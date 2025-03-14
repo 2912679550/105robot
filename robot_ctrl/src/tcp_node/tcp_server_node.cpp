@@ -16,13 +16,15 @@ pthread_t tid;
 fd_set read_fds;
 struct timeval timeout;
 //检测是否正确连接
-int connnected = 0;
+int isConnected = 0;
 int ps_success = 0;
 
 std::string fan_data_str;
 
 //运动指令消息发布器
 ros::Publisher motion_cmd_pub;
+ros::Subscriber v_motion_front_sub;
+ros::Subscriber v_motion_back_sub;
 ros::Timer tcp_recv_timer;
 
 // 位资数据
@@ -37,9 +39,11 @@ int main(int argc, char** argv)
     #ifndef DEBUG
     ros::init(argc, argv, "tcp_server_node");
     ros::NodeHandle nh;
-    ros::NodeHandle nh_private("~");
+    // ros::NodeHandle nh_private("~");
     //消息发布器和订阅器建立
-    motion_cmd_pub = nh.advertise<robot_ctrl::tcp_motion_cmd>(ROBOT_TCP_CMD , 1);
+    motion_cmd_pub = nh.advertise<ROBOT_TCP_CMD_TYPE>(ROBOT_TCP_CMD , 1);
+    v_motion_back_sub = nh.subscribe(STM2PC_V_B, 1, v_motion_back_callback);
+    v_motion_front_sub = nh.subscribe(STM2PC_V_F, 1, v_motion_front_callback);
     // fan_data_sub = nh.subscribe("fan_pwm_info", 1, FanDataCallback); 
     // nh_private.param<int>("SERVER_PORT",SERVER_PORT,9527);
     // nh_private.getParam("SERVER_PORT",SERVER_PORT);
@@ -115,7 +119,7 @@ int main(int argc, char** argv)
     ros::Rate r(10);
     while(ros::ok()) 
     {
-        if(connnected==0) //未成功连接
+        if(isConnected==0) //未成功连接
         {
             // 复制文件描述符集合，因为 select 会修改它
             fd_set read_fds_copy = read_fds;
@@ -150,11 +154,11 @@ int main(int argc, char** argv)
                 ROS_INFO("client_ip:%s port:%d", 
                         inet_ntop(AF_INET, &client_addr.sin_addr.s_addr, client_IP, sizeof(client_IP)),
                         ntohs(client_addr.sin_port));
-                connnected = 1;
+                isConnected = 1;
             }
         }
 
-        else if(connnected==1) //已经成功连接
+        else if(isConnected==1) //已经成功连接
         {
             if(ps_success==0)
             {
@@ -196,14 +200,13 @@ void* InstructionPubCallback(void* arg)
     while (ros::ok())
     {
         char buf[1024] = "";         //服务器读取字符串，最大1024个字节
-
-         if(recv(confd, buf, sizeof(buf), 0) <= 0) 
+        if(recv(confd, buf, sizeof(buf), 0) <= 0) 
          { // 客户端关闭连接或者出错
-            if(connnected==1)
+            if(isConnected==1)
             {
                 ROS_INFO("Socket disconnected!");
             }
-            connnected = 0;
+            isConnected = 0;
             //break;
             continue;
         };

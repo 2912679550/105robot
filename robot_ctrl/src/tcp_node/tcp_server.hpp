@@ -20,6 +20,13 @@
 
 //Tcp服务器端口号
 const int SERVER_PORT = 9527;
+//检测是否正确连接
+extern int isConnected;
+extern int ps_success;
+//服务器监听套接字
+extern int listenfd;
+extern int confd;
+extern int max_fd;
 
 // ! TCP功能函数
 /*!
@@ -36,6 +43,7 @@ void* MessageSubCallback(void* arg);
 void* InstructionPubCallback(void* arg);
 
 // ! 定义ROS中的消息回调函数
+void v_motion_back_callback(const STM2PC_V_CPTR& msg);
 // void PoseDataCallback(const geometry_msgs::PoseStampedConstPtr &msg);
 // void lvbanPoseDataCallback(const geometry_msgs::PoseStampedConstPtr &msg);
 // void FanDataCallback(const std_msgs::StringConstPtr& msg);

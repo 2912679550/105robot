@@ -3,6 +3,9 @@
         "core": "cpp",
         "dense": "cpp",
         "string": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "array": "cpp",
+        "string_view": "cpp",
+        "ranges": "cpp"
     }
 }

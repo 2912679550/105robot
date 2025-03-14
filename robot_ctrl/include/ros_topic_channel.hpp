@@ -1,4 +1,16 @@
-#define ROBOT_TCP_CMD "robot_tcp_cmd_topic"
+#include "robot_ctrl/tcp_motion_cmd.h"
+#include "robot_ctrl/robot_motion_val.h"
+
+// todo ROS话题通道定义与类型转义
+#define ROBOT_TCP_CMD "robot_tcp_cmd_topic"             // 由手柄通过TCP发来的控制指令，通过tcp_node广播给机器人控制节点
+typedef robot_ctrl::tcp_motion_cmd ROBOT_TCP_CMD_TYPE;  // 机器人控制指令
+typedef robot_ctrl::tcp_motion_cmdConstPtr ROBOT_TCP_CMD_CPTR;  // 机器人控制指令指针
+
+#define STM2PC_V_F "stm2pc_v_f"                     // 机器人前侧边在机器人坐标系下的速度
+#define STM2PC_V_B "stm2pc_v_b"                     // 机器人后侧边在机器人坐标系下的速度
+typedef robot_ctrl::robot_motion_val STM2PC_V_TYPE; // 机器人运动速度
+typedef robot_ctrl::robot_motion_valConstPtr STM2PC_V_CPTR; // 机器人运动速度指针
+
 
 
 // todo 字符串打印配置宏
