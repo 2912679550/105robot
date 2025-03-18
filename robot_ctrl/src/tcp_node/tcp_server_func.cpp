@@ -14,7 +14,7 @@ void buf_split(std::vector<std::string> &return_data_vec, const std::string &str
     return;
 }
 
-void v_motion_back_callback(const STM2PC_V_CPTR& msg)
+void motion_val_callback(const ROBOT_TCP_VAL_CPTR& msg)
 {
     static int countt=0;
     countt++;

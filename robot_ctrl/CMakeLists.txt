@@ -27,6 +27,15 @@ add_message_files(
     FILES
     robot_motion_val.msg
     tcp_motion_cmd.msg
+    # 单臂辅助轮控制板
+    assist_board_cmd.msg
+    assist_board_val.msg
+    # 主驱动轮控制板
+    main_board_cmd.msg
+    main_board_val.msg
+    # 中置推杆控制板
+    push_board_cmd.msg
+    push_board_val.msg
 )
 
 generate_messages(

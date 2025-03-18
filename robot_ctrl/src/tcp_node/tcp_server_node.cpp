@@ -23,8 +23,8 @@ std::string fan_data_str;
 
 //运动指令消息发布器
 ros::Publisher motion_cmd_pub;
-ros::Subscriber v_motion_front_sub;
-ros::Subscriber v_motion_back_sub;
+ros::Subscriber motion_val_sub;
+
 ros::Timer tcp_recv_timer;
 
 // 位资数据
@@ -35,15 +35,14 @@ geometry_msgs::PoseStamped lvban_pose;
 
 int main(int argc, char** argv)
 {
-    //初始化ros节点
-    #ifndef DEBUG
     ros::init(argc, argv, "tcp_server_node");
     ros::NodeHandle nh;
+    //初始化ros节点
+    #ifndef DEBUG
     // ros::NodeHandle nh_private("~");
     //消息发布器和订阅器建立
     motion_cmd_pub = nh.advertise<ROBOT_TCP_CMD_TYPE>(ROBOT_TCP_CMD , 1);
-    v_motion_back_sub = nh.subscribe(STM2PC_V_B, 1, v_motion_back_callback);
-    v_motion_front_sub = nh.subscribe(STM2PC_V_F, 1, v_motion_front_callback);
+    motion_val_sub = nh.subscribe(STM2PC_V_F, 1, motion_val_callback);
     // fan_data_sub = nh.subscribe("fan_pwm_info", 1, FanDataCallback); 
     // nh_private.param<int>("SERVER_PORT",SERVER_PORT,9527);
     // nh_private.getParam("SERVER_PORT",SERVER_PORT);
@@ -279,10 +278,10 @@ void* InstructionPubCallback(void* arg)
         }
         #else
         // debug模式下只打印处理后的motion_instruction_str数据
-        std::cout << "motion_instruction_str: ";
+        std::cout << "motion_instruction_str: \n";
         for (int i = 0; i < motion_instruction_str.size(); i++)
         {
-            std::cout << motion_instruction_str[i] << " ";
+            std::cout << motion_instruction_str[i] << "\n";
         }
         std::cout << std::endl;
         #endif

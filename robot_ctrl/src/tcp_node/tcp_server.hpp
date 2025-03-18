@@ -43,7 +43,7 @@ void* MessageSubCallback(void* arg);
 void* InstructionPubCallback(void* arg);
 
 // ! 定义ROS中的消息回调函数
-void v_motion_back_callback(const STM2PC_V_CPTR& msg);
+void motion_val_callback(const ROBOT_TCP_VAL_CPTR& msg);
 // void PoseDataCallback(const geometry_msgs::PoseStampedConstPtr &msg);
 // void lvbanPoseDataCallback(const geometry_msgs::PoseStampedConstPtr &msg);
 // void FanDataCallback(const std_msgs::StringConstPtr& msg);

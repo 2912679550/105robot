@@ -7,5 +7,13 @@
         "array": "cpp",
         "string_view": "cpp",
         "ranges": "cpp"
-    }
+    },
+    "python.autoComplete.extraPaths": [
+        "/home/robot/bot105_ws/devel/lib/python3/dist-packages",
+        "/opt/ros/noetic/lib/python3/dist-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/robot/bot105_ws/devel/lib/python3/dist-packages",
+        "/opt/ros/noetic/lib/python3/dist-packages"
+    ]
 }
