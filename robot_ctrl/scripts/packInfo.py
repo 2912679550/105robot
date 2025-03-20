@@ -1,5 +1,6 @@
 class packInfo():
-    boardType = {'1':'Steer', '2':'Adsorption Fan', '3':'Fan', '4':'IO'}
+    # boardType = {'1':'Steer', '2':'Adsorption Fan', '3':'Fan', '4':'IO'}
+    boardType = {'1':'main_board', '2':'assist_board', '3':'push_board'}
 
     SteerCmdName = {"steer_state" : 1, "dr1_tar_v" : 0.00, "dr2_tar_p" : 0.00, "dr1_tar_c" : 0.00, "ts" : 0.00}
     SteerValName = {"steer_state" : 0, "dr1_tar_v" : 0.00, "dr1_real_v" : 0.00, "dr1_tar_i" : 0.00, 
