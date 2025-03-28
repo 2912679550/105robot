@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding:utf-8
 import rospy
 import socket
@@ -84,7 +84,7 @@ class IPControl():
             # print('[server]: ' + data_input)
             # 客户端发送给服务端
             self.tcpCliSock.send(data_input.encode())
-        except Exception as err:
+        except Exception as err: 
             print('send over', err)
         except KeyboardInterrupt:
             # 发起关闭
@@ -94,7 +94,7 @@ class IPControl():
             
     def changeip(self):
         try:
-            data_input = 'ip:192.168.0.103 type:3 freq:100 '#注意结尾的空格
+            data_input = 'ip:192.168.110.201 type:1 freq:100 '#注意结尾的空格
             self.tcpCliSock.send(data_input.encode())
             print("change IP OVER")
         except Exception as err:
@@ -105,7 +105,7 @@ class IPControl():
 
 
 if __name__ == "__main__":
-    bottom_controller = IPControl('192.168.0.106', 5001, '4', 100)
+    bottom_controller = IPControl('192.168.0.201', 5001, '4', 100)
     info = packInfo()
     bottom_controller.changeip()
     time.sleep(1)
