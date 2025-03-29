@@ -41,8 +41,8 @@ int main(int argc, char** argv)
     #ifndef DEBUG
     // ros::NodeHandle nh_private("~");
     //消息发布器和订阅器建立
-    motion_cmd_pub = nh.advertise<ROBOT_TCP_CMD_TYPE>(ROBOT_TCP_CMD , 1);
-    motion_val_sub = nh.subscribe(STM2PC_V_F, 1, motion_val_callback);
+    motion_cmd_pub = nh.advertise<TCP_ROBOT_CMD_TYPE>(TCP_ROBOT_CMD , 1);
+    motion_val_sub = nh.subscribe(ROBOT_TCP_VAL, 1, motion_val_callback);
     // fan_data_sub = nh.subscribe("fan_pwm_info", 1, FanDataCallback); 
     // nh_private.param<int>("SERVER_PORT",SERVER_PORT,9527);
     // nh_private.getParam("SERVER_PORT",SERVER_PORT);

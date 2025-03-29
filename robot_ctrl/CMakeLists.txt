@@ -27,12 +27,9 @@ add_message_files(
     FILES
     robot_motion_val.msg
     tcp_motion_cmd.msg
-    # 单臂辅助轮控制板
-    assist_board_cmd.msg
-    assist_board_val.msg
-    # 主驱动轮控制板
-    main_board_cmd.msg
-    main_board_val.msg
+    # 单侧控制板
+    single_side_cmd.msg
+    single_side_val.msg
     # 中置推杆控制板
     push_board_cmd.msg
     push_board_val.msg
@@ -72,6 +69,7 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 add_definitions(${EIGEN_DEFINITIONS})
 
 add_subdirectory(src/tcp_node)
+add_subdirectory(src/robot_node)
 
 #############
 ## Install ##
