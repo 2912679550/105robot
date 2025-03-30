@@ -12,8 +12,8 @@ typedef robot_ctrl::tcp_motion_cmd TCP_ROBOT_CMD_TYPE;  // 机器人控制指令
 typedef robot_ctrl::tcp_motion_cmdConstPtr TCP_ROBOT_CMD_CPTR;  // 机器人控制指令指针
 // 由python文件的ether node发出来的32端现在的执行状态，需要通过TCP发给手柄显示UI
 #define ROBOT_TCP_VAL "robot_tcp_val_topic"                     // 机器人前侧边在机器人坐标系下的速度
-typedef robot_ctrl::robot_motion_val ROBOT_TCP_VAL_TYPE; // 机器人运动速度
-typedef robot_ctrl::robot_motion_valConstPtr ROBOT_TCP_VAL_CPTR; // 机器人运动速度指针
+typedef robot_ctrl::robot_motion_val ROBOT_TCP_VAL_TYPE;            // 回传给手柄显示的信息
+typedef robot_ctrl::robot_motion_valConstPtr ROBOT_TCP_VAL_CPTR;    // 回传给手柄显示的信息指针
 
 // * 主程序与 ether node 的收发信道( for robot ctrl )
 #define ROBOT_STM_CMD_F "robot_stm_cmd_f"             // 前侧的控制指令
@@ -23,8 +23,8 @@ typedef robot_ctrl::single_side_cmdConstPtr ROBOT_STM_CMD_CPTR;  // 机器人控
 
 #define STM_ROBOT_VAL_F "stm_robot_f"                     // 机器人前侧发回的当前信息
 #define STM_ROBOT_VAL_B "stm_robot_b"                     // 机器人后侧发回的当前信息
-typedef robot_ctrl::single_side_val STM_ROBOT_VAL_TYPE; // 机器人运动速度
-typedef robot_ctrl::single_side_valConstPtr STM_ROBOT_VAL_CPTR; // 机器人运动速度指针
+typedef robot_ctrl::single_side_val STM_ROBOT_VAL_TYPE;         // 机器人32端当前的运动状态
+typedef robot_ctrl::single_side_valConstPtr STM_ROBOT_VAL_CPTR; // 机器人32端当前的运动状态指针
 
 
 

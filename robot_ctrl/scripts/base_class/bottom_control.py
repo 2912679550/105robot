@@ -4,7 +4,7 @@ import rospy
 import socket
 import os
 import time
-from packInfo import packInfo
+from base_class.packInfo import packInfo
     
 
 class BottomControl():

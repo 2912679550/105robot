@@ -4,7 +4,7 @@
             "name": "Linux",
             "includePath": [
                 "/opt/ros/noetic/include",
-                "${workspaceFolder}/../devel/include/**",
+                "${workspaceFolder}/../devel/include",
                 "/usr/include/eigen3",
                 "${workspaceFolder}/robot_ctrl/src/**",
                 "${workspaceFolder}/robot_ctrl/include/**"
