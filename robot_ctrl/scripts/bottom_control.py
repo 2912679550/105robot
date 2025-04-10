@@ -4,7 +4,7 @@ import rospy
 import socket
 import os
 import time
-from base_class.packInfo import packInfo
+from packInfo import packInfo
     
 
 class BottomControl():
@@ -145,28 +145,26 @@ class BottomControl():
 
 # if __name__ == "__main__":
 #     rospy.init_node("controller_node", anonymous=False)
-#     bottom_controller = BottomControl('192.168.110.201', 5000, '1', 100)
+#     bottom_controller = BottomControl('192.168.0.201', 5000, '1', 100)
 #     info = packInfo()
 #     while not rospy.is_shutdown():
 #         info.MainAssistCmdName["tar_v"]=10.5
 #         info.MainAssistCmdName["tar_p"] = round(float(0.0),4)#旋转的时候，舵轮速度为0
-#         bottom_controller.sendTask(info=info)
-        # bottom_controller.recvTask(info)
-        # print('========================================== ')
-        # print('staate: ',info.MainAssistValName["state"])
-        # print('tar1_v: ' ,info.MainAssistValName["tar1_v"])
-        # print('real1_v: ',info.MainAssistValName["real1_v"])
-        # print('tar2_v: ',info.MainAssistValName["tar2_v"])
-        # print('real2_v: ',info.MainAssistValName["real2_v"])
-        # print('tar_p: ',info.MainAssistValName["tar_p"])
-        # print('real_p: ',info.MainAssistValName["real_p"])
-        # print('tar_angle: ',info.MainAssistValName["tar_angle"])
-        # print('real_angle: ',info.MainAssistValName["real_angle"])
-        # print('tar_spring: ',info.MainAssistValName["tar_spring"])
-        # print('real_s1: ',info.MainAssistValName["real_s1"])
-        # print('real_s2: ',info.MainAssistValName["real_s2"])
-        # print('========================================== ')
-        
-        
-        time.sleep(1.0)
+#         # bottom_controller.sendTask(info=info)
+#         bottom_controller.recvTask(info)
+#         print('========================================== ')
+#         print('staate: ',info.MainAssistValName["state"])
+#         print('tar1_v: ' ,info.MainAssistValName["tar1_v"])
+#         print('real1_v: ',info.MainAssistValName["real1_v"])
+#         print('tar2_v: ',info.MainAssistValName["tar2_v"])
+#         print('real2_v: ',info.MainAssistValName["real2_v"])
+#         print('tar_p: ',info.MainAssistValName["tar_p"])
+#         print('real_p: ',info.MainAssistValName["real_p"])
+#         print('tar_angle: ',info.MainAssistValName["tar_angle"])
+#         print('real_angle: ',info.MainAssistValName["real_angle"])
+#         print('tar_spring: ',info.MainAssistValName["tar_spring"])
+#         print('real_s1: ',info.MainAssistValName["real_s1"])
+#         print('real_s2: ',info.MainAssistValName["real_s2"])
+#         print('========================================== ')
+#         time.sleep(1.0)
     

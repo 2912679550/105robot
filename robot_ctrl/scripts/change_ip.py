@@ -94,7 +94,7 @@ class IPControl():
             
     def changeip(self):
         try:
-            data_input = 'ip:192.168.110.201 type:1 freq:100 '#注意结尾的空格
+            data_input = 'ip:192.168.0.202 type:2 freq:100 '#注意结尾的空格
             self.tcpCliSock.send(data_input.encode())
             print("change IP OVER")
         except Exception as err:
@@ -105,7 +105,7 @@ class IPControl():
 
 
 if __name__ == "__main__":
-    bottom_controller = IPControl('192.168.0.201', 5001, '4', 100)
+    bottom_controller = IPControl('192.168.0.202', 5001, '4', 100)
     info = packInfo()
     bottom_controller.changeip()
     time.sleep(1)

@@ -4,8 +4,8 @@ import rospy
 import time
 import os
 import socket
-from base_class.packInfo import packInfo
-from base_class.bottom_control import BottomControl
+from packInfo import packInfo
+from bottom_control import BottomControl
 # 供给python使用的消息路径(在工作空间中查看）：ls ./devel/lib/python3/dist-packages/robot_ctrl/msg
 from robot_ctrl.msg import single_side_cmd
 from robot_ctrl.msg import single_side_val
@@ -57,8 +57,8 @@ class SINGLE_SIDE:
         try:
             for i in range( self.board_num ):
                 tail_ip = str(i + ip_start)
-                full_ip = '192.168.110.' + tail_ip
-                self.ether_nodes_buf.append( BottomControl(ip = full_ip , type = '1', frequency = self.frequency))
+                full_ip = '192.168.0.' + tail_ip
+                self.ether_nodes_buf.append( BottomControl(ip = full_ip , port = 5000 ,type = '1', frequency = self.frequency))
                 self.ether_info_buf.append(packInfo())
                 print('创建控制板 %s 成功' % full_ip)
             # 开定时器任务，循环接收数据
@@ -153,14 +153,14 @@ class SINGLE_SIDE:
             # print('dir_steer_vel: ',self.current_cmd.dir_steer_vel[i])
 
 # 测试用主程序
-# if __name__ == "__main__":
-#     rospy.init_node("single_side_node", anonymous=False)
-#     # 创建一个SINGLE_SIDE对象
-#     single_side = SINGLE_SIDE(topic_in = '/robot/single_side_cmd', topic_out = '/robot/single_side_val', ip_start = 201, sub_board_num = 1 , frequency = 100)
-#     while not rospy.is_shutdown():                
-#         rospy.spin() 
-#     if(rospy.is_shutdown()):
-#         for i in range(single_side.ether_nodes_buf.__len__()):
-#             single_side.ether_nodes_buf[i].tcpCliSock.close() 
-#         time.sleep(1.0)
-#         os._exit(0)
+if __name__ == "__main__":
+    rospy.init_node("single_side_node", anonymous=False)
+    # 创建一个SINGLE_SIDE对象
+    single_side = SINGLE_SIDE(topic_in = '/robot/single_side_cmd', topic_out = '/robot/single_side_val', ip_start = 201, sub_board_num = 3 , frequency = 100)
+    while not rospy.is_shutdown():                
+        rospy.spin() 
+    if(rospy.is_shutdown()):
+        for i in range(single_side.ether_nodes_buf.__len__()):
+            single_side.ether_nodes_buf[i].tcpCliSock.close() 
+        time.sleep(1.0)
+        os._exit(0)
