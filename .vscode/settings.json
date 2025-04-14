@@ -15,5 +15,6 @@
     "python.analysis.extraPaths": [
         "/home/robot/bot105_ws/devel/lib/python3/dist-packages",
         "/opt/ros/noetic/lib/python3/dist-packages"
-    ]
+    ],
+    "C_Cpp.default.compilerPath": "/usr/bin/gcc"
 }

@@ -4,7 +4,7 @@
 #include <tf/tf.h>
 #include "tcp_server.hpp"
 
-#define DEBUG 1 // debug模式只调试tcp的数据接收，不处理ros问题
+#define USE_ROS 1 // debug模式只调试tcp的数据接收，不处理ros问题
 
 //服务器监听套接字
 int listenfd;
@@ -38,7 +38,7 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "tcp_server_node");
     ros::NodeHandle nh;
     //初始化ros节点
-    #ifndef DEBUG
+    #if USE_ROS
     // ros::NodeHandle nh_private("~");
     //消息发布器和订阅器建立
     motion_cmd_pub = nh.advertise<TCP_ROBOT_CMD_TYPE>(TCP_ROBOT_CMD , 1);
@@ -156,7 +156,6 @@ int main(int argc, char** argv)
                 isConnected = 1;
             }
         }
-
         else if(isConnected==1) //已经成功连接
         {
             if(ps_success==0)

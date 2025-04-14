@@ -61,6 +61,9 @@ class SINGLE_SIDE:
                 self.ether_nodes_buf.append( BottomControl(ip = full_ip , port = 5000 ,type = '1', frequency = self.frequency))
                 self.ether_info_buf.append(packInfo())
                 print('创建控制板 %s 成功' % full_ip)
+                # 暂停一小段时间，经过测试不暂停会连接不上
+                time.sleep(0.5)
+            time.sleep(1)
             # 开定时器任务，循环接收数据
             self.ether_recv_task = rospy.Timer(rospy.Duration(1.0/self.frequency), self.ether_revc_callback)
             # 创建ROS发布，用来广播32端接收到的信息状态
@@ -104,8 +107,8 @@ class SINGLE_SIDE:
                 generat_msg.cur_arm_angle[i] = self.current_val.real_angle[i] = self.ether_info_buf[i].MainAssistValName["real_angle"]
             # 处理弹簧信息（主控板）
             self.current_val.tar_spring = self.ether_info_buf[2].MainAssistValName["tar_spring"]
-            generat_msg.cur_spring_length[1] = self.current_val.real_s1 = self.ether_info_buf[2].MainAssistValName["real_s1"]
-            generat_msg.cur_spring_length[2] = self.current_val.real_s2 = self.ether_info_buf[2].MainAssistValName["real_s2"]
+            generat_msg.cur_spring_length[0] = self.current_val.real_s1 = self.ether_info_buf[2].MainAssistValName["real_s1"]
+            generat_msg.cur_spring_length[1] = self.current_val.real_s2 = self.ether_info_buf[2].MainAssistValName["real_s2"]
         # 发布ROS消息
         self.single_val_pub.publish(generat_msg)
         # 打印generat_msg

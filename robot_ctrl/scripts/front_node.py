@@ -13,7 +13,7 @@ if __name__ == "__main__":
                                 topic_out = ros_channel.STM_ROBOT_VAL_F, 
                                 ip_start = 201, 
                                 sub_board_num = 3 , 
-                                frequency = 100)
+                                frequency = 200)
     while not rospy.is_shutdown():                
         rospy.spin() 
     if(rospy.is_shutdown()):

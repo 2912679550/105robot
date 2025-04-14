@@ -8,6 +8,15 @@
 #define STEER_DIR 1     // 舵轮方向电机数组序号
 #define MECH_MOTOR 2    // 机构电机数组序号
 
+typedef enum    // 与底层32对应，舵轮当前的工作状态
+{
+    STOP,           // 0 停止
+    NORMAL,     // 1 正常
+    TORQUE,     // 2 扭矩
+    RESET,      // 3 复位
+    RESET_OVER  // 4 完成复位
+} steerState;
+
 class SINGLE_SIDE_CTRL
 {
 public:

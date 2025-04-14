@@ -23,6 +23,7 @@ void SINGLE_SIDE_CTRL::pub_cmd(const ROBOT_STM_CMD_TYPE &cmdIn){
 }
 
 void SINGLE_SIDE_CTRL::val_callback(const STM_ROBOT_VAL_CPTR &msg){
+    if(msg != nullptr)
     val_data_ = *msg;
 }
 
@@ -36,6 +37,9 @@ MAIN_ROBOT::MAIN_ROBOT(ros::NodeHandle* nh_ ){
     }
     front_side_ = new SINGLE_SIDE_CTRL(ROBOT_STM_CMD_F, STM_ROBOT_VAL_F, nh_);
     back_side_ = new SINGLE_SIDE_CTRL(ROBOT_STM_CMD_B, STM_ROBOT_VAL_B, nh_);
+    // 创建手柄消息的订阅与回传发布者
+    tcp_pub_ = nh_->advertise<ROBOT_TCP_VAL_TYPE>(ROBOT_TCP_VAL, 1);
+    tcp_sub_ = nh_->subscribe(TCP_ROBOT_CMD , 1, &MAIN_ROBOT::motion_cmd_callback, this);
 }
 
 MAIN_ROBOT::~MAIN_ROBOT(){
@@ -46,6 +50,15 @@ MAIN_ROBOT::~MAIN_ROBOT(){
     if(back_side_ != nullptr){
         delete back_side_;
         back_side_ = nullptr;
+    }
+}
+
+void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
+    if(msg != nullptr)
+    {
+        // 处理接收到的数据，整合成一个字符串容器
+        std::vector<std::string> motion_instruction_str;
+        
     }
 }
 
