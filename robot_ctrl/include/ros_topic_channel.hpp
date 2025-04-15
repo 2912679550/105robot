@@ -26,6 +26,13 @@ typedef robot_ctrl::single_side_cmdConstPtr ROBOT_STM_CMD_CPTR;  // 机器人控
 typedef robot_ctrl::single_side_val STM_ROBOT_VAL_TYPE;         // 机器人32端当前的运动状态
 typedef robot_ctrl::single_side_valConstPtr STM_ROBOT_VAL_CPTR; // 机器人32端当前的运动状态指针
 
+// todo 手柄发来的TCP控制消息宏转移，宏对应机器人将会执行的功能，字符串链接手柄实际发来的字符（提供不同手柄兼容性）
+#define ROBOT_STOP "stop"               // 急停
+#define ROBOT_CALI "stcorr"             // 舵轮标定
+#define ROBOT_MOTION "increment"        // 正常运动
+#define ROBOT_TIGHT_EN "stopF"          // 启用夹紧（app上风扇按钮亮的时候发的信号是stopF）
+#define ROBOT_TIGHT_DIS "fans"          // 夹紧松开（app上风扇按钮灭的时候发的信号是fans）
+#define ROBOT_ANGLE "set_fan"           // 设置夹紧角度软件中给定的默认列表范围是3到9，计划用这个做一个映射
 
 
 // todo 字符串打印配置宏

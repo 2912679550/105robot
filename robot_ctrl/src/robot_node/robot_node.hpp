@@ -17,6 +17,8 @@ typedef enum    // 与底层32对应，舵轮当前的工作状态
     RESET_OVER  // 4 完成复位
 } steerState;
 
+
+
 class SINGLE_SIDE_CTRL
 {
 public:
@@ -25,9 +27,14 @@ public:
     ~SINGLE_SIDE_CTRL();
     // 数据存储，用于存放32段发回来的一些运行数据，可以通过外部访问，辅助主程序逻辑
     STM_ROBOT_VAL_TYPE val_data_;
+    ROBOT_STM_CMD_TYPE cmd_data_;
 
     // 外部接口，用于向32发布控制指令
-    void pub_cmd(const ROBOT_STM_CMD_TYPE &cmdIn);
+    void pub_cmd();
+    void set_tight(bool tightFlag);
+    void set_angle(float angle);
+    void set_steer(steerState stateIn , float v_aix = 0.0f , float v_cir = 0.0f);
+
 private:
     ros::NodeHandle *nh_;
     ros::Publisher cmd_pub_;
@@ -40,9 +47,15 @@ class MAIN_ROBOT
 public:
     MAIN_ROBOT(ros::NodeHandle* nh_ = nullptr);
     ~MAIN_ROBOT();
+    
 
     SINGLE_SIDE_CTRL* front_side_;
     SINGLE_SIDE_CTRL* back_side_;
+    void pubCmd(){
+        front_side_->pub_cmd();
+        back_side_->pub_cmd();
+    };
+
 private:
     ros::NodeHandle* nh_;
     ros::Publisher tcp_pub_;

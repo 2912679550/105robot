@@ -1,0 +1,7 @@
+<launch>
+    <node pkg = "robot_ctrl" type = "tcp_node"  name = "tcp_node" output = "screen" />
+    <!-- <node pkg = "robot_ctrl" type = "front_node.py"  name = "front_node" output = "screen" /> -->
+    <!-- <node pkg = "robot_ctrl" type = "back_node.py"  name =  "back_node" output = "screen" /> -->
+    <node pkg = "robot_ctrl" type = "robot_node"  name = "robot_node" output = "screen" />
+
+</launch>

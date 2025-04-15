@@ -156,14 +156,14 @@ class SINGLE_SIDE:
             # print('dir_steer_vel: ',self.current_cmd.dir_steer_vel[i])
 
 # 测试用主程序
-if __name__ == "__main__":
-    rospy.init_node("single_side_node", anonymous=False)
-    # 创建一个SINGLE_SIDE对象
-    single_side = SINGLE_SIDE(topic_in = '/robot/single_side_cmd', topic_out = '/robot/single_side_val', ip_start = 201, sub_board_num = 3 , frequency = 100)
-    while not rospy.is_shutdown():                
-        rospy.spin() 
-    if(rospy.is_shutdown()):
-        for i in range(single_side.ether_nodes_buf.__len__()):
-            single_side.ether_nodes_buf[i].tcpCliSock.close() 
-        time.sleep(1.0)
-        os._exit(0)
+# if __name__ == "__main__":
+#     rospy.init_node("single_side_node", anonymous=False)
+#     # 创建一个SINGLE_SIDE对象
+#     single_side = SINGLE_SIDE(topic_in = '/robot/single_side_cmd', topic_out = '/robot/single_side_val', ip_start = 201, sub_board_num = 3 , frequency = 100)
+#     while not rospy.is_shutdown():                
+#         rospy.spin() 
+#     if(rospy.is_shutdown()):
+#         for i in range(single_side.ether_nodes_buf.__len__()):
+#             single_side.ether_nodes_buf[i].tcpCliSock.close() 
+#         time.sleep(1.0)
+#         os._exit(0)

@@ -1,10 +1,13 @@
 #include "ros/ros.h"
 #include <signal.h>
 #include "robot_ctrl/tcp_motion_cmd.h"
+#include "robot_ctrl/robot_motion_val.h"
+#include "robot_params.hpp"
 #include <tf/tf.h>
 #include "tcp_server.hpp"
 
 #define USE_ROS 1 // debug模式只调试tcp的数据接收，不处理ros问题
+// #define DEBUG
 
 //服务器监听套接字
 int listenfd;
@@ -210,71 +213,47 @@ void* InstructionPubCallback(void* arg)
         };
         // 处理接收到的数据，整合成一个字符串容器
         std::vector<std::string> motion_instruction_str;
-        buf_split(motion_instruction_str, buf, "\t");
+        // motion_instruction_str容器中已经为分割后的控制字符串
+        buf_split(motion_instruction_str, buf, "\t");  
         
         #ifndef DEBUG
-        steer_track::motion_instruction motion_msg;//待发送的tcp指令消息
+        robot_ctrl::tcp_motion_cmd motion_msg;//待发送的tcp指令消息
+        
 
+        
         std::string mode;
         mode = motion_instruction_str.at(0);
-
-        //根据传入字符判断并作出相应处理
-        if(mode == "motion" || mode == "stop" || mode == "track" || \
-        mode == "stcorr" || mode == "fans" || mode == "stopF" || \
-        mode=="splineTrack" || mode=="getDeltaYaw" ||  mode=="RestAngle" || \
-        mode=="CCWiRotate" || mode=="CWiRotate" || mode=="start_follow" || mode=="stop_follow" || mode=="set_zeroing")
+        std::cout   << BLOD_STRING
+                    << GREEN_STRING
+                    << "mode: " << mode
+                    << RESET_STRING << std::endl;
+        
+        if( mode ==  ROBOT_STOP || 
+            mode ==  ROBOT_CALI ||
+            mode ==  ROBOT_TIGHT_EN ||
+            mode ==  ROBOT_TIGHT_DIS)
         {
-            motion_msg.mode = mode;
-            motion_cmd_pub.publish(motion_msg);
+            motion_msg.cmdType = mode;    
         }
-        else if(mode == "robotVel")
-        {
-            motion_msg.mode = mode;
-            motion_msg.robot_vel = atof(motion_instruction_str[1].c_str());//字符串转化为浮点数
-            motion_cmd_pub.publish(motion_msg);
+        else if(mode == ROBOT_MOTION){
+            motion_msg.cmdType = ROBOT_MOTION;
+            // 周向速度对应原来“x方向”的位置
+            motion_msg.v_cir = atof(motion_instruction_str[1].c_str())/10.0;
+            motion_msg.v_axi = atof(motion_instruction_str[2].c_str())/10.0;
+            std::cout  << "v_axi: " << motion_msg.v_axi << std::endl;
+            std::cout  << "v_cir: " << motion_msg.v_cir << std::endl;
         }
-        else if(mode == "increment" || mode == "absolute")
-        { 
-            motion_msg.mode = mode;
-            if (mode == "increment")
-            {
-                float dx = atof(motion_instruction_str[1].c_str());
-                float dy = atof(motion_instruction_str[2].c_str());
-                motion_msg.dx = dx;
-                motion_msg.dy = dy;
-            }
-            else 
-            {
-                float x = atof(motion_instruction_str[1].c_str());
-                float y = atof(motion_instruction_str[2].c_str());
-                motion_msg.x = x;
-                motion_msg.y = y;
-            }
-            motion_cmd_pub.publish(motion_msg);
+        else if(mode == ROBOT_ANGLE){
+            // 软件默认范围为3到9，做一个线性映射
+            float angle = atof(motion_instruction_str[1].c_str());
+            angle = mechAngleRange[0] + (angle - 3) * (mechAngleRange[1] - mechAngleRange[0]) / (9 - 3);
+            motion_msg.cmdType = ROBOT_ANGLE;
+            motion_msg.angle_front = angle;
+            motion_msg.angle_back = angle;
+            std::cout  << "angle_front: " << angle << std::endl;
+            std::cout  << "angle_back: " << angle << std::endl;
         }
-        else if(mode == "set_fan")
-        {
-            motion_msg.mode = mode;
-            motion_msg.fan_1 = atof(motion_instruction_str[1].c_str());
-            motion_msg.fan_2 = atof(motion_instruction_str[2].c_str());
-            motion_msg.fan_3 = atof(motion_instruction_str[3].c_str());
-            motion_cmd_pub.publish(motion_msg);
-        }
-        else if(mode == "set_polish")
-        {
-            motion_msg.mode = mode;
-            motion_msg.polish_speed = atof(motion_instruction_str[1].c_str());
-            motion_cmd_pub.publish(motion_msg);
-        }
-        else if(mode == "autotrack")
-        {
-            motion_msg.mode = mode;
-            motion_msg.per_x = atof(motion_instruction_str[1].c_str());
-            motion_msg.per_y = atof(motion_instruction_str[2].c_str());
-            motion_msg.num_track = atof(motion_instruction_str[3].c_str());
-            motion_msg.orien_track = atof(motion_instruction_str[4].c_str());
-            motion_cmd_pub.publish(motion_msg);
-        }
+        motion_cmd_pub.publish(motion_msg);//发布消息
         #else
         // debug模式下只打印处理后的motion_instruction_str数据
         std::cout << "motion_instruction_str: \n";

@@ -8,6 +8,7 @@ int main(int argc , char **argv){
     while (ros::ok())
     {
         ros::spinOnce();
+        robot.pubCmd();
         loop_rate.sleep();
     }
 
