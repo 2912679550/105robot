@@ -13,8 +13,9 @@ if __name__ == "__main__":
                                 topic_out = ros_channel.STM_ROBOT_VAL_F, 
                                 ip_start = 201, 
                                 sub_board_num = 3 , 
-                                frequency = 200)
-    while not rospy.is_shutdown():                
+                                frequency = 100)
+    while not rospy.is_shutdown():      
+        single_side.start_recv()               
         rospy.spin() 
     if(rospy.is_shutdown()):
         for i in range(single_side.ether_nodes_buf.__len__()):

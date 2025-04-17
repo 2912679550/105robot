@@ -53,6 +53,7 @@ class SINGLE_SIDE:
         self.ether_nodes_buf = []
         self.current_val = SINGLE_SIDE_VAL()
         self.current_cmd = SINGLE_SIDE_CMD()
+        self.startRecvFlag = False
         
         try:
             for i in range( self.board_num ):
@@ -62,7 +63,7 @@ class SINGLE_SIDE:
                 self.ether_info_buf.append(packInfo())
                 print('创建控制板 %s 成功' % full_ip)
                 # 暂停一小段时间，经过测试不暂停会连接不上
-                time.sleep(0.5)
+                time.sleep(0.2)
             time.sleep(1)
             # 开定时器任务，循环接收数据
             self.ether_recv_task = rospy.Timer(rospy.Duration(1.0/self.frequency), self.ether_revc_callback)
@@ -77,6 +78,13 @@ class SINGLE_SIDE:
                 time.sleep(1.0)
                 os._exit(0)   
 
+    def start_recv(self):
+        self.startRecvFlag = True
+    
+    def stop_recv(self):
+        self.startRecvFlag = False
+
+    
     def ether_revc_callback(self , event):
         generat_msg = single_side_val()
         # 先初始化消息防止运行报错
@@ -86,31 +94,32 @@ class SINGLE_SIDE:
         generat_msg.cur_arm_angle = [0.] * 2
         generat_msg.cur_spring_length = [0.] * 2
         # 先接收信息，并存储通用的舵轮信息
-        for i in range(self.board_num):
-            self.ether_nodes_buf[i].recvTask(self.ether_info_buf[i])
-            # * 解析收到的32数据，并分类装填到内部存储中
-            generat_msg.cur_steer_state[i] = self.current_val.state[i] = int(self.ether_info_buf[i].MainAssistValName["state"])
-            # 舵电机
-            self.current_val.tar_p[i] = self.ether_info_buf[i].MainAssistValName["tar_p"]
-            generat_msg.cur_steer_dir[i] = self.current_val.real_p[i] = self.ether_info_buf[i].MainAssistValName["real_p"]
-            self.current_val.tar2_v[i] = self.ether_info_buf[i].MainAssistValName["tar2_v"]
-            self.current_val.real2_v[i] = self.ether_info_buf[i].MainAssistValName["real2_v"]
-            # 轮电机
-            self.current_val.tar1_v[i] = self.ether_info_buf[i].MainAssistValName["tar1_v"]
-            generat_msg.cur_steer_vel[i] = self.current_val.real1_v[i] = self.ether_info_buf[i].MainAssistValName["real1_v"]
-        # * 以下的量需要根据实际情况筛选存储，如臂夹角只有辅助控制板才有，而弹簧长度只有主控制板才有
-        if self.board_num > 1:  # 多板子时说明为实际使用状态，测试时会将board_num设置为1
-            # 继续处理夹角信息，左右辅助控制板的编号分别为1,2
-            for i in range(2):
-                # 夹角
-                self.current_val.tar_angle[i] = self.ether_info_buf[i].MainAssistValName["tar_angle"]
-                generat_msg.cur_arm_angle[i] = self.current_val.real_angle[i] = self.ether_info_buf[i].MainAssistValName["real_angle"]
-            # 处理弹簧信息（主控板）
-            self.current_val.tar_spring = self.ether_info_buf[2].MainAssistValName["tar_spring"]
-            generat_msg.cur_spring_length[0] = self.current_val.real_s1 = self.ether_info_buf[2].MainAssistValName["real_s1"]
-            generat_msg.cur_spring_length[1] = self.current_val.real_s2 = self.ether_info_buf[2].MainAssistValName["real_s2"]
+        if(self.startRecvFlag == True):
+            for i in range(self.board_num):
+                self.ether_nodes_buf[i].recvTask(self.ether_info_buf[i])
+                # * 解析收到的32数据，并分类装填到内部存储中
+                generat_msg.cur_steer_state[i] = self.current_val.state[i] = int(self.ether_info_buf[i].MainAssistValName["state"])
+                # 舵电机
+                self.current_val.tar_p[i] = self.ether_info_buf[i].MainAssistValName["tar_p"]
+                generat_msg.cur_steer_dir[i] = self.current_val.real_p[i] = self.ether_info_buf[i].MainAssistValName["real_p"]
+                self.current_val.tar2_v[i] = self.ether_info_buf[i].MainAssistValName["tar2_v"]
+                self.current_val.real2_v[i] = self.ether_info_buf[i].MainAssistValName["real2_v"]
+                # 轮电机
+                self.current_val.tar1_v[i] = self.ether_info_buf[i].MainAssistValName["tar1_v"]
+                generat_msg.cur_steer_vel[i] = self.current_val.real1_v[i] = self.ether_info_buf[i].MainAssistValName["real1_v"]
+            # * 以下的量需要根据实际情况筛选存储，如臂夹角只有辅助控制板才有，而弹簧长度只有主控制板才有
+            if self.board_num > 1:  # 多板子时说明为实际使用状态，测试时会将board_num设置为1
+                # 继续处理夹角信息，左右辅助控制板的编号分别为1,2
+                for i in range(2):
+                    # 夹角
+                    self.current_val.tar_angle[i] = self.ether_info_buf[i].MainAssistValName["tar_angle"]
+                    generat_msg.cur_arm_angle[i] = self.current_val.real_angle[i] = self.ether_info_buf[i].MainAssistValName["real_angle"]
+                # 处理弹簧信息（主控板）
+                self.current_val.tar_spring = self.ether_info_buf[2].MainAssistValName["tar_spring"]
+                generat_msg.cur_spring_length[0] = self.current_val.real_s1 = self.ether_info_buf[2].MainAssistValName["real_s1"]
+                generat_msg.cur_spring_length[1] = self.current_val.real_s2 = self.ether_info_buf[2].MainAssistValName["real_s2"]
         # 发布ROS消息
-        self.single_val_pub.publish(generat_msg)
+            self.single_val_pub.publish(generat_msg)
         # 打印generat_msg
         # print('========================================== ')
         # print('state: ',self.current_val.state)
@@ -146,6 +155,9 @@ class SINGLE_SIDE:
             
             # 弹簧
             self.current_cmd.dir_spring_length = float(msg.dir_spring_length)
+            # 改为全部发送
+            self.ether_info_buf[0].MainAssistCmdName["tar_spring"] = self.current_cmd.dir_spring_length
+            self.ether_info_buf[1].MainAssistCmdName["tar_spring"] = self.current_cmd.dir_spring_length
             self.ether_info_buf[2].MainAssistCmdName["tar_spring"] = self.current_cmd.dir_spring_length
         # 发送信息
         for i in range(self.board_num):

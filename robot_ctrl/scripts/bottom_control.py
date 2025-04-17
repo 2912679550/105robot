@@ -17,14 +17,13 @@ class BottomControl():
         self.BUFSIZE = 1024
         # 创建socket
         self.tcpCliSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        # 设置连接超时时间为3秒
-        self.tcpCliSock.settimeout(10)
+        self.tcpCliSock.settimeout(20)  # 将超时时间设置为 20 秒
 
         # 启动socket长连接心跳
         self.tcpCliSock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)  # 在客户端开启心跳维护
         self.tcpCliSock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPIDLE, 1)  # 在空闲5秒后激活
         self.tcpCliSock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPINTVL, 1)  # 间隔1秒发送一次保活ping
-        self.tcpCliSock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPCNT, 10)  # 在ping失败10次(Max_Ailures)或15秒后关闭连接
+        self.tcpCliSock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPCNT, 20)  # 在ping失败10次(Max_Ailures)或15秒后关闭连接
         # self.tcpCliSock.ioctl(socket.SIO_KEEPALIVE_VALS, (1, 1000, 1000))
         # 试图连接到服务端，默认使用5000端口   netstat -ntulp | grep 5000
         try:
