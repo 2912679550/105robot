@@ -57,7 +57,7 @@ class SINGLE_SIDE:
         
         try:
             for i in range( self.board_num ):
-                tail_ip = str(i + ip_start)
+                tail_ip = str(i + self.ip_start)
                 full_ip = '192.168.0.' + tail_ip
                 self.ether_nodes_buf.append( BottomControl(ip = full_ip , port = 5000 ,type = '1', frequency = self.frequency))
                 self.ether_info_buf.append(packInfo())

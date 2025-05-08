@@ -1,8 +1,12 @@
 // ! 核心数据流： 手柄 -> tcp_node ---- [运动指令] ----> 机器人主控程序(cpp) ---- [控制数据] ----> 与32端通信(python)
 #include "robot_ctrl/tcp_motion_cmd.h"
 #include "robot_ctrl/robot_motion_val.h"
+// 单侧控制（主控制板与辅助控制板）
 #include "robot_ctrl/single_side_cmd.h"
 #include "robot_ctrl/single_side_val.h" 
+// 推杆控制
+#include "robot_ctrl/push_board_cmd.h"
+#include "robot_ctrl/push_board_val.h"
 
 // todo ROS话题通道定义与类型转义
 
@@ -25,6 +29,15 @@ typedef robot_ctrl::single_side_cmdConstPtr ROBOT_STM_CMD_CPTR;  // 机器人控
 #define STM_ROBOT_VAL_B "stm_robot_b"                     // 机器人后侧发回的当前信息
 typedef robot_ctrl::single_side_val STM_ROBOT_VAL_TYPE;         // 机器人32端当前的运动状态
 typedef robot_ctrl::single_side_valConstPtr STM_ROBOT_VAL_CPTR; // 机器人32端当前的运动状态指针
+
+#define PUSH_CMD "push_cmd"                     // 推杆控制指令
+typedef robot_ctrl::push_board_cmd PUSH_CMD_TYPE;  // 推杆控制指令
+typedef robot_ctrl::push_board_cmdConstPtr PUSH_CMD_CPTR;  // 推杆控制指令指针
+
+#define PUSH_VAL "push_val"                     // 推杆当前状态
+typedef robot_ctrl::push_board_val PUSH_VAL_TYPE;  // 推杆当前状态
+typedef robot_ctrl::push_board_valConstPtr PUSH_VAL_CPTR;  // 推杆当前状态指针
+
 
 // todo 手柄发来的TCP控制消息宏转移，宏对应机器人将会执行的功能，字符串链接手柄实际发来的字符（提供不同手柄兼容性）
 #define ROBOT_STOP "stop"               // 急停
