@@ -76,6 +76,44 @@ void SINGLE_SIDE_CTRL::set_steer(steerState stateIn , float v_aix , float v_cir)
     }
 }
 
+// ! ========================== push ctrl ===========================
+// ! ========================== push ctrl ===========================
+PUSH_CTRL::PUSH_CTRL(std::string cmd_topic , std::string val_topic , ros::NodeHandle* nh){
+    if(nh == nullptr){
+        nh_ = new ros::NodeHandle();
+    }else{
+        nh_ = nh;
+    }
+    cmd_pub_ = nh_->advertise<PUSH_CMD_TYPE>(cmd_topic, 1);
+    val_sub_ = nh_->subscribe(val_topic, 1, &PUSH_CTRL::val_callback, this);
+    std::cout<< GREEN_STRING << BLOD_STRING << "push ctrl node start\n" 
+            << " cmd_topic: " << cmd_topic << "\n"
+            << " val_topic: " << val_topic
+            << RESET_STRING << std::endl;
+}
+
+PUSH_CTRL::~PUSH_CTRL(){
+    if(nh_ != nullptr){
+        delete nh_;
+        nh_ = nullptr;
+    }
+}
+
+void PUSH_CTRL::pub_cmd(){
+    cmd_pub_.publish(cmd_data_);
+}
+
+void PUSH_CTRL::set_cmd(float tar_length_f , float tar_length_b , float tar_length_m){
+    cmd_data_.tar_length_f = tar_length_f;
+    cmd_data_.tar_length_b = tar_length_b;
+    cmd_data_.tar_length_m = tar_length_m;
+}
+
+void PUSH_CTRL::val_callback(const PUSH_VAL_CPTR &msg){
+    if(msg != nullptr)
+    val_data_ = *msg;
+}
+
 // ! ========================== main robot ===========================
 // ! ========================== main robot ===========================
 
@@ -86,6 +124,7 @@ MAIN_ROBOT::MAIN_ROBOT(ros::NodeHandle* nh_ ){
     }
     front_side_ = new SINGLE_SIDE_CTRL(ROBOT_STM_CMD_F, STM_ROBOT_VAL_F, nh_);
     back_side_ = new SINGLE_SIDE_CTRL(ROBOT_STM_CMD_B, STM_ROBOT_VAL_B, nh_);
+    push_ctrl_ = new PUSH_CTRL(PUSH_CMD , PUSH_VAL, nh_);
     // 创建手柄消息的订阅与回传发布者
     tcp_pub_ = nh_->advertise<ROBOT_TCP_VAL_TYPE>(ROBOT_TCP_VAL, 1);
     tcp_sub_ = nh_->subscribe(TCP_ROBOT_CMD , 1, &MAIN_ROBOT::motion_cmd_callback, this);
@@ -100,6 +139,14 @@ MAIN_ROBOT::~MAIN_ROBOT(){
     if(back_side_ != nullptr){
         delete back_side_;
         back_side_ = nullptr;
+    }
+    if(nh_ != nullptr){
+        delete nh_;
+        nh_ = nullptr;
+    }
+    if(push_ctrl_ != nullptr){
+        delete push_ctrl_;
+        push_ctrl_ = nullptr;
     }
 }
 

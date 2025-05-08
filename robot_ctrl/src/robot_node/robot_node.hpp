@@ -42,6 +42,24 @@ private:
     void val_callback(const STM_ROBOT_VAL_CPTR &msg);
 };
 
+class PUSH_CTRL
+{
+public:
+    PUSH_CTRL(std::string cmd_topic , std::string val_topic , ros::NodeHandle* nh = nullptr);
+    ~PUSH_CTRL();
+    // 存储数据
+    PUSH_VAL_TYPE val_data_;
+    PUSH_CMD_TYPE cmd_data_;
+    // 外部接口
+    void pub_cmd();
+    void set_cmd(float tar_length_f , float tar_length_b , float tar_length_m);
+private:
+    ros::NodeHandle *nh_;
+    ros::Publisher cmd_pub_;
+    ros::Subscriber val_sub_;
+    void val_callback(const PUSH_VAL_CPTR &msg);
+};
+
 class MAIN_ROBOT
 {
 public:
@@ -51,9 +69,12 @@ public:
 
     SINGLE_SIDE_CTRL* front_side_;
     SINGLE_SIDE_CTRL* back_side_;
+    PUSH_CTRL* push_ctrl_;
+
     void pubCmd(){
         front_side_->pub_cmd();
         back_side_->pub_cmd();
+        push_ctrl_->pub_cmd();
     };
 
 private:
