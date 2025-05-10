@@ -90,6 +90,11 @@ PUSH_CTRL::PUSH_CTRL(std::string cmd_topic , std::string val_topic , ros::NodeHa
             << " cmd_topic: " << cmd_topic << "\n"
             << " val_topic: " << val_topic
             << RESET_STRING << std::endl;
+    
+    // 初始化控制指令
+    cmd_data_.tar_length_f = 20.0f;  // 前推杆的目标长度
+    cmd_data_.tar_length_b = 20.0f;  // 后推杆的目标长度
+    cmd_data_.tar_length_m = 15.0f;  // 中推杆的目标长度
 }
 
 PUSH_CTRL::~PUSH_CTRL(){
@@ -155,6 +160,9 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
     {
         // 处理接收到的数据，整合成一个字符串容器
         std::string mode = msg->cmdType;
+        std::cout<< BLUE_STRING << BLINK_STRING
+            << "receive command: " << mode
+            << RESET_STRING << std::endl;
         if(mode == ROBOT_STOP){
             front_side_->set_steer(steerState::STOP);
             back_side_->set_steer(steerState::STOP);
@@ -178,6 +186,21 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
         else if(mode == ROBOT_ANGLE){
             front_side_->set_angle(msg->angle_front);
             back_side_->set_angle(msg->angle_back);
+        }
+        else if(mode == ROBOT_LOSS_F){
+            front_side_->set_tight(false);
+        }
+        else if(mode == ROBOT_LOSS_B){
+            back_side_->set_tight(false);
+        }
+        else if(mode == ROBOT_OPEN){
+            push_ctrl_->set_cmd(70.0f , 70.0f ,20.0f);
+        }
+        else if(mode == ROBOT_CLOSE){
+            push_ctrl_->set_cmd(20.0f , 20.0f , 20.0f);
+        }
+        else{
+            std::cout<< RED_STRING << "robot node receive unknown command" << RESET_STRING << std::endl;
         }
     }
 }

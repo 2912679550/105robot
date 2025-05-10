@@ -3,6 +3,8 @@
 #include "robot_ctrl/single_side_cmd.h"
 #include "robot_ctrl/single_side_val.h"
 #include "robot_ctrl/tcp_motion_cmd.h"
+#include "robot_ctrl/push_board_cmd.h"
+#include "robot_ctrl/push_board_val.h"
 
 #define STEER_WHEEL 0   // 舵轮轮电机数组序号
 #define STEER_DIR 1     // 舵轮方向电机数组序号

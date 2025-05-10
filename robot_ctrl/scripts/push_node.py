@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+# coding:utf-8
 import rospy
 import time
 import os
@@ -31,7 +33,7 @@ class PUSH_CTRL:
         
         try:
             tail_ip = str(self.ip_start)
-            full_ip = "192.168.110." + tail_ip
+            full_ip = "192.168.0." + tail_ip
             self.ether_nodes_buf.append(BottomControl(ip = full_ip , port = 5000 ,type = '3', frequency = self.frequency))
             self.ether_info_buf.append(packInfo())
             print('创建控制板 %s 成功' % full_ip)

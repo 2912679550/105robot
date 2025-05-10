@@ -46,7 +46,11 @@ typedef robot_ctrl::push_board_valConstPtr PUSH_VAL_CPTR;  // 推杆当前状态
 #define ROBOT_TIGHT_EN "stopF"          // 启用夹紧（app上风扇按钮亮的时候发的信号是stopF）
 #define ROBOT_TIGHT_DIS "fans"          // 夹紧松开（app上风扇按钮灭的时候发的信号是fans）
 #define ROBOT_ANGLE "set_fan"           // 设置夹紧角度软件中给定的默认列表范围是3到9，计划用这个做一个映射
-
+// * 用于单侧测试
+#define ROBOT_LOSS_F "motion"           // 前侧臂松开
+#define ROBOT_LOSS_B "track"            // 后侧臂松开
+#define ROBOT_OPEN  "absolute"         // 机器人张开
+#define ROBOT_CLOSE "splineTrack"       // 机器人闭合
 
 // todo 字符串打印配置宏
 // 字体颜色

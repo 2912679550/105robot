@@ -43,3 +43,7 @@
 
 
 ## 问题解决
+
+## 常用调试指令
+
+`rostopic pub -1 /push_cmd robot_ctrl/push_board_cmd '{tar_length_f: 25.0, tar_length_b: 25.0, tar_length_m: 20.0}'`

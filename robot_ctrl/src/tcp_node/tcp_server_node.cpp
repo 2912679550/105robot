@@ -231,7 +231,11 @@ void* InstructionPubCallback(void* arg)
         if( mode ==  ROBOT_STOP || 
             mode ==  ROBOT_CALI ||
             mode ==  ROBOT_TIGHT_EN ||
-            mode ==  ROBOT_TIGHT_DIS)
+            mode ==  ROBOT_TIGHT_DIS ||
+            mode ==  ROBOT_LOSS_F ||
+            mode == ROBOT_OPEN ||
+            mode == ROBOT_CLOSE 
+        )
         {
             motion_msg.cmdType = mode;    
         }
