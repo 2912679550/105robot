@@ -215,7 +215,6 @@ void* InstructionPubCallback(void* arg)
         std::vector<std::string> motion_instruction_str;
         // motion_instruction_str容器中已经为分割后的控制字符串
         buf_split(motion_instruction_str, buf, "\t");  
-        
         #ifndef DEBUG
         robot_ctrl::tcp_motion_cmd motion_msg;//待发送的tcp指令消息
         

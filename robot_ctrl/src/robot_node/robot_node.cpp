@@ -46,6 +46,10 @@ void SINGLE_SIDE_CTRL::set_tight(bool tightFlag){
     cmd_data_.dir_spring_length = tightFlag ? 20.0f : 1.0f;
 }
 
+void SINGLE_SIDE_CTRL::set_tight(float length){
+    cmd_data_.dir_spring_length = length;
+}
+
 void SINGLE_SIDE_CTRL::set_angle(float angle){
     cmd_data_.dir_arm_angle[0] = 180.0 - angle;
     cmd_data_.dir_arm_angle[1] = 180.0 - angle;
@@ -176,8 +180,8 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
             back_side_->set_steer(steerState::NORMAL , msg->v_axi , msg->v_cir);
         }
         else if(mode == ROBOT_TIGHT_EN){
-            front_side_->set_tight(true);
-            back_side_->set_tight(true);
+            front_side_->set_tight(47.0f);
+            back_side_->set_tight(47.0f);
         }
         else if(mode == ROBOT_TIGHT_DIS){
             front_side_->set_tight(false);

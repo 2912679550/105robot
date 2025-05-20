@@ -19,7 +19,7 @@ typedef enum    // 与底层32对应，舵轮当前的工作状态
     RESET_OVER  // 4 完成复位
 } steerState;
 
-
+static float TIGHT_LENGTH_LIMIT[2] = {47.0f , 58.0f};  // 夹紧长度范围
 
 class SINGLE_SIDE_CTRL
 {
@@ -34,6 +34,7 @@ public:
     // 外部接口，用于向32发布控制指令
     void pub_cmd();
     void set_tight(bool tightFlag);
+    void set_tight(float length);   // 用于直接配置期望压缩弹簧的长度
     void set_angle(float angle);
     void set_steer(steerState stateIn , float v_aix = 0.0f , float v_cir = 0.0f);
 
