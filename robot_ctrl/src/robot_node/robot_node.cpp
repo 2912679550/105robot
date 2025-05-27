@@ -1,5 +1,6 @@
 #include "robot_node.hpp"
 #include "robot_params.hpp"
+#include "tf/transform_datatypes.h"
 
 // ! ========================== single side ctrl ===========================
 // ! ========================== single side ctrl ===========================
@@ -23,6 +24,25 @@ SINGLE_SIDE_CTRL::SINGLE_SIDE_CTRL(std::string cmd_topic , std::string val_topic
         cmd_data_.dir_steer_dir[i] = 0.5 * PI;  // 舵轮舵向的角度
         cmd_data_.dir_steer_vel[i] = 0.0f;  // 舵轮舵向的速度
         cmd_data_.dir_spring_length = 1.0f;  // 松开
+    }
+}
+
+void SINGLE_SIDE_CTRL::create_imu(std::string imu_topic , int imu_id){
+    imu_handler_ = new IMU_HANDLER(imu_topic, nh_);
+    if(imu_id == IMU_ID::FRONT){
+        // 根据3*3数组创建旋转矩阵
+        imu_handler_-> imu_robot_matrix = new tf::Matrix3x3(IMU_FRONT_ROTATE[0][0], IMU_FRONT_ROTATE[0][1], IMU_FRONT_ROTATE[0][2],
+                                                        IMU_FRONT_ROTATE[1][0], IMU_FRONT_ROTATE[1][1], IMU_FRONT_ROTATE[1][2],
+                                                        IMU_FRONT_ROTATE[2][0], IMU_FRONT_ROTATE[2][1], IMU_FRONT_ROTATE[2][2]);
+    }
+    else if(imu_id == IMU_ID::BACK){
+        // 根据3*3数组创建旋转矩阵
+        imu_handler_-> imu_robot_matrix = new tf::Matrix3x3(IMU_BACK_ROTATE[0][0], IMU_BACK_ROTATE[0][1], IMU_BACK_ROTATE[0][2],
+                                                        IMU_BACK_ROTATE[1][0], IMU_BACK_ROTATE[1][1], IMU_BACK_ROTATE[1][2],
+                                                        IMU_BACK_ROTATE[2][0], IMU_BACK_ROTATE[2][1], IMU_BACK_ROTATE[2][2]);
+    }
+    else{
+        std::cout << RED_STRING << "imu id error" << RESET_STRING << std::endl;
     }
 }
 
@@ -134,6 +154,8 @@ MAIN_ROBOT::MAIN_ROBOT(ros::NodeHandle* nh_ ){
     front_side_ = new SINGLE_SIDE_CTRL(ROBOT_STM_CMD_F, STM_ROBOT_VAL_F, nh_);
     back_side_ = new SINGLE_SIDE_CTRL(ROBOT_STM_CMD_B, STM_ROBOT_VAL_B, nh_);
     push_ctrl_ = new PUSH_CTRL(PUSH_CMD , PUSH_VAL, nh_);
+    front_side_->create_imu(IMU_FRONT , IMU_ID::FRONT);  // 创建前侧IMU
+    back_side_->create_imu(IMU_FRONT , IMU_ID::BACK);   // 创建后侧IMU
     // 创建手柄消息的订阅与回传发布者
     tcp_pub_ = nh_->advertise<ROBOT_TCP_VAL_TYPE>(ROBOT_TCP_VAL, 1);
     tcp_sub_ = nh_->subscribe(TCP_ROBOT_CMD , 1, &MAIN_ROBOT::motion_cmd_callback, this);

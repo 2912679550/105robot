@@ -71,7 +71,8 @@
         "cinttypes": "cpp",
         "typeindex": "cpp",
         "typeinfo": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "csignal": "cpp"
     },
     "python.autoComplete.extraPaths": [
         "/home/robot/bot105_ws/devel/lib/python3/dist-packages",

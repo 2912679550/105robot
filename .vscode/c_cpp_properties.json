@@ -7,7 +7,8 @@
                 "${workspaceFolder}/../devel/include",
                 "/usr/include/eigen3",
                 "${workspaceFolder}/robot_ctrl/src/**",
-                "${workspaceFolder}/robot_ctrl/include/**"
+                "${workspaceFolder}/robot_ctrl/include/**",
+                "${workspaceFolder}/fdilink_ahrs/include"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

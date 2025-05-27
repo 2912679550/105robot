@@ -7,6 +7,7 @@
 // 推杆控制
 #include "robot_ctrl/push_board_cmd.h"
 #include "robot_ctrl/push_board_val.h"
+#include "sensor_msgs/Imu.h"
 
 // todo ROS话题通道定义与类型转义
 
@@ -38,6 +39,11 @@ typedef robot_ctrl::push_board_cmdConstPtr PUSH_CMD_CPTR;  // 推杆控制指令
 typedef robot_ctrl::push_board_val PUSH_VAL_TYPE;  // 推杆当前状态
 typedef robot_ctrl::push_board_valConstPtr PUSH_VAL_CPTR;  // 推杆当前状态指针
 
+// * IMU数据信道
+#define IMU_FRONT "imu_front_topic"             // 前侧IMU数据
+#define IMU_BACK "imu_back_topic"               // 后侧IMU数据
+typedef sensor_msgs::Imu IMU_TYPE;  // IMU数据类型
+typedef sensor_msgs::ImuConstPtr IMU_CPTR;  // IMU数据指针类型
 
 // todo 手柄发来的TCP控制消息宏转移，宏对应机器人将会执行的功能，字符串链接手柄实际发来的字符（提供不同手柄兼容性）
 #define ROBOT_STOP "stop"               // 急停

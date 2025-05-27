@@ -5,6 +5,8 @@
 #include "robot_ctrl/tcp_motion_cmd.h"
 #include "robot_ctrl/push_board_cmd.h"
 #include "robot_ctrl/push_board_val.h"
+#include "sensor_msgs/Imu.h"
+#include "imu_handler.hpp"
 
 #define STEER_WHEEL 0   // 舵轮轮电机数组序号
 #define STEER_DIR 1     // 舵轮方向电机数组序号
@@ -30,6 +32,8 @@ public:
     // 数据存储，用于存放32段发回来的一些运行数据，可以通过外部访问，辅助主程序逻辑
     STM_ROBOT_VAL_TYPE val_data_;
     ROBOT_STM_CMD_TYPE cmd_data_;
+    IMU_HANDLER* imu_handler_;  // IMU数据处理类
+
 
     // 外部接口，用于向32发布控制指令
     void pub_cmd();
@@ -38,10 +42,14 @@ public:
     void set_angle(float angle);
     void set_steer(steerState stateIn , float v_aix = 0.0f , float v_cir = 0.0f);
 
+    void create_imu(std::string imu_topic , int imu_id);
+
 private:
     ros::NodeHandle *nh_;
     ros::Publisher cmd_pub_;
     ros::Subscriber val_sub_;
+    ros::Subscriber imu_sub_;
+
     void val_callback(const STM_ROBOT_VAL_CPTR &msg);
 };
 

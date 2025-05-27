@@ -10,7 +10,6 @@ int main(int argc , char **argv){
         ros::spinOnce();
         robot.pubCmd();
         loop_rate.sleep();
-    }
-
+    }  
     return 0;
 }
