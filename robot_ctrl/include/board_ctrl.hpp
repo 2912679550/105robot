@@ -1,16 +1,14 @@
 #include "ros/ros.h"
-#include "ros_topic_channel.hpp"
 #include "robot_ctrl/single_side_cmd.h"
 #include "robot_ctrl/single_side_val.h"
 #include "robot_ctrl/tcp_motion_cmd.h"
 #include "robot_ctrl/push_board_cmd.h"
 #include "robot_ctrl/push_board_val.h"
-#include "sensor_msgs/Imu.h"
 #include "imu_handler.hpp"
+#include "pid.hpp"
+#include "ros_topic_channel.hpp"
+#include "robot_params.hpp"
 
-#define STEER_WHEEL 0   // 舵轮轮电机数组序号
-#define STEER_DIR 1     // 舵轮方向电机数组序号
-#define MECH_MOTOR 2    // 机构电机数组序号
 
 typedef enum    // 与底层32对应，舵轮当前的工作状态
 {
@@ -33,7 +31,8 @@ public:
     STM_ROBOT_VAL_TYPE val_data_;
     ROBOT_STM_CMD_TYPE cmd_data_;
     IMU_HANDLER* imu_handler_;  // IMU数据处理类
-
+    Pid* pid_handler_;  // PID控制器，用于姿态控制
+    
 
     // 外部接口，用于向32发布控制指令
     void pub_cmd();
@@ -43,12 +42,18 @@ public:
     void set_steer(steerState stateIn , float v_aix = 0.0f , float v_cir = 0.0f);
 
     void create_imu(std::string imu_topic , int imu_id);
+    void fix_quat();
+    void release_quat();  // 释放IMU的四元数，恢复到正常状态
 
 private:
     ros::NodeHandle *nh_;
     ros::Publisher cmd_pub_;
     ros::Subscriber val_sub_;
     ros::Subscriber imu_sub_;
+
+    bool singleSideFixed = false;
+
+    int imu_id_;  // IMU的ID，用于区分前侧和后侧IMU
 
     void val_callback(const STM_ROBOT_VAL_CPTR &msg);
 };
@@ -71,26 +76,4 @@ private:
     void val_callback(const PUSH_VAL_CPTR &msg);
 };
 
-class MAIN_ROBOT
-{
-public:
-    MAIN_ROBOT(ros::NodeHandle* nh_ = nullptr);
-    ~MAIN_ROBOT();
-    
 
-    SINGLE_SIDE_CTRL* front_side_;
-    SINGLE_SIDE_CTRL* back_side_;
-    PUSH_CTRL* push_ctrl_;
-
-    void pubCmd(){
-        front_side_->pub_cmd();
-        back_side_->pub_cmd();
-        push_ctrl_->pub_cmd();
-    };
-
-private:
-    ros::NodeHandle* nh_;
-    ros::Publisher tcp_pub_;
-    ros::Subscriber tcp_sub_;
-    void motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg);
-};
