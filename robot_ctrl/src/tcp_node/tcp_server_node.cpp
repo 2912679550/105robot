@@ -217,9 +217,6 @@ void* InstructionPubCallback(void* arg)
         buf_split(motion_instruction_str, buf, "\t");  
         #ifndef DEBUG
         robot_ctrl::tcp_motion_cmd motion_msg;//待发送的tcp指令消息
-        
-
-        
         std::string mode;
         mode = motion_instruction_str.at(0);
         std::cout   << BLOD_STRING
@@ -232,6 +229,7 @@ void* InstructionPubCallback(void* arg)
             mode ==  ROBOT_TIGHT_EN ||
             mode ==  ROBOT_TIGHT_DIS ||
             mode ==  ROBOT_LOSS_F ||
+            mode ==  ROBOT_LOSS_B ||
             mode == ROBOT_OPEN ||
             mode == ROBOT_CLOSE 
         )

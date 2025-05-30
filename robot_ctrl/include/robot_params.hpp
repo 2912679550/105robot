@@ -14,8 +14,8 @@ const float steerVelRange[2] = {
 }; // 舵轮电机的速度范围，单位为m/s
 
 const float imu_pitch_P[2] = {
-    0.004f,
-    0.004f};
+    0.008f,
+    0.008f};
 
 const float imu_pitch_I[2] = {
     0.0001f,

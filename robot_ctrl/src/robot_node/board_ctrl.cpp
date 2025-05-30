@@ -71,6 +71,10 @@ SINGLE_SIDE_CTRL::~SINGLE_SIDE_CTRL(){
 }
 
 void SINGLE_SIDE_CTRL::pub_cmd(){
+    if(steer_state_ == steerState::NORMAL) {
+        // 如果当前是正常状态，迭代计算舵轮状态，可能需要姿态矫正的参与
+        set_steer(steerState::NORMAL , tar_v_aix_ , tar_v_cir_);  
+    }
     cmd_pub_.publish(cmd_data_);
 }
 
@@ -93,35 +97,61 @@ void SINGLE_SIDE_CTRL::set_angle(float angle){
 }
 
 void SINGLE_SIDE_CTRL::set_steer(steerState stateIn , float v_aix , float v_cir){
-    for (int i = 0; i < 3;i++){
-        // v_aix 为轴向速度，v_cir为周向速度，周向速度的正方向对应于舵轮舵向的0弧度处
-        if(stateIn == steerState::RESET || stateIn == steerState::STOP){
-            cmd_data_.dir_steer_state[i] = stateIn;
-            // 配置但不使用
-            cmd_data_.dir_steer_dir[i] = 0.5 * PI;
-            cmd_data_.dir_steer_vel[i] = 0.0f;
+    steer_state_ = stateIn;  // 更新当前舵轮的工作状态
+    tar_v_aix_ = v_aix;  // 更新目标轴向速度
+    tar_v_cir_ = v_cir;  // 更新目标周向速度
+    float pid_out = 0;
+    // v_aix 为轴向速度，v_cir为周向速度，周向速度的正方向对应于舵轮舵向的0弧度处
+    if(stateIn == steerState::RESET || stateIn == steerState::STOP){
+        for (int i = 0; i < 3;i++){
+        cmd_data_.dir_steer_state[i] = stateIn;
+        // 配置但不使用
+        cmd_data_.dir_steer_dir[i] = 0.5 * PI;
+        cmd_data_.dir_steer_vel[i] = 0.0f;
+        // if(singleSideFixed == true && stateIn == steerState::STOP){
+        //     IMU_POSE aixs_err;
+        //     imu_handler_->get_aixs_err(&aixs_err, true);  // 获取IMU的姿态误差
+        //     // 计算PID控制器的输出
+        //     float pid_out = pid_handler_->Tick(aixs_err.pitch , true);
+        //     if( i == 2 ) v_aix += pid_out;  // 如果是主动驱动轮，误差为正时应该增大轴向速度
+        //     else v_aix -= pid_out;  // 辅助驱动轮，误差为正时应该减小轴向速度
+        // }
         }
-        else if(stateIn = steerState::NORMAL){
+    }
+    else if (stateIn = steerState::NORMAL)
+    {
+        if (singleSideFixed == true)
+        {
+            // 如果当前是单侧固定状态，需要使用PID控制器调整单侧姿态
+            IMU_POSE aixs_err;
+            imu_handler_->get_aixs_err(&aixs_err, true); // 获取IMU的姿态误差
+            // 计算PID控制器的输出
+            pid_out = pid_handler_->Tick(aixs_err.pitch, true);
+        }
+        for (int i = 0; i < 3; i++)
+        {
             cmd_data_.dir_steer_state[i] = stateIn;
-            if(singleSideFixed == true){
-                // 如果当前是单侧固定状态，需要使用PID控制器调整单侧姿态
-                IMU_POSE aixs_err;
-                imu_handler_->get_aixs_err(&aixs_err, true);  // 获取IMU的姿态误差
-                // 计算PID控制器的输出
-                float pid_out = pid_handler_->Tick(aixs_err.pitch , true);
-                if( i == 2 ) v_aix += pid_out;  // 如果是主动驱动轮，误差为正时应该增大轴向速度
-                else v_aix -= pid_out;  // 辅助驱动轮，误差为正时应该减小轴向速度
+            if (singleSideFixed == true)
+            {
+                if (i == 2)
+                    v_aix = tar_v_aix_ + pid_out; // 如果是主动驱动轮，误差为正时应该增大轴向速度
+                else
+                    v_aix = tar_v_aix_ - pid_out; // 辅助驱动轮，误差为正时应该减小轴向速度
             }
-
-            float vel_total = sqrt(v_aix * v_aix + v_cir * v_cir);  // 速度的数值大小
-            float vel_dir = atan2(v_aix , v_cir);  // 速度的方向 , 这里的角度范围为[-PI , PI]
+            float vel_total = sqrt(v_aix * v_aix + v_cir * v_cir); // 速度的数值大小
+            float vel_dir = atan2(v_aix, v_cir);                   // 速度的方向 , 这里的角度范围为[-PI , PI]
             // 将角度范围调整到（0,PI]，并为此修正速度大小
-            if(vel_dir <= 0.0f){
+            if (vel_dir <= 0.0f)
+            {
                 vel_dir += 1.0f * PI;
-                vel_total = -vel_total;  
+                vel_total = -vel_total;
             }
-            cmd_data_.dir_steer_dir[i] = vel_dir;  // 舵轮舵向的角度
-            cmd_data_.dir_steer_vel[i] = vel_total;  // 舵轮舵向的速度
+            cmd_data_.dir_steer_dir[i] = vel_dir;   // 舵轮舵向的角度
+            cmd_data_.dir_steer_vel[i] = vel_total; // 舵轮舵向的速度
+            // std::cout << "Wheel ID: " << i
+            //           << " Dir: " << cmd_data_.dir_steer_dir[i]
+            //           << " Vel: " << cmd_data_.dir_steer_vel[i]
+            //           << std::endl;
         }
     }
 }
@@ -129,6 +159,7 @@ void SINGLE_SIDE_CTRL::set_steer(steerState stateIn , float v_aix , float v_cir)
 void SINGLE_SIDE_CTRL::fix_quat(){
     if(imu_handler_ != nullptr){
         imu_handler_->fix_quat();
+        singleSideFixed = true;  // 设置单侧固定状态为true
     }
 }
 

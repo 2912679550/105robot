@@ -1,0 +1,2 @@
+KERNELS=="3-3.3:1.0", MODE:="0777", GROUP:="dialout", SYMLINK+="imu_front"
+KERNELS=="3-3.1:1.0", MODE:="0777", GROUP:="dialout", SYMLINK+="imu_back"

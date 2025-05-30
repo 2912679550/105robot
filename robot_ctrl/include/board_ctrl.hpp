@@ -54,6 +54,9 @@ private:
     bool singleSideFixed = false;
 
     int imu_id_;  // IMU的ID，用于区分前侧和后侧IMU
+    steerState steer_state_ = steerState::STOP;  // 当前舵轮的工作状态
+    float tar_v_aix_ = 0.0f;  // 目标轴向速度
+    float tar_v_cir_ = 0.0f;  // 目标周向速度
 
     void val_callback(const STM_ROBOT_VAL_CPTR &msg);
 };

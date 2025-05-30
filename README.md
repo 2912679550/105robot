@@ -51,6 +51,70 @@
 
 ## 问题解决
 
+### 20250530
+
+重要问题：
+原来之前的python端"single side"控制器一直有问题，问题核心概括为：
+
+```test
+请阅读我这部分代码，为什么我在终端进行Debug打印时会输出这样的结果：
+ID: 0 存储的舵轮速度 0.04021909087896347
+ID: 1 存储的舵轮速度 0.04021909087896347
+ID: 2 存储的舵轮速度 -0.04001908749341965
+IP: 192.168.0.201 发送的舵轮速度 -0.04001908749341965
+IP: 192.168.0.202 发送的舵轮速度 -0.04001908749341965
+IP: 192.168.0.203 发送的舵轮速度 -0.04001908749341965
+从存储的消息来看，ID0,1两个轮子的速度与ID2应该是不同的，但是为什么在后面用来发布数据的代码这里再次打印，ID0,1这两个轮子的速度却又都等于ID2轮子的速度
+```
+对应出问题的代码为这段：
+```python
+for i in range(self.board_num):
+    self.current_cmd.dir_steer_state[i] = int(msg.dir_steer_state[i])
+    self.current_cmd.dir_steer_dir[i] = float(msg.dir_steer_dir[i])
+    self.current_cmd.dir_steer_vel[i] = float(msg.dir_steer_vel[i])
+    # 装填到等待发送的info中
+    (self.ether_info_buf[i]).MainAssistCmdName["state"] = self.current_cmd.dir_steer_state[i]
+    (self.ether_info_buf[i]).MainAssistCmdName["tar_p"] = self.current_cmd.dir_steer_dir[i]
+    (self.ether_info_buf[i]).MainAssistCmdName["tar_v"] = self.current_cmd.dir_steer_vel[i]
+    print('ID: %s 存储的舵轮速度 %s' % (i, self.ether_info_buf[i].MainAssistCmdName["tar_v"]))
+if self.board_num > 1:
+    # 夹角
+    self.current_cmd.dir_arm_angle[0] = float(msg.dir_arm_angle[0])
+    self.current_cmd.dir_arm_angle[1] = float(msg.dir_arm_angle[1])
+    self.ether_info_buf[0].MainAssistCmdName["tar_angle"] = self.current_cmd.dir_arm_angle[0]
+    self.ether_info_buf[1].MainAssistCmdName["tar_angle"] = self.current_cmd.dir_arm_angle[1]
+    
+    # 弹簧
+    self.current_cmd.dir_spring_length = float(msg.dir_spring_length)
+    # 改为全部发送
+    self.ether_info_buf[0].MainAssistCmdName["tar_spring"] = self.current_cmd.dir_spring_length
+    self.ether_info_buf[1].MainAssistCmdName["tar_spring"] = self.current_cmd.dir_spring_length
+    self.ether_info_buf[2].MainAssistCmdName["tar_spring"] = self.current_cmd.dir_spring_length
+# 发送信息
+self.ether_nodes_buf[0].sendTask((self.ether_info_buf[0]))
+print('IP: %s 发送的舵轮速度 %s' % (self.ether_nodes_buf[0].ip,self.ether_info_buf[0].MainAssistCmdName["tar_v"]))
+self.ether_nodes_buf[1].sendTask((self.ether_info_buf[1]))
+print('IP: %s 发送的舵轮速度 %s' % (self.ether_nodes_buf[1].ip,self.ether_info_buf[1].MainAssistCmdName["tar_v"]))
+# 如果是多板子，则发送第三个控制板
+self.ether_nodes_buf[2].sendTask((self.ether_info_buf[2]))
+print('IP: %s 发送的舵轮速度 %s' % (self.ether_nodes_buf[2].ip,self.ether_info_buf[2].MainAssistCmdName["tar_v"]))
+```
+也即之前所有的辅助驱动轮控制指令都和主动轮是**相同的**！！，这里的原因询问了Copilot，核心原因就是packInfo 类（即 self.ether_info_buf[i]）的 MainAssistCmdName 字典，三个对象其实引用的是同一个字典，即它们不是独立的，而是同一个内存对象！所以你在 for i in range(self.board_num) 里赋值时，虽然看起来是分别赋值，但实际上是给同一个字典赋值，最后的值就是最后一次循环（即ID2）的值。
+
+解决方案其实也很简单，就是将类似这样开头的定义：
+```python
+class packInfo:
+    MainAssistCmdName = {}
+```
+
+变更为这样：
+```python
+class packInfo:
+    def __init__(self):
+        self.MainAssistCmdName = {}
+```
+才会使得每个类实例化后都是独立的。
+
 ## 常用调试指令
 
 `rostopic pub -1 /push_cmd robot_ctrl/push_board_cmd '{tar_length_f: 25.0, tar_length_b: 25.0, tar_length_m: 20.0}'`

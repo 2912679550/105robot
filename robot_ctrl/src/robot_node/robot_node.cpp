@@ -13,7 +13,7 @@ MAIN_ROBOT::MAIN_ROBOT(ros::NodeHandle* nh_ ){
     back_side_ = new SINGLE_SIDE_CTRL(ROBOT_STM_CMD_B, STM_ROBOT_VAL_B, nh_);
     push_ctrl_ = new PUSH_CTRL(PUSH_CMD , PUSH_VAL, nh_);
     front_side_->create_imu(IMU_FRONT , IMU_ID::FRONT);  // 创建前侧IMU
-    back_side_->create_imu(IMU_FRONT , IMU_ID::BACK);   // 创建后侧IMU
+    back_side_->create_imu(IMU_BACK , IMU_ID::BACK);   // 创建后侧IMU
     // 创建手柄消息的订阅与回传发布者
     tcp_pub_ = nh_->advertise<ROBOT_TCP_VAL_TYPE>(ROBOT_TCP_VAL, 1);
     tcp_sub_ = nh_->subscribe(TCP_ROBOT_CMD , 1, &MAIN_ROBOT::motion_cmd_callback, this);

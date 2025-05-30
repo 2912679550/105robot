@@ -51,8 +51,8 @@ class SINGLE_SIDE:
         
         self.ether_info_buf = []
         self.ether_nodes_buf = []
-        self.current_val = SINGLE_SIDE_VAL()
-        self.current_cmd = SINGLE_SIDE_CMD()
+        self.current_val = SINGLE_SIDE_VAL(self.board_num)
+        self.current_cmd = SINGLE_SIDE_CMD(self.board_num)
         self.startRecvFlag = False
         
         try:
@@ -69,7 +69,7 @@ class SINGLE_SIDE:
             self.ether_recv_task = rospy.Timer(rospy.Duration(1.0/self.frequency), self.ether_revc_callback)
             # 创建ROS发布，用来广播32端接收到的信息状态
             self.single_val_pub = rospy.Publisher(self.topic_out , single_side_val , queue_size = 1)
-            self.single_cmd_sub = rospy.Subscriber(self.topic_in , single_side_cmd , self.cmd_callback , queue_size = 1)
+            self.single_cmd_sub = rospy.Subscriber(self.topic_in , single_side_cmd , self.cmd_callback , queue_size = 3)
         except Exception as err:
             print('机器人初始化失败', err)
             for i in range(3):
@@ -138,14 +138,17 @@ class SINGLE_SIDE:
 
     def cmd_callback(self , msg):
         # 解析ROS消息，这里接收到的是舵轮的朝向与速度信息、期望的运行状态等
+        # print(msg)
+        # print(self.board_num)
         for i in range(self.board_num):
             self.current_cmd.dir_steer_state[i] = int(msg.dir_steer_state[i])
             self.current_cmd.dir_steer_dir[i] = float(msg.dir_steer_dir[i])
             self.current_cmd.dir_steer_vel[i] = float(msg.dir_steer_vel[i])
             # 装填到等待发送的info中
-            self.ether_info_buf[i].MainAssistCmdName["state"] = self.current_cmd.dir_steer_state[i]
-            self.ether_info_buf[i].MainAssistCmdName["tar_v"] = self.current_cmd.dir_steer_vel[i]
-            self.ether_info_buf[i].MainAssistCmdName["tar_p"] = self.current_cmd.dir_steer_dir[i]
+            (self.ether_info_buf[i]).MainAssistCmdName["state"] = self.current_cmd.dir_steer_state[i]
+            (self.ether_info_buf[i]).MainAssistCmdName["tar_p"] = self.current_cmd.dir_steer_dir[i]
+            (self.ether_info_buf[i]).MainAssistCmdName["tar_v"] = self.current_cmd.dir_steer_vel[i]
+            # print('ID: %s 存储的舵轮速度 %s' % (i, self.ether_info_buf[i].MainAssistCmdName["tar_v"]))
         if self.board_num > 1:
             # 夹角
             self.current_cmd.dir_arm_angle[0] = float(msg.dir_arm_angle[0])
@@ -160,8 +163,17 @@ class SINGLE_SIDE:
             self.ether_info_buf[1].MainAssistCmdName["tar_spring"] = self.current_cmd.dir_spring_length
             self.ether_info_buf[2].MainAssistCmdName["tar_spring"] = self.current_cmd.dir_spring_length
         # 发送信息
-        for i in range(self.board_num):
-            self.ether_nodes_buf[i].sendTask(self.ether_info_buf[i])
+        self.ether_nodes_buf[0].sendTask((self.ether_info_buf[0]))
+        # print('IP: %s 发送的舵轮速度 %s' % (self.ether_nodes_buf[0].ip,self.ether_info_buf[0].MainAssistCmdName["tar_v"]))
+        self.ether_nodes_buf[1].sendTask((self.ether_info_buf[1]))
+        # print('IP: %s 发送的舵轮速度 %s' % (self.ether_nodes_buf[1].ip,self.ether_info_buf[1].MainAssistCmdName["tar_v"]))
+        # 如果是多板子，则发送第三个控制板
+        self.ether_nodes_buf[2].sendTask((self.ether_info_buf[2]))
+        # print('IP: %s 发送的舵轮速度 %s' % (self.ether_nodes_buf[2].ip,self.ether_info_buf[2].MainAssistCmdName["tar_v"]))
+        
+        # for i in range(self.board_num):
+        #     self.ether_nodes_buf[i].sendTask((self.ether_info_buf[i]))
+        #     print('IP: %s 发送的舵轮速度 %s' % (self.ether_nodes_buf[i].ip,self.ether_info_buf[i].MainAssistCmdName["tar_v"]))
             # print('发送控制指令到 %s' % self.ether_nodes_buf[i].ip)
             # print('dir_steer_state: ',self.current_cmd.dir_steer_state[i])
             # print('dir_steer_dir: ',self.current_cmd.dir_steer_dir[i])
