@@ -49,6 +49,12 @@
 - 处理好了之前的坐标系问题，采用了四元数来描述夹紧后续的姿态变化过程，从而求解误差角度
 - 引入了PID控制器，并做了基本检验，可以进行单侧姿态闭环PID测试了
 
+## 2025.06.06
+
+- 新增了基于舵轮里程的轮式里程计
+- 在主程序中完成了结合前后侧夹紧状态的里程计数据自动生成
+- *还没有测试是否有效*
+
 ## 问题解决
 
 ### 20250530
@@ -66,7 +72,9 @@ IP: 192.168.0.202 发送的舵轮速度 -0.04001908749341965
 IP: 192.168.0.203 发送的舵轮速度 -0.04001908749341965
 从存储的消息来看，ID0,1两个轮子的速度与ID2应该是不同的，但是为什么在后面用来发布数据的代码这里再次打印，ID0,1这两个轮子的速度却又都等于ID2轮子的速度
 ```
+
 对应出问题的代码为这段：
+
 ```python
 for i in range(self.board_num):
     self.current_cmd.dir_steer_state[i] = int(msg.dir_steer_state[i])
@@ -83,7 +91,7 @@ if self.board_num > 1:
     self.current_cmd.dir_arm_angle[1] = float(msg.dir_arm_angle[1])
     self.ether_info_buf[0].MainAssistCmdName["tar_angle"] = self.current_cmd.dir_arm_angle[0]
     self.ether_info_buf[1].MainAssistCmdName["tar_angle"] = self.current_cmd.dir_arm_angle[1]
-    
+  
     # 弹簧
     self.current_cmd.dir_spring_length = float(msg.dir_spring_length)
     # 改为全部发送
@@ -99,20 +107,24 @@ print('IP: %s 发送的舵轮速度 %s' % (self.ether_nodes_buf[1].ip,self.ether
 self.ether_nodes_buf[2].sendTask((self.ether_info_buf[2]))
 print('IP: %s 发送的舵轮速度 %s' % (self.ether_nodes_buf[2].ip,self.ether_info_buf[2].MainAssistCmdName["tar_v"]))
 ```
+
 也即之前所有的辅助驱动轮控制指令都和主动轮是**相同的**！！，这里的原因询问了Copilot，核心原因就是packInfo 类（即 self.ether_info_buf[i]）的 MainAssistCmdName 字典，三个对象其实引用的是同一个字典，即它们不是独立的，而是同一个内存对象！所以你在 for i in range(self.board_num) 里赋值时，虽然看起来是分别赋值，但实际上是给同一个字典赋值，最后的值就是最后一次循环（即ID2）的值。
 
 解决方案其实也很简单，就是将类似这样开头的定义：
+
 ```python
 class packInfo:
     MainAssistCmdName = {}
 ```
 
 变更为这样：
+
 ```python
 class packInfo:
     def __init__(self):
         self.MainAssistCmdName = {}
 ```
+
 才会使得每个类实例化后都是独立的。
 
 ## 常用调试指令

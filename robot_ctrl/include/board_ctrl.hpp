@@ -8,6 +8,8 @@
 #include "pid.hpp"
 #include "ros_topic_channel.hpp"
 #include "robot_params.hpp"
+#include <eigen3/Eigen/Dense>
+#include "Timer.hpp"
 
 
 typedef enum    // 与底层32对应，舵轮当前的工作状态
@@ -21,6 +23,28 @@ typedef enum    // 与底层32对应，舵轮当前的工作状态
 
 static float TIGHT_LENGTH_LIMIT[2] = {47.0f , 58.0f};  // 夹紧长度范围
 
+class MICRO_ODOM{
+public:
+    MICRO_ODOM();
+    ~MICRO_ODOM();
+    // 轴向和周向的里程计数据
+    float odom_axis = 0.0f;  // 轴向里程计
+    float odom_cir = 0.0f;   // 周向里程计
+    // 更新里程计数据
+    void update(STM_ROBOT_VAL_TYPE* val_data, bool printFlag = false);
+    void reset();  // 重置里程计数据
+    void start_odom(){startOdom = true;}    // 开始里程计数据处理
+    void pause_odom(){startOdom = false;}   // 暂停里程计数据处理
+    void set_cur_val(float axis, float cir);  // 设置当前里程计数据(里程计采用增量式，可以在这里直接修改累加的基础值)
+private:
+    Eigen::Vector2f pre_position_[3];         // 存储接收到的上一次三个轮子的定位数据
+    Eigen::Vector2f cur_position_[3];         // 存储接收到的当前三个轮子的定位数据
+
+    bool startOdom = false;  // 是否开始里程计数据处理
+
+    bool resetFlag = true;  // 复位标志位，true表示需要复位里程计数据
+};
+
 class SINGLE_SIDE_CTRL
 {
 public:
@@ -30,10 +54,17 @@ public:
     // 数据存储，用于存放32段发回来的一些运行数据，可以通过外部访问，辅助主程序逻辑
     STM_ROBOT_VAL_TYPE val_data_;
     ROBOT_STM_CMD_TYPE cmd_data_;
+    // 功能类
     IMU_HANDLER* imu_handler_;  // IMU数据处理类
-    Pid* pid_handler_;  // PID控制器，用于姿态控制
-    
+    Pid* pid_handler_;          // PID控制器，用于姿态控制
+    MICRO_ODOM* odom_handler_;  // 里程计处理类，用于处理轴向和周向的里程计数据
+    MYTIMER* tight_timer_;  // 定时器处理类，用于定时发布控制指令
 
+    bool tarTightFlag_ = false;  // 目标夹紧状态
+    bool pre_tightFlag_ = false;  // 上一次夹紧状态
+    bool cur_tightFlag_ = false;  // 当前夹紧状态
+    
+    void single_side_ctrl();  // 单侧控制逻辑
     // 外部接口，用于向32发布控制指令
     void pub_cmd();
     void set_tight(bool tightFlag);

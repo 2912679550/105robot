@@ -19,11 +19,19 @@ class packInfo():
 
         self.MainAssistValName = {
             "state": 0,
-            "tar1_v": 0.00, "real1_v": 0.00,
-            "tar2_v": 0.00, "real2_v": 0.00,
-            "tar_p": 0.00, "real_p": 0.00,
-            "tar_angle": 0.00, "real_angle": 0.00,
-            "tar_spring": 0.00, "real_s1": 0.00, "real_s2": 0.00
+            # "tar1_v": 0.00, 
+            "real1_v": 0.00,
+            # "tar2_v": 0.00, 
+            "real2_v": 0.00,
+            # "tar_p": 0.00, 
+            "real_p": 0.00,
+            # "tar_angle": 0.00, 
+            "real_angle": 0.00,
+            # "tar_spring": 0.00, 
+            "real_s1": 0.00, 
+            "real_s2": 0.00,
+            "odom_axis": 0.00,
+            "odom_cir" : 0.00
         }
 
         self.PushCmdName = {

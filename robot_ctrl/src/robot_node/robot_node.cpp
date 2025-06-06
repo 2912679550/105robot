@@ -100,6 +100,75 @@ void MAIN_ROBOT::pubCmd(){
 };
 
 void MAIN_ROBOT::robot_ctrl(bool printFlag){
+    // * 执行一些状态机指令
+    // 如果只有一侧夹紧状态为false，则将其自动失能
+    if(front_side_->tarTightFlag_ == false && back_side_-> tarTightFlag_ == true) front_side_ -> set_steer(steerState::STOP);
+    if(back_side_->tarTightFlag_ == false && front_side_-> tarTightFlag_ == true) back_side_ -> set_steer(steerState::STOP);
+    
+    front_side_->single_side_ctrl();  // 前侧单侧控制逻辑
+    back_side_->single_side_ctrl();   // 后侧单侧控制逻辑
+
+    // todo 里程计逻辑处理
+    // * 根据夹紧状态自动控制里程计启停
+    // 总体概括为：夹紧状态为false，则暂停里程计；
+    // 夹紧状态为true，则判断是否已经夹紧了超过1s，如果超过1s，则开始里程计；否则暂停里程计
+    if(front_side_ -> cur_tightFlag_ == false){
+        front_side_ -> odom_handler_ -> pause_odom();  // 如果前侧夹紧状态为false，则暂停前侧里程计
+        front_odom_en_ = false;  // 前侧里程计使能为false
+    }else{
+        if(front_side_ -> tight_timer_->get_sec() < 1.0f){
+            front_side_ -> odom_handler_ -> pause_odom();  // 如果前侧夹紧状态为false，则暂停前侧里程计
+            front_odom_en_ = false;  // 前侧里程计使能为false
+        }else{
+            front_side_ -> odom_handler_ -> start_odom();  // 如果前侧夹紧状态为true，则开始前侧里程计
+            front_odom_en_ = true;  // 前侧里程计使能为true
+        }
+    }
+    // 后侧里程计逻辑处理
+    if(back_side_ -> cur_tightFlag_ == false){
+        back_side_ -> odom_handler_ -> pause_odom();  // 如果后侧夹紧状态为false，则暂停后侧里程计
+        back_odom_en_ = false;  // 后侧里程计使能为false
+    }else{
+        if(back_side_ -> tight_timer_->get_sec() < 1.0f){
+            back_side_ -> odom_handler_ -> pause_odom();  // 如果后侧夹紧状态为false，则暂停后侧里程计
+            back_odom_en_ = false;  // 后侧里程计使能为false
+        }else{
+            back_side_ -> odom_handler_ -> start_odom();  // 如果后侧夹紧状态为true，则开始后侧里程计
+            back_odom_en_ = true;  // 后侧里程计使能为true  
+        }
+    }
+
+    // * 根据里程计启停状态，生成里程计数据
+    if(front_odom_en_ && back_odom_en_){
+        // 如果前后两侧里程计都使能，则取两侧平均值
+        robot_axis_odom_ = (front_side_->odom_handler_->odom_axis + back_side_->odom_handler_->odom_axis) / 2.0f;
+        robot_cir_odom_ = (front_side_->odom_handler_->odom_cir + back_side_->odom_handler_->odom_cir) / 2.0f;
+    }
+    else if(front_odom_en_ && (!back_odom_en_)){
+        // 如果只有前侧里程计使能，则取前侧里程计值，并使用前侧里程计刷新后侧里程计
+        robot_axis_odom_ = front_side_->odom_handler_->odom_axis;
+        robot_cir_odom_ = front_side_->odom_handler_->odom_cir;
+        back_side_->odom_handler_->set_cur_val(robot_axis_odom_, robot_cir_odom_);  // 刷新后侧里程计
+    }
+    else if((!front_odom_en_) && back_odom_en_){
+        // 如果只有后侧里程计使能，则取后侧里程计值，并使用后侧里程计刷新前侧里程计
+        robot_axis_odom_ = back_side_->odom_handler_->odom_axis;
+        robot_cir_odom_ = back_side_->odom_handler_->odom_cir;
+        front_side_->odom_handler_->set_cur_val(robot_axis_odom_, robot_cir_odom_);  // 刷新前侧里程计
+    }
+    else{
+        // 如果两侧里程计都未使能，则将轴向和周向里程计数据置为0
+        robot_axis_odom_ = 0.0f;
+        robot_cir_odom_ = 0.0f;
+    }
+    // 打印输出
+    if(printFlag){
+        std::cout<< YELLOW_STRING << BLOD_STRING << UNDERLINE_STRING 
+            << "robot odom (axis , cir): " << RESET_STRING
+            << GREEN_STRING
+            << robot_axis_odom_ 
+            << " , " << robot_cir_odom_ << RESET_STRING << std::endl;
+    }
     // 发布控制指令
     pubCmd();
 

@@ -16,20 +16,23 @@ class SINGLE_SIDE_VAL:
         # 初始化并填充为sub_board_num个0
         self.state = [0] * sub_board_num
         # 轮电机
-        self.tar1_v = [0] * sub_board_num
         self.real1_v = [0] * sub_board_num
         # 舵电机
-        self.tar2_v = [0] * sub_board_num
         self.real2_v = [0] * sub_board_num
-        self.tar_p = [0] * sub_board_num
         self.real_p = [0] * sub_board_num
         # 臂夹角
-        self.tar_angle = [0] * 2
         self.real_angle = [0] * 2
         # 弹簧
-        self.tar_spring = 0 
         self.real_s1 = 0 
         self.real_s2 = 0
+        # 里程计信息
+        self.odom_axis = [0.] * 3
+        self.odom_cir  = [0.] * 3
+        # self.tar1_v = [0] * sub_board_num
+        # self.tar2_v = [0] * sub_board_num
+        # self.tar_p = [0] * sub_board_num
+        # self.tar_angle = [0] * 2
+        # self.tar_spring = 0 
 
 class SINGLE_SIDE_CMD:
     # 使用类来定义接收到的控制指令的结构体
@@ -93,6 +96,8 @@ class SINGLE_SIDE:
         generat_msg.cur_steer_vel = [0.] * 3
         generat_msg.cur_arm_angle = [0.] * 2
         generat_msg.cur_spring_length = [0.] * 2
+        generat_msg.odom_axis = [0.] * 3
+        generat_msg.odom_cir  = [0.] * 3
         # 先接收信息，并存储通用的舵轮信息
         if(self.startRecvFlag == True):
             for i in range(self.board_num):
@@ -100,22 +105,25 @@ class SINGLE_SIDE:
                 # * 解析收到的32数据，并分类装填到内部存储中
                 generat_msg.cur_steer_state[i] = self.current_val.state[i] = int(self.ether_info_buf[i].MainAssistValName["state"])
                 # 舵电机
-                self.current_val.tar_p[i] = self.ether_info_buf[i].MainAssistValName["tar_p"]
                 generat_msg.cur_steer_dir[i] = self.current_val.real_p[i] = self.ether_info_buf[i].MainAssistValName["real_p"]
-                self.current_val.tar2_v[i] = self.ether_info_buf[i].MainAssistValName["tar2_v"]
                 self.current_val.real2_v[i] = self.ether_info_buf[i].MainAssistValName["real2_v"]
                 # 轮电机
-                self.current_val.tar1_v[i] = self.ether_info_buf[i].MainAssistValName["tar1_v"]
                 generat_msg.cur_steer_vel[i] = self.current_val.real1_v[i] = self.ether_info_buf[i].MainAssistValName["real1_v"]
+                # 里程计信息
+                generat_msg.odom_axis[i] = self.current_val.odom_axis[i] = self.ether_info_buf[i].MainAssistValName["odom_axis"]
+                generat_msg.odom_cir[i]  = self.current_val.odmo_cir[i]  = self.ether_info_buf[i].MainAssistValName["odom_cir"]
+                # self.current_val.tar_p[i] = self.ether_info_buf[i].MainAssistValName["tar_p"]
+                # self.current_val.tar2_v[i] = self.ether_info_buf[i].MainAssistValName["tar2_v"]
+                # self.current_val.tar1_v[i] = self.ether_info_buf[i].MainAssistValName["tar1_v"]
             # * 以下的量需要根据实际情况筛选存储，如臂夹角只有辅助控制板才有，而弹簧长度只有主控制板才有
             if self.board_num > 1:  # 多板子时说明为实际使用状态，测试时会将board_num设置为1
                 # 继续处理夹角信息，左右辅助控制板的编号分别为1,2
                 for i in range(2):
                     # 夹角
-                    self.current_val.tar_angle[i] = self.ether_info_buf[i].MainAssistValName["tar_angle"]
+                    # self.current_val.tar_angle[i] = self.ether_info_buf[i].MainAssistValName["tar_angle"]
                     generat_msg.cur_arm_angle[i] = self.current_val.real_angle[i] = self.ether_info_buf[i].MainAssistValName["real_angle"]
                 # 处理弹簧信息（主控板）
-                self.current_val.tar_spring = self.ether_info_buf[2].MainAssistValName["tar_spring"]
+                # self.current_val.tar_spring = self.ether_info_buf[2].MainAssistValName["tar_spring"]
                 generat_msg.cur_spring_length[0] = self.current_val.real_s1 = self.ether_info_buf[2].MainAssistValName["real_s1"]
                 generat_msg.cur_spring_length[1] = self.current_val.real_s2 = self.ether_info_buf[2].MainAssistValName["real_s2"]
         # 发布ROS消息
