@@ -22,6 +22,8 @@ public:
     PUSH_CTRL* push_ctrl_;
 
     void robot_ctrl(bool printFlag = false);
+    // 用于在外部通过键盘按键直接调用cmd_callback并进行人为回调处理
+    void cmd_hand_maked(TCP_ROBOT_CMD_TYPE* msg);
 
     
 private:

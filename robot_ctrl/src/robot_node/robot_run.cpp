@@ -11,6 +11,10 @@ int main(int argc , char **argv){
 
     control = 0;
     bool exitloop = false;
+    TCP_ROBOT_CMD_TYPE cmd_msg;  // 用于人工向机器人发布控制指令
+    cmd_msg.cmdType = ROBOT_STOP;  // 默认停止状态
+    cmd_msg.angle_front = 0.0f;  // 前侧夹紧角度
+    cmd_msg.angle_back = 0.0f;   // 后侧夹紧角度
 
     while (ros::ok() && !exitloop)
     {
@@ -29,10 +33,71 @@ int main(int argc , char **argv){
                 std::cout << "Front side IMU quaternion fixed." << std::endl;
                 control = 't';
                 break;
-            case 't':
+            case 'o':
                 IMU_POSE aixs_err;
                 robot.front_side_->imu_handler_->get_aixs_err(&aixs_err, true);
                 robot.front_side_->pid_handler_->Tick(aixs_err.pitch, true);
+                break;
+            // todo 以下开始为通过按键复现机器人的软件控制流程
+            // * 两臂夹角控制
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+                cmd_msg.cmdType = ROBOT_ANGLE;  // 设置夹紧角度
+                cmd_msg.angle_front = (mechAngleRange[0] + (float(control) - 3.0f) * (mechAngleRange[1] - mechAngleRange[0]) / (9.0f - 3.0f));
+                cmd_msg.angle_back  = (mechAngleRange[0] + (float(control) - 3.0f) * (mechAngleRange[1] - mechAngleRange[0]) / (9.0f - 3.0f));
+                robot.cmd_hand_maked(&cmd_msg);
+                control = '0'; // 重置控制字符
+                break;
+            // * 舵轮标定
+            case 'c':
+                cmd_msg.cmdType = ROBOT_CALI;  // 舵轮标定
+                robot.cmd_hand_maked(&cmd_msg);
+                control = '0'; // 重置控制字符
+                break;
+            // * wasd 控制机器人运动
+            case 'w':
+                cmd_msg.cmdType = ROBOT_MOTION;  // 正常运动
+                cmd_msg.v_axi = 0.2f;  // 设置轴向速度
+                cmd_msg.v_cir = 0.0f;  // 设置周向速度
+                robot.cmd_hand_maked(&cmd_msg);
+                control = '0'; // 重置控制字符
+                break;
+            case 's':
+                cmd_msg.cmdType = ROBOT_MOTION;  // 正常运动
+                cmd_msg.v_axi = -0.2f;  // 设置轴向速度
+                cmd_msg.v_cir = 0.0f;  // 设置周向速度
+                robot.cmd_hand_maked(&cmd_msg);
+                control = '0'; // 重置控制字符
+                break;
+            case 'a':
+                cmd_msg.cmdType = ROBOT_MOTION;  // 正常运动
+                cmd_msg.v_axi = 0.0f;  // 设置轴向速度
+                cmd_msg.v_cir = -0.2f;  // 设置周向速度
+                robot.cmd_hand_maked(&cmd_msg);
+                control = '0'; // 重置控制字符
+                break;
+            case 'd':
+                cmd_msg.cmdType = ROBOT_MOTION;  // 正常运动
+                cmd_msg.v_axi = 0.0f;  // 设置轴向速度
+                cmd_msg.v_cir = 0.2f;  // 设置周向速度
+                robot.cmd_hand_maked(&cmd_msg);
+                control = '0'; // 重置控制字符
+                break;
+            // * 夹紧控制
+            case 't':
+                cmd_msg.cmdType = ROBOT_TIGHT_EN;  // 启用夹紧
+                robot.cmd_hand_maked(&cmd_msg);
+                control = '0'; // 重置控制字符
+                break;
+            case 'l':
+                cmd_msg.cmdType = ROBOT_TIGHT_DIS;  // 松开夹紧
+                robot.cmd_hand_maked(&cmd_msg);
+                control = '0'; // 重置控制字符
                 break;
             default:
                 break;

@@ -39,6 +39,17 @@ MAIN_ROBOT::~MAIN_ROBOT(){
     }
 }
 
+void MAIN_ROBOT::cmd_hand_maked(TCP_ROBOT_CMD_TYPE* msg){
+    // 直接调用回调函数，模拟接收数据
+    if(msg != nullptr){
+        TCP_ROBOT_CMD_CPTR msg_ptr(new TCP_ROBOT_CMD_TYPE(*msg));
+        motion_cmd_callback(msg_ptr);
+    }
+    else{
+        std::cout<< RED_STRING << "robot node receive hand made command is nullptr" << RESET_STRING << std::endl;
+    }
+}
+
 void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
     if(msg != nullptr)
     {
