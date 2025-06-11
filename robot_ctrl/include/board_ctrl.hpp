@@ -44,7 +44,7 @@ private:
 
     bool resetFlag = true;  // 复位标志位，true表示需要复位里程计数据
 };
-
+ 
 class SINGLE_SIDE_CTRL
 {
 public:

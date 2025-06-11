@@ -111,7 +111,7 @@ class SINGLE_SIDE:
                 generat_msg.cur_steer_vel[i] = self.current_val.real1_v[i] = self.ether_info_buf[i].MainAssistValName["real1_v"]
                 # 里程计信息
                 generat_msg.odom_axis[i] = self.current_val.odom_axis[i] = self.ether_info_buf[i].MainAssistValName["odom_axis"]
-                generat_msg.odom_cir[i]  = self.current_val.odmo_cir[i]  = self.ether_info_buf[i].MainAssistValName["odom_cir"]
+                generat_msg.odom_cir[i]  = self.current_val.odom_cir[i]  = self.ether_info_buf[i].MainAssistValName["odom_cir"]
                 # self.current_val.tar_p[i] = self.ether_info_buf[i].MainAssistValName["tar_p"]
                 # self.current_val.tar2_v[i] = self.ether_info_buf[i].MainAssistValName["tar2_v"]
                 # self.current_val.tar1_v[i] = self.ether_info_buf[i].MainAssistValName["tar1_v"]
