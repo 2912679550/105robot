@@ -2,12 +2,68 @@
 #include "robot_params.hpp"
 #include "tf/transform_datatypes.h"
 
+// ! ========================== micro odom ctrl ===========================
+// ! ========================== micro odom ctrl ===========================
+MICRO_ODOM::MICRO_ODOM(){
+    // 初始化里程计数据
+    for (int i = 0; i < 3; i++){
+        pre_position_[i] = Eigen::Vector2f(0.0f, 0.0f);  // 初始化为零
+        cur_position_[i] = Eigen::Vector2f(0.0f, 0.0f);  // 初始化为零
+    }
+}
 
+MICRO_ODOM::~MICRO_ODOM(){
+    // 清理里程计数据
+    for (int i = 0; i < 3; i++){
+        pre_position_[i].setZero();  // 清零
+        cur_position_[i].setZero();  // 清零
+    }
+}
+
+void MICRO_ODOM::reset(){
+    // 重置里程计标志
+    resetFlag = true;
+}
+
+void MICRO_ODOM::set_cur_val(float axis, float cir){
+    odom_axis = axis;  // 设置当前轴向里程计值
+    odom_cir = cir;    // 设置当前周向里程计值
+}
+
+void MICRO_ODOM::update(STM_ROBOT_VAL_TYPE *val_data, bool printFlag ){
+    if(resetFlag == true){
+        odom_axis = 0.0f;  // 重置轴向里程计
+        odom_cir = 0.0f;   // 重置周向里程计
+        resetFlag = false;  // 重置标志位
+        for (int i = 0; i < 3; i++){
+            pre_position_[i].setZero();  // 清零上一次的位置
+            cur_position_[i].setZero();   // 清零当前的位置
+        }
+    }
+    else{
+        Eigen::Vector2f delta[3];
+        for (int i = 0; i < 3; i++)
+        {
+            pre_position_[i] = cur_position_[i];  // 保存上一次的位置
+            cur_position_[i] = Eigen::Vector2f(val_data->odom_axis[i], val_data->odom_cir[i]);  // 更新当前的位置
+            delta[i] = cur_position_[i] - pre_position_[i];  // 计算位置增量
+        }
+        // // 求出到三个增量delta之间总距离最小的二维向量
+        // Eigen::Vector2f total_delta = Eigen::Vector2f(0.0f, 0.0f);
+        // 使用平均距离作为单边运动的增量距离
+        Eigen::Vector2f meanDelta = (delta[0] + delta[1] + delta[2]) / 3.0f;  // 计算平均增量
+        if(startOdom == true){
+            odom_axis += meanDelta.x();  // 更新轴向里程计
+            odom_cir += meanDelta.y();    // 更新周向里程计
+        }
+    }
+}
 
 // ! ========================== single side ctrl ===========================
 // ! ========================== single side ctrl ===========================
 
-SINGLE_SIDE_CTRL::SINGLE_SIDE_CTRL(std::string cmd_topic , std::string val_topic , ros::NodeHandle* nh){
+SINGLE_SIDE_CTRL::SINGLE_SIDE_CTRL(std::string cmd_topic, std::string val_topic, ros::NodeHandle *nh)
+{
     if(nh == nullptr){
         nh_ = new ros::NodeHandle();
     }else{
@@ -27,6 +83,10 @@ SINGLE_SIDE_CTRL::SINGLE_SIDE_CTRL(std::string cmd_topic , std::string val_topic
         cmd_data_.dir_steer_vel[i] = 0.0f;  // 舵轮舵向的速度
         cmd_data_.dir_spring_length = 1.0f;  // 松开
     }
+    odom_handler_ = new MICRO_ODOM();  // 创建里程计处理类实例
+    tight_timer_ = new MYTIMER();  // 创建定时器处理类实例
+    tight_timer_->reset();
+    odom_handler_->reset(); // 重置里程计数据
 }
 
 void SINGLE_SIDE_CTRL::create_imu(std::string imu_topic , int imu_id){
@@ -70,6 +130,28 @@ SINGLE_SIDE_CTRL::~SINGLE_SIDE_CTRL(){
     }
 }
 
+void SINGLE_SIDE_CTRL::single_side_ctrl(){
+    // 单侧控制逻辑
+    pre_tightFlag_ = cur_tightFlag_;  // 保存上一次的夹紧状态
+    if(tarTightFlag_ == true){
+        // 如果当前目标状态为夹紧，则开始判断是否到达夹紧阈值
+        if(cmd_data_.dir_spring_length -  val_data_.cur_spring_length[0] > -0.5f
+            && cmd_data_.dir_spring_length -  val_data_.cur_spring_length[1] > -0.5f){
+            // 如果夹紧差长度小于0.5f，则认为已经夹紧
+            cur_tightFlag_ = true;  // 更新当前夹紧状态
+            // 如果上一次夹紧状态为未夹紧，则重置定时器
+            if(pre_tightFlag_ == false) tight_timer_->reset();
+        }else{
+            cur_tightFlag_ = false;  // 否则认为未夹紧
+            tight_timer_->reset();  // 重置定时器
+        }
+    }else{
+        // 如果当前目标状态为松开，则认为未夹紧
+        cur_tightFlag_ = false;
+        tight_timer_->reset();  // 重置定时器
+    }
+}
+
 void SINGLE_SIDE_CTRL::pub_cmd(){
     if(steer_state_ == steerState::NORMAL) {
         // 如果当前是正常状态，迭代计算舵轮状态，可能需要姿态矫正的参与
@@ -81,14 +163,26 @@ void SINGLE_SIDE_CTRL::pub_cmd(){
 void SINGLE_SIDE_CTRL::val_callback(const STM_ROBOT_VAL_CPTR &msg){
     if(msg != nullptr)
     val_data_ = *msg;
+    // 里程计会自动接收数据并更新，但会有标志位控制其输出是否会累加
+    if(odom_handler_ != nullptr) odom_handler_->update(&val_data_, false);  // 更新里程计数据，不打印
 }
 
 void SINGLE_SIDE_CTRL::set_tight(bool tightFlag){
     cmd_data_.dir_spring_length = tightFlag ? 20.0f : 1.0f;
+    if(cmd_data_.dir_spring_length < 10.0f){
+        tarTightFlag_ = false;  // 如果长度小于10.0f，认为是松开状态
+    }else{
+        tarTightFlag_ = true;  // 否则认为是夹紧状态
+    }
 }
 
 void SINGLE_SIDE_CTRL::set_tight(float length){
     cmd_data_.dir_spring_length = length;
+    if(cmd_data_.dir_spring_length < 10.0f){
+        tarTightFlag_ = false;  // 如果长度小于10.0f，认为是松开状态
+    }else{
+        tarTightFlag_ = true;  // 否则认为是夹紧状态
+    }
 }
 
 void SINGLE_SIDE_CTRL::set_angle(float angle){

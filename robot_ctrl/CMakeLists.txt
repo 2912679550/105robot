@@ -69,7 +69,18 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 add_definitions(${EIGEN_DEFINITIONS})
 
 add_subdirectory(src/tcp_node)
-add_subdirectory(src/robot_node)
+
+add_executable(robot_node 
+    src/robot_node/robot_node.cpp
+    src/robot_node/robot_run.cpp
+    src/robot_node/public.cpp
+    src/robot_node/imu_handler.cpp
+    src/robot_node/pid.cpp
+    src/robot_node/board_ctrl.cpp
+    src/Timer/Timer.cpp
+)
+add_dependencies(robot_node robot_ctrl_generate_messages_cpp)
+target_link_libraries(robot_node ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 #############
 ## Install ##
