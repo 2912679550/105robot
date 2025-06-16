@@ -37,6 +37,7 @@ private:
 
     bool front_odom_en_ = false;  // 前侧里程计使能
     bool back_odom_en_ = false;   // 后侧里程计使能
+    void odom_handler(bool printFlag = false);  // 里程计处理函数
 
     void pubCmd();
 };

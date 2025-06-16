@@ -26,7 +26,7 @@ MAIN_ROBOT::~MAIN_ROBOT(){
         front_side_ = nullptr;
     }
     if(back_side_ != nullptr){
-        delete back_side_;
+        delete back_side_; 
         back_side_ = nullptr;
     }
     if(nh_ != nullptr){
@@ -55,9 +55,11 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
     {
         // 处理接收到的数据，整合成一个字符串容器
         std::string mode = msg->cmdType;
+
         std::cout<< BLUE_STRING << BLINK_STRING
             << "receive command: " << mode
             << RESET_STRING << std::endl;
+
         if(mode == ROBOT_STOP){
             front_side_->set_steer(steerState::STOP);
             back_side_->set_steer(steerState::STOP);
@@ -84,10 +86,16 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
             front_side_->set_angle(msg->angle_front);
             back_side_->set_angle(msg->angle_back);
         }
+        else if(mode == ROBOT_TIGHT_F){
+            front_side_->set_tight(47.0f);  // 前侧夹紧
+        }
         else if(mode == ROBOT_LOSS_F){
             front_side_->set_tight(false);
             front_side_->release_quat();  // 释放前侧IMU的四元数    
             back_side_->fix_quat();  // 后侧单边锁住
+        }
+        else if(mode == ROBOT_TIGHT_B){ 
+            back_side_->set_tight(47.0f);  // 后侧夹紧
         }
         else if(mode == ROBOT_LOSS_B){
             back_side_->set_tight(false);
@@ -99,6 +107,9 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
         }
         else if(mode == ROBOT_CLOSE){
             push_ctrl_->set_cmd(20.0f , 20.0f , 20.0f);
+        }
+        else if(mode == ROBOT_BODY_ANGLE){
+            
         }
         else{
             std::cout<< RED_STRING << "robot node receive unknown command" << RESET_STRING << std::endl;
@@ -121,6 +132,16 @@ void MAIN_ROBOT::robot_ctrl(bool printFlag){
     front_side_->single_side_ctrl();  // 前侧单侧控制逻辑
     back_side_->single_side_ctrl();   // 后侧单侧控制逻辑
 
+    odom_handler(printFlag);  // 处理里程计数据
+    // 发布控制指令
+    pubCmd();
+    // 发布手柄回传数据
+    // ROBOT_TCP_VAL_TYPE tcp_val;
+
+    // tcp_pub_.publish(tcp_val);
+}
+
+void MAIN_ROBOT::odom_handler(bool printFlag){
     // todo 里程计逻辑处理
     bool odomPrintFlag = false;  // 是否打印里程计数据
     // * 根据夹紧状态自动控制里程计启停
@@ -186,15 +207,9 @@ void MAIN_ROBOT::robot_ctrl(bool printFlag){
             << robot_axis_odom_ 
             << " , " << robot_cir_odom_ << RESET_STRING << std::endl;
     }
-    // 发布控制指令
-    pubCmd();
-
-
-    // 发布手柄回传数据
-    // ROBOT_TCP_VAL_TYPE tcp_val;
-
-    // tcp_pub_.publish(tcp_val);
 }
+
+
 
 
 
