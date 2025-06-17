@@ -63,6 +63,8 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
         if(mode == ROBOT_STOP){
             front_side_->set_steer(steerState::STOP);
             back_side_->set_steer(steerState::STOP);
+            step_moiton_en_ = false;
+            scan_motion_en_ = false;
         }
         else if(mode == ROBOT_CALI){
             front_side_->set_steer(steerState::RESET);
@@ -71,6 +73,22 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
         else if(mode == ROBOT_MOTION){
             front_side_->set_steer(steerState::NORMAL , msg->v_axi , msg->v_cir);
             back_side_->set_steer(steerState::NORMAL , msg->v_axi , msg->v_cir);
+            // 重置步进与扫查运动的使能标志位
+            step_moiton_en_ = false;
+            scan_motion_en_ = false;
+        }
+        else if(mode == ROBOT_STEP){
+            // 步进运动
+            // if(step_moiton_en_ == false){  // 如果步进运动使能为false，则开始步进运动
+            step_moiton_en_ = true;  // 设置步进运动使能为true
+            scan_motion_en_ = false;  // 扫查运动使能为false
+
+        }
+        else if(mode == ROBOT_SCAN){
+            // 扫查运动 
+            step_moiton_en_ = false;  // 步进运动使能为false
+            scan_motion_en_ = true;
+
         }
         else if(mode == ROBOT_TIGHT_EN){
             front_side_->set_tight(49.0f);
@@ -92,7 +110,7 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
         else if(mode == ROBOT_LOSS_F){
             front_side_->set_tight(false);
             front_side_->release_quat();  // 释放前侧IMU的四元数    
-            back_side_->fix_quat();  // 后侧单边锁住
+            if( front_side_->tarTightFlag_ == false ) back_side_ ->fix_quat();  // 如果此时前侧臂为松开状态，则后侧单边锁住
         }
         else if(mode == ROBOT_TIGHT_B){ 
             back_side_->set_tight(47.0f);  // 后侧夹紧
@@ -100,7 +118,7 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
         else if(mode == ROBOT_LOSS_B){
             back_side_->set_tight(false);
             back_side_->release_quat();  // 释放后侧IMU的四元数
-            front_side_->fix_quat();  // 前侧单边锁住
+            if( back_side_->tarTightFlag_  == false ) front_side_->fix_quat();  // 前侧单边锁住
         }
         else if(mode == ROBOT_OPEN){
             push_ctrl_->set_cmd(70.0f , 70.0f ,20.0f);
@@ -109,7 +127,7 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
             push_ctrl_->set_cmd(20.0f , 20.0f , 20.0f);
         }
         else if(mode == ROBOT_BODY_ANGLE){
-            
+            push_ctrl_->set_body_angle(msg->robot_kink_angle);
         }
         else{
             std::cout<< RED_STRING << "robot node receive unknown command" << RESET_STRING << std::endl;
@@ -209,7 +227,15 @@ void MAIN_ROBOT::odom_handler(bool printFlag){
     }
 }
 
-
-
-
-
+void MAIN_ROBOT::set_motion_range(float _step_axis, float _step_cir){
+    // 设置步进或扫查运动的范围
+    motion_range.first.x() = robot_axis_odom_;
+    motion_range.first.y() = robot_cir_odom_;
+    motion_range.second.x() = robot_axis_odom_ + _step_axis;
+    motion_range.second.y() = robot_cir_odom_ + _step_cir;
+    
+    // std::cout<< YELLOW_STRING << BLOD_STRING << "set motion range: " 
+    //     << motion_range.first.x() << " , " << motion_range.first.y() 
+    //     << " -> " << motion_range.second.x() << " , " << motion_range.second.y()
+    //     << RESET_STRING << std::endl;
+}

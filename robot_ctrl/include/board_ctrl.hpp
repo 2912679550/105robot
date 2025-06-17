@@ -103,6 +103,7 @@ public:
     // 外部接口
     void pub_cmd();
     void set_cmd(float tar_length_f , float tar_length_b , float tar_length_m);
+    void set_body_angle(float angle);
 private:
     ros::NodeHandle *nh_;
     ros::Publisher cmd_pub_;

@@ -49,6 +49,8 @@ typedef sensor_msgs::ImuConstPtr IMU_CPTR;  // IMU数据指针类型
 #define ROBOT_STOP "stop"               // 急停
 #define ROBOT_CALI "stcorr"             // 舵轮标定
 #define ROBOT_MOTION "increment"        // 正常运动
+#define  ROBOT_STEP  "stepmove"         // 步进运动
+#define ROBOT_SCAN   "scanmove"         // 扫描运动
 #define ROBOT_TIGHT_EN "stopF"          // 启用夹紧（app上风扇按钮亮的时候发的信号是stopF）
 #define ROBOT_TIGHT_DIS "fans"          // 夹紧松开（app上风扇按钮灭的时候发的信号是fans）
 #define ROBOT_ANGLE "set_fan"           // 设置夹紧角度软件中给定的默认列表范围是3到9，计划用这个做一个映射

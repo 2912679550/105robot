@@ -305,5 +305,8 @@ void PUSH_CTRL::val_callback(const PUSH_VAL_CPTR &msg){
     val_data_ = *msg;
 }
 
+void PUSH_CTRL::set_body_angle(float angle){
+    // 将输入的角度转化为推杆长度，目前暂时保持缺省
 
+}
 
