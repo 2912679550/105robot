@@ -224,20 +224,19 @@ void* InstructionPubCallback(void* arg)
                     << "mode: " << mode
                     << RESET_STRING << std::endl;
         
-        if( mode ==  ROBOT_STOP || 
-            mode ==  ROBOT_CALI ||
-            mode ==  ROBOT_TIGHT_EN ||
-            mode ==  ROBOT_TIGHT_DIS ||
-            mode ==  ROBOT_LOSS_F ||
-            mode ==  ROBOT_LOSS_B ||
-            mode == ROBOT_OPEN ||
-            mode == ROBOT_CLOSE 
-        )
-        {
-            motion_msg.cmdType = mode;    
-        }
-        else if(mode == ROBOT_MOTION){
-            motion_msg.cmdType = ROBOT_MOTION;
+        // if( mode ==  ROBOT_STOP || 
+        //     mode ==  ROBOT_CALI ||
+        //     mode ==  ROBOT_TIGHT_EN ||
+        //     mode ==  ROBOT_TIGHT_DIS ||
+        //     mode ==  ROBOT_LOSS_F ||
+        //     mode ==  ROBOT_LOSS_B ||
+        //     mode == ROBOT_OPEN ||
+        //     mode == ROBOT_CLOSE 
+        // )
+        if( mode == ROBOT_MOTION ||
+            mode == ROBOT_STEP ||
+            mode == ROBOT_SCAN ){
+            motion_msg.cmdType = mode;
             // 周向速度对应原来“x方向”的位置
             motion_msg.v_cir = atof(motion_instruction_str[1].c_str())/10.0;
             motion_msg.v_axi = atof(motion_instruction_str[2].c_str())/10.0;
@@ -253,7 +252,10 @@ void* InstructionPubCallback(void* arg)
             motion_msg.angle_back = angle;
             std::cout  << "angle_front: " << angle << std::endl;
             std::cout  << "angle_back: " << angle << std::endl;
+        }else{
+            motion_msg.cmdType = mode;    
         }
+        
         motion_cmd_pub.publish(motion_msg);//发布消息
         #else
         // debug模式下只打印处理后的motion_instruction_str数据

@@ -46,6 +46,7 @@ private:
     bool back_odom_en_ = false;   // 后侧里程计使能
     bool step_moiton_en_ = false; // 步进运动使能
     bool scan_motion_en_ = false; // 扫查运动使能
+    bool scan_positive_en_ = true; // 扫查正向使能
     void odom_handler(bool printFlag = false); // 里程计处理函数
 
     void pubCmd();

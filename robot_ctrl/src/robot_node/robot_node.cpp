@@ -82,13 +82,16 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
             // if(step_moiton_en_ == false){  // 如果步进运动使能为false，则开始步进运动
             step_moiton_en_ = true;  // 设置步进运动使能为true
             scan_motion_en_ = false;  // 扫查运动使能为false
-
+            // 设置运动范围
+            set_motion_range(msg->v_axi, msg->v_cir);
         }
         else if(mode == ROBOT_SCAN){
             // 扫查运动 
             step_moiton_en_ = false;  // 步进运动使能为false
             scan_motion_en_ = true;
-
+            scan_positive_en_ = true;  // 扫查正向使能为true
+            // 设置运动范围
+            set_motion_range(msg->v_axi, msg->v_cir);
         }
         else if(mode == ROBOT_TIGHT_EN){
             front_side_->set_tight(49.0f);
@@ -150,7 +153,73 @@ void MAIN_ROBOT::robot_ctrl(bool printFlag){
     front_side_->single_side_ctrl();  // 前侧单侧控制逻辑
     back_side_->single_side_ctrl();   // 后侧单侧控制逻辑
 
-    odom_handler(printFlag);  // 处理里程计数据
+
+    // * 步进与扫查运动控制
+    float speed = 0.03f;  // 步进或扫查运动的速度
+    float dir = 0.0f;
+    float trace_distance = 0.0f;  // 步进或扫查运动的距离
+    if(step_moiton_en_ || scan_motion_en_){
+        // 使能了步进或扫查运动，则现在这里根据运动范围来解算速度方向
+        dir = atan2(motion_range.second.y() - motion_range.first.y() , motion_range.second.x() - motion_range.first.x());  // 计算运动方向
+        trace_distance = sqrt(pow(motion_range.second.x() - motion_range.first.x(), 2) + pow(motion_range.second.y() - motion_range.first.y(), 2));  // 计算步进运动的距离
+    }
+    if (step_moiton_en_)
+    {
+        // 步进运动控制
+        // 使用当前距离到起点的距离来判断是否到达步进运动终点（步进运动使用大于阈值判断）
+        float current_distance = sqrt(  pow(robot_axis_odom_ - motion_range.first.x(), 2) + 
+                                        pow(robot_cir_odom_  - motion_range.first.y(), 2));
+        if(current_distance >= trace_distance){
+            // 如果当前距离大于等于步进运动的距离，则认为到达终点
+            step_moiton_en_ = false;  // 步进运动使能为false
+            scan_motion_en_ = false;  // 扫查运动使能为false
+            front_side_->set_steer(steerState::STOP);  // 前侧舵轮停止
+            back_side_->set_steer(steerState::STOP);   // 后侧舵轮停止
+            std::cout<< GREEN_STRING << "robot step motion end" << RESET_STRING << std::endl;
+        }else{
+            // 如果当前距离小于步进运动的距离，则继续执行步进运动
+            front_side_->set_steer(steerState::NORMAL, speed * cos(dir), speed * sin(dir));  // 前侧舵轮运动
+            back_side_->set_steer(steerState::NORMAL, speed * cos(dir), speed * sin(dir));   // 后侧舵轮运动
+        }
+    }
+    else if (scan_motion_en_)
+    {
+        // 扫查运动控制
+        if (scan_positive_en_)
+        {
+            // 扫查正向使能
+            // 使用当前距离到起点的距离来判断是否到达扫查运动终点（扫查运动使用小于阈值判断）
+            float current_distance = sqrt(  pow(robot_axis_odom_ - motion_range.first.x(), 2) +
+                                            pow(robot_cir_odom_ - motion_range.first.y(), 2));
+            if (current_distance >= trace_distance)
+            {
+                // 如果当前距离小于等于扫查运动的距离，则认为到达终点
+                scan_positive_en_ = false; // 扫查正向使能为false
+            }
+            else
+            {
+                // 如果当前距离大于扫查运动的距离，则继续执行扫查运动
+                front_side_->set_steer(steerState::NORMAL, speed * cos(dir), speed * sin(dir)); // 前侧舵轮运动
+                back_side_->set_steer(steerState::NORMAL, speed * cos(dir), speed * sin(dir));  // 后侧舵轮运动
+            }
+        }else{
+            // 扫查反向使能
+            // 使用当前距离到终点的距离来判断是否到达扫查运动终点（扫查运动使用小于阈值判断）
+            float current_distance = sqrt(  pow(robot_axis_odom_ - motion_range.second.x(), 2) + 
+                                            pow(robot_cir_odom_ - motion_range.second.y(), 2));
+            if (current_distance >= trace_distance)
+            {
+                scan_positive_en_ = true;  // 扫查运动使能为true
+            }else{
+                // 如果当前距离小于扫查运动的距离，则继续执行扫查运动
+                front_side_->set_steer(steerState::NORMAL, -speed * cos(dir), -speed * sin(dir));
+                back_side_->set_steer(steerState::NORMAL, -speed * cos(dir), -speed * sin(dir));
+            }
+        }
+    }
+    // * 步进与扫查控制结束
+
+    odom_handler(printFlag); // 处理里程计数据
     // 发布控制指令
     pubCmd();
     // 发布手柄回传数据
