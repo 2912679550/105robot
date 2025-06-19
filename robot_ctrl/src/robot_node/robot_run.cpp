@@ -21,7 +21,7 @@ int main(int argc , char **argv){
         char temp = get_char();
         control = temp != 0 ? temp : control;
         ros::spinOnce();
-        robot.robot_ctrl(true);
+        robot.robot_ctrl(false);
         // if(control != '0' && control != 0)std::cout << control << std::endl;
         switch (control)
         {
@@ -41,20 +41,20 @@ int main(int argc , char **argv){
             break;
         // todo 以下开始为通过按键复现机器人的软件控制流程
         // * 两臂夹角控制
-        case '3':
-        case '4':
-        case '5':
-        case '6':
-        case '7':
-        case '8':
-        case '9':
-            cmd_msg.cmdType = ROBOT_ANGLE; // 设置夹紧角度
-            cmd_msg.angle_front = (mechAngleRange[0] + (float(int(control - '0')) - 3.0f) * (mechAngleRange[1] - mechAngleRange[0]) / (9.0f - 3.0f));
-            cmd_msg.angle_back = (mechAngleRange[0] + (float(int(control - '0')) - 3.0f) * (mechAngleRange[1] - mechAngleRange[0]) / (9.0f - 3.0f));
-            std::cout << "Set robot front angle to " << cmd_msg.angle_front << " and back angle to " << cmd_msg.angle_back << std::endl;
-            robot.cmd_hand_maked(&cmd_msg);
-            control = '0'; // 重置控制字符
-            break;
+        // case '3':
+        // case '4':
+        // case '5':
+        // case '6':
+        // case '7':
+        // case '8':
+        // case '9':
+        //     cmd_msg.cmdType = ROBOT_ANGLE; // 设置夹紧角度
+        //     cmd_msg.angle_front = (mechAngleRange[0] + (float(int(control - '0')) - 3.0f) * (mechAngleRange[1] - mechAngleRange[0]) / (9.0f - 3.0f));
+        //     cmd_msg.angle_back = (mechAngleRange[0] + (float(int(control - '0')) - 3.0f) * (mechAngleRange[1] - mechAngleRange[0]) / (9.0f - 3.0f));
+        //     std::cout << "Set robot front angle to " << cmd_msg.angle_front << " and back angle to " << cmd_msg.angle_back << std::endl;
+        //     robot.cmd_hand_maked(&cmd_msg);
+        //     control = '0'; // 重置控制字符
+        //     break;
         // * 舵轮标定
         case 'c':
             cmd_msg.cmdType = ROBOT_CALI; // 舵轮标定

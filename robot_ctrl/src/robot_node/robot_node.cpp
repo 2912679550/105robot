@@ -4,6 +4,9 @@
 // ! ========================== main robot ===========================
 // ! ========================== main robot ===========================
 
+float odomValueCoeff_f[3] = {1.040268, 1.05457, 1.016019};
+float odomValueCoeff_b[3] = {1.048881, 1.063183, 0.994876}; // 里程计值的缩放系数
+
 MAIN_ROBOT::MAIN_ROBOT(ros::NodeHandle* nh_ ){
     if(nh_ == nullptr){
         nh_ = new ros::NodeHandle();
@@ -12,6 +15,10 @@ MAIN_ROBOT::MAIN_ROBOT(ros::NodeHandle* nh_ ){
     front_side_ = new SINGLE_SIDE_CTRL(ROBOT_STM_CMD_F, STM_ROBOT_VAL_F, nh_);
     back_side_ = new SINGLE_SIDE_CTRL(ROBOT_STM_CMD_B, STM_ROBOT_VAL_B, nh_);
     push_ctrl_ = new PUSH_CTRL(PUSH_CMD , PUSH_VAL, nh_);
+
+    front_side_->odom_handler_ = new MICRO_ODOM(odomValueCoeff_f);  // 前侧里程计处理类
+    back_side_->odom_handler_ = new MICRO_ODOM(odomValueCoeff_b);
+
     front_side_->create_imu(IMU_FRONT , IMU_ID::FRONT);  // 创建前侧IMU
     back_side_->create_imu(IMU_BACK , IMU_ID::BACK);   // 创建后侧IMU
     // 创建手柄消息的订阅与回传发布者
@@ -60,6 +67,7 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
             << "receive command: " << mode
             << RESET_STRING << std::endl;
 
+        // * 基本运动与功能控制
         if(mode == ROBOT_STOP){
             front_side_->set_steer(steerState::STOP);
             back_side_->set_steer(steerState::STOP);
@@ -84,6 +92,11 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
             scan_motion_en_ = false;  // 扫查运动使能为false
             // 设置运动范围
             set_motion_range(msg->v_axi, msg->v_cir);
+            // 打印运动范围
+            std::cout << "step motion range: " 
+                      << "first: (" << motion_range.first.x() << ", " << motion_range.first.y() << "), "
+                      << "second: (" << motion_range.second.x() << ", " << motion_range.second.y() << ")" 
+                      << std::endl;
         }
         else if(mode == ROBOT_SCAN){
             // 扫查运动 
@@ -92,7 +105,14 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
             scan_positive_en_ = true;  // 扫查正向使能为true
             // 设置运动范围
             set_motion_range(msg->v_axi, msg->v_cir);
+            // 打印运动范围
+            std::cout << "scan motion range: " 
+                      << "first: (" << motion_range.first.x() << ", " << motion_range.first.y() << "), "
+                      << "second: (" << motion_range.second.x() << ", " << motion_range.second.y() << ")" 
+                      << std::endl;
         }
+
+        // * 夹紧控制
         else if(mode == ROBOT_TIGHT_EN){
             front_side_->set_tight(49.0f);
             back_side_-> set_tight(49.0f);
@@ -102,10 +122,6 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
         else if(mode == ROBOT_TIGHT_DIS){
             front_side_->set_tight(false);
             back_side_->set_tight(false);
-        }
-        else if(mode == ROBOT_ANGLE){
-            front_side_->set_angle(msg->angle_front);
-            back_side_->set_angle(msg->angle_back);
         }
         else if(mode == ROBOT_TIGHT_F){
             front_side_->set_tight(47.0f);  // 前侧夹紧
@@ -123,11 +139,11 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
             back_side_->release_quat();  // 释放后侧IMU的四元数
             if( back_side_->tarTightFlag_  == false ) front_side_->fix_quat();  // 前侧单边锁住
         }
-        else if(mode == ROBOT_OPEN){
-            push_ctrl_->set_cmd(70.0f , 70.0f ,20.0f);
-        }
-        else if(mode == ROBOT_CLOSE){
-            push_ctrl_->set_cmd(20.0f , 20.0f , 20.0f);
+
+        // * 变形控制
+        else if(mode == ROBOT_DIA){
+            front_side_->set_dia(msg->dia_front);
+            back_side_->set_dia(msg->dia_back);
         }
         else if(mode == ROBOT_BODY_ANGLE){
             push_ctrl_->set_body_angle(msg->robot_kink_angle);
@@ -135,6 +151,18 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
         else{
             std::cout<< RED_STRING << "robot node receive unknown command" << RESET_STRING << std::endl;
         }
+        
+        // * 旧指令
+        // else if(mode == ROBOT_ANGLE){
+        //     front_side_->set_angle(msg->angle_front);
+        //     back_side_->set_angle(msg->angle_back);
+        // }
+        // else if(mode == ROBOT_OPEN){
+        //     push_ctrl_->set_cmd(70.0f , 70.0f ,20.0f);
+        // }
+        // else if(mode == ROBOT_CLOSE){
+        //     push_ctrl_->set_cmd(20.0f , 20.0f , 20.0f);
+        // }
     }
 }
 
@@ -155,13 +183,21 @@ void MAIN_ROBOT::robot_ctrl(bool printFlag){
 
 
     // * 步进与扫查运动控制
-    float speed = 0.03f;  // 步进或扫查运动的速度
+    float speed = 0.02f;  // 步进或扫查运动的速度
     float dir = 0.0f;
     float trace_distance = 0.0f;  // 步进或扫查运动的距离
     if(step_moiton_en_ || scan_motion_en_){
         // 使能了步进或扫查运动，则现在这里根据运动范围来解算速度方向
         dir = atan2(motion_range.second.y() - motion_range.first.y() , motion_range.second.x() - motion_range.first.x());  // 计算运动方向
         trace_distance = sqrt(pow(motion_range.second.x() - motion_range.first.x(), 2) + pow(motion_range.second.y() - motion_range.first.y(), 2));  // 计算步进运动的距离
+        std::cout << "motion range: " 
+                    << "first: (" << motion_range.first.x() << ", " << motion_range.first.y() << "), "
+                    << "second: (" << motion_range.second.x() << ", " << motion_range.second.y() << ")" 
+                    << "\n"
+                    << "motion direction: " << dir
+                    << "\t"
+                    << "motion trace distance: " << trace_distance
+                    << std::endl;
     }
     if (step_moiton_en_)
     {
@@ -180,6 +216,13 @@ void MAIN_ROBOT::robot_ctrl(bool printFlag){
             // 如果当前距离小于步进运动的距离，则继续执行步进运动
             front_side_->set_steer(steerState::NORMAL, speed * cos(dir), speed * sin(dir));  // 前侧舵轮运动
             back_side_->set_steer(steerState::NORMAL, speed * cos(dir), speed * sin(dir));   // 后侧舵轮运动
+            std::cout<< BLOD_STRING
+                    << GREEN_STRING
+                    << "target motion: "
+                    << speed * cos(dir) << ", " << speed * sin(dir)
+                    << "\n"
+                    <<"current distance: "<< current_distance
+                    << RESET_STRING << std::endl;
         }
     }
     else if (scan_motion_en_)
@@ -206,7 +249,7 @@ void MAIN_ROBOT::robot_ctrl(bool printFlag){
             // 扫查反向使能
             // 使用当前距离到终点的距离来判断是否到达扫查运动终点（扫查运动使用小于阈值判断）
             float current_distance = sqrt(  pow(robot_axis_odom_ - motion_range.second.x(), 2) + 
-                                            pow(robot_cir_odom_ - motion_range.second.y(), 2));
+                                            pow(robot_cir_odom_ - motion_range.second.y(), 2));  
             if (current_distance >= trace_distance)
             {
                 scan_positive_en_ = true;  // 扫查运动使能为true

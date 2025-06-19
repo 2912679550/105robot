@@ -238,21 +238,29 @@ void* InstructionPubCallback(void* arg)
             mode == ROBOT_SCAN ){
             motion_msg.cmdType = mode;
             // 周向速度对应原来“x方向”的位置
-            motion_msg.v_cir = atof(motion_instruction_str[1].c_str())/10.0;
-            motion_msg.v_axi = atof(motion_instruction_str[2].c_str())/10.0;
+            motion_msg.v_axi = atof(motion_instruction_str[1].c_str())/1000.0;
+            motion_msg.v_cir = atof(motion_instruction_str[2].c_str())/1000.0;
             std::cout  << "v_axi: " << motion_msg.v_axi << std::endl;
             std::cout  << "v_cir: " << motion_msg.v_cir << std::endl;
         }
-        else if(mode == ROBOT_ANGLE){
-            // 软件默认范围为3到9，做一个线性映射
-            float angle = atof(motion_instruction_str[1].c_str());
-            angle = mechAngleRange[0] + (angle - 3) * (mechAngleRange[1] - mechAngleRange[0]) / (9 - 3);
-            motion_msg.cmdType = ROBOT_ANGLE;
-            motion_msg.angle_front = angle;
-            motion_msg.angle_back = angle;
-            std::cout  << "angle_front: " << angle << std::endl;
-            std::cout  << "angle_back: " << angle << std::endl;
-        }else{
+        // else if(mode == ROBOT_ANGLE){
+        //     // 软件默认范围为3到9，做一个线性映射
+        //     float angle = atof(motion_instruction_str[1].c_str());
+        //     angle = mechAngleRange[0] + (angle - 3) * (mechAngleRange[1] - mechAngleRange[0]) / (9 - 3);
+        //     motion_msg.cmdType = ROBOT_ANGLE;
+        //     motion_msg.angle_front = angle;
+        //     motion_msg.angle_back = angle;
+        //     std::cout  << "angle_front: " << angle << std::endl;
+        //     std::cout  << "angle_back: " << angle << std::endl;
+        // }
+        else if(mode == ROBOT_DIA){
+            motion_msg.dia_front = atof(motion_instruction_str[1].c_str()); // 前侧直径
+            motion_msg.dia_back = atof(motion_instruction_str[2].c_str());  // 后侧直径
+            motion_msg.cmdType = ROBOT_DIA;
+            std::cout  << "dia_front: " << motion_msg.dia_front << std::endl;
+            std::cout  << "dia_back: " << motion_msg.dia_back << std::endl;
+        }
+        else{
             motion_msg.cmdType = mode;    
         }
         

@@ -4,11 +4,20 @@
 
 // ! ========================== micro odom ctrl ===========================
 // ! ========================== micro odom ctrl ===========================
-MICRO_ODOM::MICRO_ODOM(){
+MICRO_ODOM::MICRO_ODOM(float* coeff){
     // 初始化里程计数据
     for (int i = 0; i < 3; i++){
         pre_position_[i] = Eigen::Vector2f(0.0f, 0.0f);  // 初始化为零
         cur_position_[i] = Eigen::Vector2f(0.0f, 0.0f);  // 初始化为零
+    }
+    if (coeff != nullptr) {
+        for (int i = 0; i < 3; i++) {
+            this->coeff[i] = coeff[i];  // 如果传入了系数，则使用传入的系数
+        }
+    } else {
+        this->coeff[0] = 1.0f;  // 默认系数
+        this->coeff[1] = 1.0f;  // 默认系数
+        this->coeff[2] = 1.0f;  // 默认系数
     }
 }
 
@@ -47,6 +56,7 @@ void MICRO_ODOM::update(STM_ROBOT_VAL_TYPE *val_data, bool printFlag ){
             pre_position_[i] = cur_position_[i];  // 保存上一次的位置
             cur_position_[i] = Eigen::Vector2f(val_data->odom_axis[i], val_data->odom_cir[i]);  // 更新当前的位置
             delta[i] = cur_position_[i] - pre_position_[i];  // 计算位置增量
+            delta[i] *= coeff[i];  // 应用系数调整增量
         }
         // // 求出到三个增量delta之间总距离最小的二维向量
         // Eigen::Vector2f total_delta = Eigen::Vector2f(0.0f, 0.0f);
@@ -188,6 +198,24 @@ void SINGLE_SIDE_CTRL::set_tight(float length){
 void SINGLE_SIDE_CTRL::set_angle(float angle){
     cmd_data_.dir_arm_angle[0] = 180.0 - angle;
     cmd_data_.dir_arm_angle[1] = 180.0 - angle;
+}
+
+void SINGLE_SIDE_CTRL::set_dia(float dia){
+    double target_angle =   pow(double(dia/100.0f) , 6) * dia2mechAngelCoeff[0] +
+                            pow(double(dia/100.0f) , 5) * dia2mechAngelCoeff[1] +
+                            pow(double(dia/100.0f) , 4) * dia2mechAngelCoeff[2] +
+                            pow(double(dia/100.0f) , 3) * dia2mechAngelCoeff[3] +
+                            pow(double(dia/100.0f) , 2) * dia2mechAngelCoeff[4] +
+                            pow(double(dia/100.0f) , 1) * dia2mechAngelCoeff[5] +
+                            dia2mechAngelCoeff[6];
+    // double target_angle =      pow(double(dia / 100.0), 3) * dia2mechAngelCoeff[0] +
+    //                             pow(double(dia / 100.0), 2) * dia2mechAngelCoeff[1] +
+    //                             pow(double(dia / 100.0), 1) * dia2mechAngelCoeff[2] +
+    //                             dia2mechAngelCoeff[3];
+    // 设置目标夹角
+    std::cout   << GREEN_STRING << "set dia: " << dia 
+                << " target angle: " << target_angle << RESET_STRING << std::endl;
+    set_angle(target_angle);
 }
 
 void SINGLE_SIDE_CTRL::set_steer(steerState stateIn , float v_aix , float v_cir){

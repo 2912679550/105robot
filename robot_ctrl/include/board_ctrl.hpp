@@ -25,11 +25,12 @@ static float TIGHT_LENGTH_LIMIT[2] = {47.0f , 58.0f};  // 夹紧长度范围
 
 class MICRO_ODOM{
 public:
-    MICRO_ODOM();
+    MICRO_ODOM(float* coeff = nullptr);  // 构造函数，coeff用于设置里程计系数
     ~MICRO_ODOM();
     // 轴向和周向的里程计数据
     float odom_axis = 0.0f;  // 轴向里程计
     float odom_cir = 0.0f;   // 周向里程计
+    float coeff[3];
     // 更新里程计数据
     void update(STM_ROBOT_VAL_TYPE* val_data, bool printFlag = false);
     void reset();  // 重置里程计数据
@@ -44,7 +45,7 @@ private:
 
     bool resetFlag = true;  // 复位标志位，true表示需要复位里程计数据
 };
- 
+
 class SINGLE_SIDE_CTRL
 {
 public:
@@ -70,6 +71,7 @@ public:
     void set_tight(bool tightFlag);
     void set_tight(float length);   // 用于直接配置期望压缩弹簧的长度
     void set_angle(float angle);
+    void set_dia(float dia);  // 设置舵轮的直径
     void set_steer(steerState stateIn , float v_aix = 0.0f , float v_cir = 0.0f);
 
     void create_imu(std::string imu_topic , int imu_id);
