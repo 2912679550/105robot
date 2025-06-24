@@ -21,7 +21,7 @@ int main(int argc , char **argv){
         char temp = get_char();
         control = temp != 0 ? temp : control;
         ros::spinOnce();
-        robot.robot_ctrl(false);
+        robot.robot_ctrl(true);
         // if(control != '0' && control != 0)std::cout << control << std::endl;
         switch (control)
         {
