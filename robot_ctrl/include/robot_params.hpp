@@ -72,6 +72,18 @@ const float imu_pitch_outRange[2] = {
     -0.1f,
     0.1f};
 
+// todo 弯折角控制
+const float body_angle_range[2] = {
+    -20.0f,
+    90.0f
+};
+
+const float body_angle_baseline = 51.875f;  // 对应机器人弯折角为0度时机械模型上的初始值
+const float body_angle_length_basline = 81.74f;  // 对应机器人弯折角为0度时机械模型上的初始长度
+const float body_angle_push_baseline = 20.0f;  // 对应机器人弯折角为0度时视觉上的初始推杆长度
+const float body_length_BC = 100.42f;  // 机器人身体BC段的长度，单位为mm
+const float body_length_CE = 83.0f;  // 机器人身体CE段的长度，单位为mm
+
 #endif
 
 

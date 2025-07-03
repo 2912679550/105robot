@@ -334,7 +334,15 @@ void PUSH_CTRL::val_callback(const PUSH_VAL_CPTR &msg){
 }
 
 void PUSH_CTRL::set_body_angle(float angle){
-    // 将输入的角度转化为推杆长度，目前暂时保持缺省
-
+    angle = angle > body_angle_range[1] ? body_angle_range[1] : angle;  // 限制角度不超过基准值
+    angle = angle < body_angle_range[0] ? body_angle_range[0] : angle;  // 限制角度不低于基准值
+    float delta_angel = angle / 2.0f;
+    float angle_BCE = delta_angel + body_angle_baseline; // 此时单位为度   
+    // 余弦定理计算推杆总长度
+    float tar_length = sqrt(body_length_BC * body_length_BC + body_length_CE * body_length_CE - 
+                            2 * body_length_BC * body_length_CE * cos(angle_BCE * PI / 180.0f));
+    // 计算推杆期望长度
+    // 相当于将推杆长度的变化量作用于弯折角为0度时的推杆长度上
+    cmd_data_.tar_length_f = tar_length - body_angle_length_basline + body_angle_push_baseline; 
+    cmd_data_.tar_length_b = cmd_data_.tar_length_f;  // 前后推杆长度相同
 }
-
