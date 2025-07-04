@@ -260,6 +260,11 @@ void* InstructionPubCallback(void* arg)
             std::cout  << "dia_front: " << motion_msg.dia_front << std::endl;
             std::cout  << "dia_back: " << motion_msg.dia_back << std::endl;
         }
+        else if(mode == ROBOT_BODY_ANGLE){
+            motion_msg.cmdType = mode;  
+            motion_msg.robot_kink_angle = atof(motion_instruction_str[1].c_str());
+            std::cout << "kink angle: " << motion_msg.robot_kink_angle << std::endl;
+        }
         else{
             motion_msg.cmdType = mode;    
         }
