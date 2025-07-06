@@ -285,6 +285,7 @@ void* InstructionPubCallback(void* arg)
             camera_msg.cmdType = CAMERA_CMD;
             camera_msg.command = cleaned.c_str();
             std::cout  << "camera_cmd: " << camera_msg.command << std::endl;
+        }
         else if(mode == ROBOT_BODY_ANGLE){
             motion_msg.cmdType = mode;  
             motion_msg.robot_kink_angle = atof(motion_instruction_str[1].c_str());
