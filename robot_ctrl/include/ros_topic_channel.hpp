@@ -60,7 +60,7 @@ typedef sensor_msgs::ImuConstPtr IMU_CPTR;  // IMU数据指针类型
 // * new
 // 基本运动
 #define ROBOT_STOP "stop"               // 急停
-#define ROBOT_CALI "Steer"              // 舵轮标定
+#define ROBOT_CALI "steel"              // 舵轮标定
 #define ROBOT_MOTION    "conmove"        // 正常运动
 #define ROBOT_STEP      "stepmove"         // 步进运动
 #define ROBOT_SCAN      "stepscan"         // 扫描运动

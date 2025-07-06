@@ -91,7 +91,7 @@ SINGLE_SIDE_CTRL::SINGLE_SIDE_CTRL(std::string cmd_topic, std::string val_topic,
         cmd_data_.dir_steer_state[i] = steerState::STOP;  // 舵轮当前的工作状态
         cmd_data_.dir_steer_dir[i] = 0.5 * PI;  // 舵轮舵向的角度
         cmd_data_.dir_steer_vel[i] = 0.0f;  // 舵轮舵向的速度
-        cmd_data_.dir_spring_length = 1.0f;  // 松开
+        cmd_data_.dir_spring_length = 60.0f;  // 松开
     }
     odom_handler_ = new MICRO_ODOM();  // 创建里程计处理类实例
     tight_timer_ = new MYTIMER();  // 创建定时器处理类实例
@@ -188,7 +188,7 @@ void SINGLE_SIDE_CTRL::set_tight(bool tightFlag){
 
 void SINGLE_SIDE_CTRL::set_tight(float length){
     cmd_data_.dir_spring_length = length;
-    if(cmd_data_.dir_spring_length < 10.0f){
+    if(cmd_data_.dir_spring_length < 10.0f || cmd_data_.dir_spring_length > 59.0f){
         tarTightFlag_ = false;  // 如果长度小于10.0f，认为是松开状态
     }else{
         tarTightFlag_ = true;  // 否则认为是夹紧状态

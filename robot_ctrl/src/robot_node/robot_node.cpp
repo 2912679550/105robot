@@ -120,14 +120,17 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
             // back_side_-> set_tight(47.0f);
         }
         else if(mode == ROBOT_TIGHT_DIS){
-            front_side_->set_tight(false);
-            back_side_->set_tight(false);
+            // front_side_->set_tight(false);
+            // back_side_->set_tight(false);
+            front_side_->set_tight(60.0f);
+            back_side_->set_tight(60.0f);
         }
         else if(mode == ROBOT_TIGHT_F){
             front_side_->set_tight(47.0f);  // 前侧夹紧
         }
         else if(mode == ROBOT_LOSS_F){
-            front_side_->set_tight(false);
+            // front_side_->set_tight(false);
+            front_side_->set_tight(60.0f);
             front_side_->release_quat();  // 释放前侧IMU的四元数    
             if( front_side_->tarTightFlag_ == false ) back_side_ ->fix_quat();  // 如果此时前侧臂为松开状态，则后侧单边锁住
         }
@@ -135,7 +138,8 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
             back_side_->set_tight(47.0f);  // 后侧夹紧
         }
         else if(mode == ROBOT_LOSS_B){
-            back_side_->set_tight(false);
+            // back_side_->set_tight(false);
+            back_side_->set_tight(60.0f);
             back_side_->release_quat();  // 释放后侧IMU的四元数
             if( back_side_->tarTightFlag_  == false ) front_side_->fix_quat();  // 前侧单边锁住
         }
@@ -146,6 +150,7 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
             back_side_->set_dia(msg->dia_back);
         }
         else if(mode == ROBOT_BODY_ANGLE){
+            
             push_ctrl_->set_body_angle(msg->robot_kink_angle);
         }
         else{
