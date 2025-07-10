@@ -229,20 +229,10 @@ void* InstructionPubCallback(void* arg)
                     << GREEN_STRING
                     << "mode: " << mode
                     << RESET_STRING << std::endl;
-        int socket_type = 0;
-        // if( mode ==  ROBOT_STOP || 
-        //     mode ==  ROBOT_CALI ||
-        //     mode ==  ROBOT_TIGHT_EN ||
-        //     mode ==  ROBOT_TIGHT_DIS ||
-        //     mode ==  ROBOT_LOSS_F ||
-        //     mode ==  ROBOT_LOSS_B ||
-        //     mode == ROBOT_OPEN ||
-        //     mode == ROBOT_CLOSE 
-        // )
+        bool cameraCmd = false;
         if( mode == ROBOT_MOTION ||
             mode == ROBOT_STEP ||
             mode == ROBOT_SCAN ){
-            socket_type = 1;
             motion_msg.cmdType = mode;
             // 周向速度对应原来“x方向”的位置
             motion_msg.v_axi = atof(motion_instruction_str[1].c_str())/1000.0;
@@ -261,7 +251,6 @@ void* InstructionPubCallback(void* arg)
         //     std::cout  << "angle_back: " << angle << std::endl;
         // }
         else if(mode == ROBOT_DIA){
-            socket_type = 1;
             motion_msg.dia_front = atof(motion_instruction_str[1].c_str()); // 前侧直径
             motion_msg.dia_back = atof(motion_instruction_str[2].c_str());  // 后侧直径
             motion_msg.cmdType = ROBOT_DIA;
@@ -269,7 +258,7 @@ void* InstructionPubCallback(void* arg)
             std::cout  << "dia_back: " << motion_msg.dia_back << std::endl;
         }
         else if(mode ==CAMERA_POSE){
-            socket_type = 2;
+            cameraCmd = true;
             camera_msg.cmdType = CAMERA_POSE;
             camera_msg.yaw= atof(motion_instruction_str[1].c_str());
             camera_msg.roll= atof(motion_instruction_str[2].c_str());
@@ -279,7 +268,7 @@ void* InstructionPubCallback(void* arg)
             std::cout  << "camera_pitch: " << camera_msg.pitch << std::endl;
         }
         else if(mode ==CAMERA_CMD){
-            socket_type = 2;
+            cameraCmd = true;
             std::string cleaned = motion_instruction_str[1];
             cleaned.resize(cleaned.length() - 2);
             camera_msg.cmdType = CAMERA_CMD;
@@ -292,19 +281,17 @@ void* InstructionPubCallback(void* arg)
             std::cout << "kink angle: " << motion_msg.robot_kink_angle << std::endl;
         }
         else{
-            socket_type = 1;
             motion_msg.cmdType = mode;    
         }
 
-        if(socket_type == 1) {
+        if(cameraCmd == false) {
             motion_cmd_pub.publish(motion_msg);
         }
-        else if(socket_type == 2) {
-            camera_cmd_pub.publish(camera_msg);
-        }
-        else {
-            ROS_WARN("Unknown command type: %s", mode.c_str());
-        }
+        else   camera_cmd_pub.publish(camera_msg);
+        // }
+        // else {
+        //     ROS_WARN("Unknown command type: %s", mode.c_str());
+        // }
         #else
         // debug模式下只打印处理后的motion_instruction_str数据
         std::cout << "motion_instruction_str: \n";
