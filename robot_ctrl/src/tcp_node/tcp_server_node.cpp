@@ -241,7 +241,7 @@ void* InstructionPubCallback(void* arg)
             motion_msg.v_axi = atof(motion_instruction_str[1].c_str())/1000.0;
             motion_msg.v_cir = atof(motion_instruction_str[2].c_str())/1000.0;
             std::cout  << "v_axi: " << motion_msg.v_axi << std::endl;
-            std::cout  << "v_cir: " << motion_msg.v_cir << std::endl;
+            std::cout  << "v_cir: " << motion_msg.v_cir << std::endl; 
         }
         // else if(mode == ROBOT_ANGLE){
         //     // 软件默认范围为3到9，做一个线性映射
@@ -264,6 +264,16 @@ void* InstructionPubCallback(void* arg)
             motion_msg.cmdType = mode;  
             motion_msg.robot_kink_angle = atof(motion_instruction_str[1].c_str());
             std::cout << "kink angle: " << motion_msg.robot_kink_angle << std::endl;
+        }
+        else if(mode == ROBOT_T_L_F){
+            motion_msg.cmdType = mode;
+            motion_msg.dir_tight_front = atof(motion_instruction_str[1].c_str());
+            std::cout << "front side tight length: " << motion_msg.dir_tight_front << std::endl;
+        }
+        else if(mode == ROBOT_T_L_B){
+            motion_msg.cmdType = mode;
+            motion_msg.dir_tight_back = atof(motion_instruction_str[1].c_str());
+            std::cout << "back side tight length: " << motion_msg.dir_tight_back << std::endl;
         }
         else{
             motion_msg.cmdType = mode;    

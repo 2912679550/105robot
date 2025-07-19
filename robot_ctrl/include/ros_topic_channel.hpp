@@ -68,6 +68,8 @@ typedef sensor_msgs::ImuConstPtr IMU_CPTR;  // IMU数据指针类型
 #define ROBOT_LOSS_F "Ungraspone"           // 前侧臂松开
 #define ROBOT_TIGHT_B "clamptwo"          // 后侧夹紧
 #define ROBOT_LOSS_B "Ungrasptwo"            // 后侧臂松开
+#define ROBOT_T_L_F "Front"           // 前侧夹紧,包含长度控制
+#define ROBOT_T_L_B "Back"            // 后侧夹紧,包含长度控制
 // 变形
 #define ROBOT_BODY_ANGLE "set_angle"        // 设置机器人身体角度     
 #define ROBOT_DIA       "set_dia"           // 设置前后夹持管径     

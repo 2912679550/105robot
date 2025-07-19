@@ -10,3 +10,5 @@ float32 dia_front  # 前端管道直径
 float32 dia_back   # 后端管道直径
 
 float32 robot_kink_angle # 机器人弯折角度
+float32  dir_tight_front
+float32  dir_tight_back
