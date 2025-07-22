@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
     #serial_steer
     serial
     message_generation
+    camera_ctrl
 )
 find_package(Eigen3 REQUIRED)
 LINK_DIRECTORIES("/usr/local/lib/")
@@ -33,6 +34,8 @@ add_message_files(
     # 中置推杆控制板
     push_board_cmd.msg
     push_board_val.msg
+    # 摄像头控制
+    # Cameractrl.msg
 )
 
 generate_messages(
@@ -57,7 +60,7 @@ generate_messages(
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
     INCLUDE_DIRS include
-    CATKIN_DEPENDS roscpp rospy std_msgs message_runtime  sensor_msgs std_srvs 
+    CATKIN_DEPENDS roscpp rospy std_msgs message_runtime  sensor_msgs std_srvs  camera_ctrl
 )
 
 include_directories(

@@ -1,6 +1,7 @@
 // ! 核心数据流： 手柄 -> tcp_node ---- [运动指令] ----> 机器人主控程序(cpp) ---- [控制数据] ----> 与32端通信(python)
 #include "robot_ctrl/tcp_motion_cmd.h"
 #include "robot_ctrl/robot_motion_val.h"
+#include "camera_ctrl/Cameractrl.h"
 // 单侧控制（主控制板与辅助控制板）
 #include "robot_ctrl/single_side_cmd.h"
 #include "robot_ctrl/single_side_val.h" 
@@ -15,6 +16,8 @@
 #define TCP_ROBOT_CMD "TCP_ROBOT_CMD_topic"             // 由手柄通过TCP发来的控制指令，通过tcp_node广播给机器人控制节点
 typedef robot_ctrl::tcp_motion_cmd TCP_ROBOT_CMD_TYPE;  // 机器人控制指令
 typedef robot_ctrl::tcp_motion_cmdConstPtr TCP_ROBOT_CMD_CPTR;  // 机器人控制指令指针
+#define CAMERA_ROBOT_CMD "CAMERA_CMD_topic"    
+typedef camera_ctrl::Cameractrl CAMERA_CMD_TYPE;  // 相机控制指令
 // 由python文件的ether node发出来的32端现在的执行状态，需要通过TCP发给手柄显示UI
 #define ROBOT_TCP_VAL "robot_tcp_val_topic"                     // 机器人前侧边在机器人坐标系下的速度
 typedef robot_ctrl::robot_motion_val ROBOT_TCP_VAL_TYPE;            // 回传给手柄显示的信息
@@ -74,6 +77,9 @@ typedef sensor_msgs::ImuConstPtr IMU_CPTR;  // IMU数据指针类型
 #define ROBOT_BODY_ANGLE "set_angle"        // 设置机器人身体角度     
 #define ROBOT_DIA       "set_dia"           // 设置前后夹持管径     
 
+// camera控制
+#define CAMERA_POSE "CameraPose"
+#define CAMERA_CMD "CameraCmd"
 // todo 字符串打印配置宏
 // 字体颜色
 #define RED_STRING "\033[31m"       //红色

@@ -2,6 +2,7 @@
 #include <signal.h>
 #include "robot_ctrl/tcp_motion_cmd.h"
 #include "robot_ctrl/robot_motion_val.h"
+#include "camera_ctrl/Cameractrl.h"
 #include "robot_params.hpp"
 #include <tf/tf.h>
 #include "tcp_server.hpp"
@@ -30,6 +31,9 @@ ros::Subscriber motion_val_sub;
 
 ros::Timer tcp_recv_timer;
 
+//相机云台消息发布器
+ros::Publisher camera_cmd_pub;
+
 // 位资数据
 float pose_data[3] = {0};
 geometry_msgs::PoseStamped lvban_pose;
@@ -46,6 +50,7 @@ int main(int argc, char** argv)
     //消息发布器和订阅器建立
     motion_cmd_pub = nh.advertise<TCP_ROBOT_CMD_TYPE>(TCP_ROBOT_CMD , 1);
     motion_val_sub = nh.subscribe(ROBOT_TCP_VAL, 1, motion_val_callback);
+    camera_cmd_pub =nh.advertise<CAMERA_CMD_TYPE>(CAMERA_ROBOT_CMD,1);
     // fan_data_sub = nh.subscribe("fan_pwm_info", 1, FanDataCallback); 
     // nh_private.param<int>("SERVER_PORT",SERVER_PORT,9527);
     // nh_private.getParam("SERVER_PORT",SERVER_PORT);
@@ -217,22 +222,14 @@ void* InstructionPubCallback(void* arg)
         buf_split(motion_instruction_str, buf, "\t");  
         #ifndef DEBUG
         robot_ctrl::tcp_motion_cmd motion_msg;//待发送的tcp指令消息
+        camera_ctrl::Cameractrl camera_msg;//待发送的相机云台消息
         std::string mode;
         mode = motion_instruction_str.at(0);
         std::cout   << BLOD_STRING
                     << GREEN_STRING
                     << "mode: " << mode
                     << RESET_STRING << std::endl;
-        
-        // if( mode ==  ROBOT_STOP || 
-        //     mode ==  ROBOT_CALI ||
-        //     mode ==  ROBOT_TIGHT_EN ||
-        //     mode ==  ROBOT_TIGHT_DIS ||
-        //     mode ==  ROBOT_LOSS_F ||
-        //     mode ==  ROBOT_LOSS_B ||
-        //     mode == ROBOT_OPEN ||
-        //     mode == ROBOT_CLOSE 
-        // )
+        bool cameraCmd = false;
         if( mode == ROBOT_MOTION ||
             mode == ROBOT_STEP ||
             mode == ROBOT_SCAN ){
@@ -260,6 +257,24 @@ void* InstructionPubCallback(void* arg)
             std::cout  << "dia_front: " << motion_msg.dia_front << std::endl;
             std::cout  << "dia_back: " << motion_msg.dia_back << std::endl;
         }
+        else if(mode ==CAMERA_POSE){
+            cameraCmd = true;
+            camera_msg.cmdType = CAMERA_POSE;
+            camera_msg.yaw= atof(motion_instruction_str[1].c_str());
+            camera_msg.roll= atof(motion_instruction_str[2].c_str());
+            camera_msg.pitch= atof(motion_instruction_str[3].c_str());
+            std::cout  << "camera_yaw: " << camera_msg.yaw << std::endl;
+            std::cout  << "camera_roll: " << camera_msg.roll << std::endl;
+            std::cout  << "camera_pitch: " << camera_msg.pitch << std::endl;
+        }
+        else if(mode ==CAMERA_CMD){
+            cameraCmd = true;
+            std::string cleaned = motion_instruction_str[1];
+            cleaned.resize(cleaned.length() - 2);
+            camera_msg.cmdType = CAMERA_CMD;
+            camera_msg.command = cleaned.c_str();
+            std::cout  << "camera_cmd: " << camera_msg.command << std::endl;
+        }
         else if(mode == ROBOT_BODY_ANGLE){
             motion_msg.cmdType = mode;  
             motion_msg.robot_kink_angle = atof(motion_instruction_str[1].c_str());
@@ -278,8 +293,15 @@ void* InstructionPubCallback(void* arg)
         else{
             motion_msg.cmdType = mode;    
         }
-        
-        motion_cmd_pub.publish(motion_msg);//发布消息
+
+        if(cameraCmd == false) {
+            motion_cmd_pub.publish(motion_msg);
+        }
+        else   camera_cmd_pub.publish(camera_msg);
+        // }
+        // else {
+        //     ROS_WARN("Unknown command type: %s", mode.c_str());
+        // }
         #else
         // debug模式下只打印处理后的motion_instruction_str数据
         std::cout << "motion_instruction_str: \n";

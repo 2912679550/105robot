@@ -1,0 +1,4 @@
+# serial_config.yaml
+serial_port: /dev/ttyUSB0  # 根据实际设备修改
+baudrate: 115200
+timeout: 1
