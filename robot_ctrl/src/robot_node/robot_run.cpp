@@ -7,7 +7,7 @@ int main(int argc , char **argv){
     ros::init(argc, argv, "robot_node");
     ros::NodeHandle nh;
     MAIN_ROBOT robot = MAIN_ROBOT(&nh);
-    ros::Rate loop_rate(200); // 200Hz
+    ros::Rate loop_rate(TS); // 200Hz
 
     control = 0;
     bool exitloop = false;

@@ -115,9 +115,19 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
         // * 夹紧控制
         else if(mode == ROBOT_T_L_F){
             front_side_->set_tight(msg->dir_tight_front);  // 前侧夹紧长度控制
+            if(front_side_ -> tarTightFlag_ == false){
+                front_side_->release_quat(); // 如果前侧当前变为期望松开状态，则释放前侧的四元数
+                if(back_side_->tarTightFlag_ == true)
+                    back_side_->fix_quat();  // 如果后侧夹紧状态为true，则锁住后侧IMU
+            }
         }
         else if(mode == ROBOT_T_L_B){
             back_side_->set_tight(msg->dir_tight_back);  // 后侧夹紧长度控制
+            if(back_side_ -> tarTightFlag_ == false){
+                back_side_->release_quat(); // 如果后侧当前变为期望松开状态，则释放后侧的四元数
+                if(front_side_->tarTightFlag_ == true)
+                    front_side_->fix_quat();  // 如果前侧夹紧状态为true，则锁住前侧IMU
+            }
         }
 
 
@@ -165,17 +175,6 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
             std::cout<< RED_STRING << "robot node receive unknown command" << RESET_STRING << std::endl;
         }
         
-        // * 旧指令
-        // else if(mode == ROBOT_ANGLE){
-        //     front_side_->set_angle(msg->angle_front);
-        //     back_side_->set_angle(msg->angle_back);
-        // }
-        // else if(mode == ROBOT_OPEN){
-        //     push_ctrl_->set_cmd(70.0f , 70.0f ,20.0f);
-        // }
-        // else if(mode == ROBOT_CLOSE){
-        //     push_ctrl_->set_cmd(20.0f , 20.0f , 20.0f);
-        // }
     }
 }
 
@@ -190,10 +189,16 @@ void MAIN_ROBOT::robot_ctrl(bool printFlag){
     // 如果只有一侧夹紧状态为false，则将其自动失能
     if(front_side_->tarTightFlag_ == false && back_side_-> tarTightFlag_ == true) front_side_ -> set_steer(steerState::STOP);
     if(back_side_->tarTightFlag_ == false && front_side_-> tarTightFlag_ == true) back_side_ -> set_steer(steerState::STOP);
+
+    // 如果前后两侧此时都为夹紧状态，则将前后的IMU都释放
+    if(front_side_->tarTightFlag_ == true && back_side_->tarTightFlag_ == true){
+        front_side_->release_quat();  // 释放前侧IMU的四元数
+        back_side_->release_quat();   // 释放后侧IMU的四元数
+        std::cout<< YELLOW_STRING << "front and back side IMU release quat" << RESET_STRING << std::endl;
+    }
     
     front_side_->single_side_ctrl();  // 前侧单侧控制逻辑
     back_side_->single_side_ctrl();   // 后侧单侧控制逻辑
-
 
     // * 步进与扫查运动控制
     float speed = 0.02f;  // 步进或扫查运动的速度

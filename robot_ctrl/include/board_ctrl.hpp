@@ -57,7 +57,8 @@ public:
     ROBOT_STM_CMD_TYPE cmd_data_;
     // 功能类
     IMU_HANDLER* imu_handler_;  // IMU数据处理类
-    Pid* pid_handler_;          // PID控制器，用于姿态控制
+    Pid* pid_pitch_;          // PID控制器，用于单边夹持时俯仰角控制
+    Pid* pid_yaw_;            // PID控制器，用于偏航角控制
     MICRO_ODOM* odom_handler_;  // 里程计处理类，用于处理轴向和周向的里程计数据
     MYTIMER* tight_timer_;  // 定时器处理类，用于定时发布控制指令
 

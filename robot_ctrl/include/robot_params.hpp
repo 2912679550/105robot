@@ -1,5 +1,9 @@
 #ifndef ROBOT_PARAMS_HPP
 #define ROBOT_PARAMS_HPP
+
+#define TS 200 // 机器人控制周期
+
+
 // 用于存储一些机器人的结构参数与控制配置等，大部分和32段的参数一致
 const float PI = 3.14159265358979323846f; // 圆周率
 
@@ -48,27 +52,43 @@ const float steerVelRange[2] = {
     0.2f
 }; // 舵轮电机的速度范围，单位为m/s
 
+// todo IMU控制PID的参数
+// * IMU俯仰角控制
 const float imu_pitch_P[2] = {
     0.008f,
     0.008f};
-
 const float imu_pitch_I[2] = {
     0.0001f,
     0.0001f}; // 前后
-
 const float imu_pitch_D[2] = {
     0.0001f,
     0.0001f}; // 前后侧IMU俯仰角PID参数
-
 const float imu_pitch_Iband[2] = {
-    1.5f,
-    1.5f}; // 前后侧IMU俯仰角PID积分死区
-
+    5.f,
+    5.f}; // 前后侧IMU俯仰角PID积分死区
 const float imu_pitch_accIRange[2] = {
     -0.1f,
     0.1f}; // 前后侧IMU俯仰角PID积分限幅范围
-
 const float imu_pitch_outRange[2] = {
+    -0.1f,
+    0.1f};
+// * IMU偏航角控制
+const float imu_yaw_P[2] = {
+    0.008f,
+    0.008f};
+const float imu_yaw_I[2] = {
+    0.0001f,
+    0.0001f}; // 前后
+const float imu_yaw_D[2] = {
+    0.0001f,
+    0.0001f}; // 前后侧IMU俯仰角PID参数
+const float imu_yaw_Iband[2] = {
+    10.f,
+    10.f}; // 前后侧IMU俯仰角PID积分死区
+const float imu_yaw_accIRange[2] = {
+    -0.1f,
+    0.1f}; // 前后侧IMU俯仰角PID积分限幅范围
+const float imu_yaw_outRange[2] = {
     -0.1f,
     0.1f};
 

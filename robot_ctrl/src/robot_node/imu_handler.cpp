@@ -94,9 +94,9 @@ void IMU_HANDLER::get_aixs_err(IMU_POSE *result , bool printFlag){
     tf::Matrix3x3 R_r1_r2 = (*imu_robot_matrix).inverse() * R_i1_i2 * (*imu_robot_matrix); // 将弧度转换为角度
     R_r1_r2.getRPY(result->roll, result->pitch, result->yaw);  // 获取欧拉角
 
-    result->roll = result->roll * 180.0 / M_PI;
+    result->roll  = result->roll * 180.0 / M_PI;
     result->pitch = result->pitch * 180.0 / M_PI;
-    result->yaw = result->yaw * 180.0 / M_PI;
+    result->yaw   = result->yaw * 180.0 / M_PI;
 
     if(printFlag){
         std::cout   << RED_STRING 

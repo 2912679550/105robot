@@ -99,6 +99,13 @@ SINGLE_SIDE_CTRL::SINGLE_SIDE_CTRL(std::string cmd_topic, std::string val_topic,
     odom_handler_->reset(); // 重置里程计数据
 }
 
+SINGLE_SIDE_CTRL::~SINGLE_SIDE_CTRL(){
+    if(nh_ != nullptr){
+        delete nh_;
+        nh_ = nullptr;
+    }
+}
+
 void SINGLE_SIDE_CTRL::create_imu(std::string imu_topic , int imu_id){
     imu_handler_ = new IMU_HANDLER(imu_topic, nh_);
     if(imu_id == IMU_ID::FRONT){
@@ -129,16 +136,22 @@ void SINGLE_SIDE_CTRL::create_imu(std::string imu_topic , int imu_id){
     pid_params.outMax = imu_pitch_outRange[1];
     pid_params.outIMin = imu_pitch_outRange[0];
     pid_params.outIMax = imu_pitch_outRange[1];
-    pid_handler_ = new Pid(&pid_params);
+    pid_params.ts = 1.0f / float(TS);  // 设置采样周期
+    pid_pitch_ = new Pid(&pid_params);
 
+    pid_params.p = imu_yaw_P[imu_id_];
+    pid_params.i = imu_yaw_I[imu_id_];
+    pid_params.d = imu_yaw_D[imu_id_];
+    pid_params.Iband = imu_yaw_Iband[imu_id_];
+    pid_params.outMin = imu_yaw_outRange[0];
+    pid_params.outMax = imu_yaw_outRange[1];
+    pid_params.outIMin = imu_yaw_outRange[0];
+    pid_params.outIMax = imu_yaw_outRange[1];
+    pid_params.ts = 1.0f / float(TS);  // 设置采样周期
+    pid_yaw_ = new Pid(&pid_params);
 }
 
-SINGLE_SIDE_CTRL::~SINGLE_SIDE_CTRL(){
-    if(nh_ != nullptr){
-        delete nh_;
-        nh_ = nullptr;
-    }
-}
+
 
 void SINGLE_SIDE_CTRL::single_side_ctrl(){
     // 单侧控制逻辑
@@ -222,7 +235,8 @@ void SINGLE_SIDE_CTRL::set_steer(steerState stateIn , float v_aix , float v_cir)
     steer_state_ = stateIn;  // 更新当前舵轮的工作状态
     tar_v_aix_ = v_aix;  // 更新目标轴向速度
     tar_v_cir_ = v_cir;  // 更新目标周向速度
-    float pid_out = 0;
+    float pid_out_p = 0;
+    float pid_out_y = 0;
     // v_aix 为轴向速度，v_cir为周向速度，周向速度的正方向对应于舵轮舵向的0弧度处
     if(stateIn == steerState::RESET || stateIn == steerState::STOP){
         for (int i = 0; i < 3;i++){
@@ -234,9 +248,9 @@ void SINGLE_SIDE_CTRL::set_steer(steerState stateIn , float v_aix , float v_cir)
         //     IMU_POSE aixs_err;
         //     imu_handler_->get_aixs_err(&aixs_err, true);  // 获取IMU的姿态误差
         //     // 计算PID控制器的输出
-        //     float pid_out = pid_handler_->Tick(aixs_err.pitch , true);
-        //     if( i == 2 ) v_aix += pid_out;  // 如果是主动驱动轮，误差为正时应该增大轴向速度
-        //     else v_aix -= pid_out;  // 辅助驱动轮，误差为正时应该减小轴向速度
+        //     float pid_out_p = pid_pitch_->Tick(aixs_err.pitch , true);
+        //     if( i == 2 ) v_aix += pid_out_p;  // 如果是主动驱动轮，误差为正时应该增大轴向速度
+        //     else v_aix -= pid_out_p;  // 辅助驱动轮，误差为正时应该减小轴向速度
         // }
         }
     }
@@ -246,9 +260,11 @@ void SINGLE_SIDE_CTRL::set_steer(steerState stateIn , float v_aix , float v_cir)
         {
             // 如果当前是单侧固定状态，需要使用PID控制器调整单侧姿态
             IMU_POSE aixs_err;
+            // 这里的误差输出为度
             imu_handler_->get_aixs_err(&aixs_err, true); // 获取IMU的姿态误差
             // 计算PID控制器的输出
-            pid_out = pid_handler_->Tick(aixs_err.pitch, true);
+            pid_out_p = pid_pitch_->Tick(aixs_err.pitch, true);
+            pid_out_y = pid_yaw_->Tick(aixs_err.yaw, true);
         }
         for (int i = 0; i < 3; i++)
         {
@@ -256,10 +272,15 @@ void SINGLE_SIDE_CTRL::set_steer(steerState stateIn , float v_aix , float v_cir)
             if (singleSideFixed == true)
             {
                 if (i == 2)
-                    v_aix = tar_v_aix_ + pid_out; // 如果是主动驱动轮，误差为正时应该增大轴向速度
+                    v_aix = tar_v_aix_ + pid_out_p; // 如果是主动驱动轮，误差为正时应该增大轴向速度
                 else
-                    v_aix = tar_v_aix_ - pid_out; // 辅助驱动轮，误差为正时应该减小轴向速度
+                    v_aix = tar_v_aix_ - pid_out_p; // 辅助驱动轮，误差为正时应该减小轴向速度
             }
+            
+            // ! 在这里加入偏航角控制即可
+
+            // ! 
+
             float vel_total = sqrt(v_aix * v_aix + v_cir * v_cir); // 速度的数值大小
             float vel_dir = atan2(v_aix, v_cir);                   // 速度的方向 , 这里的角度范围为[-PI , PI]
             // 将角度范围调整到（0,PI]，并为此修正速度大小
