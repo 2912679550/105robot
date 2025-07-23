@@ -264,6 +264,7 @@ void SINGLE_SIDE_CTRL::set_steer(steerState stateIn , float v_aix , float v_cir)
             imu_handler_->get_aixs_err(&aixs_err, true); // 获取IMU的姿态误差
             // 计算PID控制器的输出
             pid_out_p = pid_pitch_->Tick(aixs_err.pitch, true);
+            // pid_out_y 为正，说明机器人偏航偏右侧，则右侧轮子需要提速，左侧轮子需要减速，即
             pid_out_y = pid_yaw_->Tick(aixs_err.yaw, true);
         }
         for (int i = 0; i < 3; i++)
@@ -273,14 +274,12 @@ void SINGLE_SIDE_CTRL::set_steer(steerState stateIn , float v_aix , float v_cir)
             {
                 if (i == 2)
                     v_aix = tar_v_aix_ + pid_out_p; // 如果是主动驱动轮，误差为正时应该增大轴向速度
-                else
+                else{
+                    // i = 0 为 左侧轮子，i = 1 为右侧轮子
                     v_aix = tar_v_aix_ - pid_out_p; // 辅助驱动轮，误差为正时应该减小轴向速度
+                    v_aix = v_aix + pid_out_y * (i == 0 ? -1.0f : 1.0f); // 左侧轮子需要减速，右侧轮子需要提速
+                }
             }
-            
-            // ! 在这里加入偏航角控制即可
-
-            // ! 
-
             float vel_total = sqrt(v_aix * v_aix + v_cir * v_cir); // 速度的数值大小
             float vel_dir = atan2(v_aix, v_cir);                   // 速度的方向 , 这里的角度范围为[-PI , PI]
             // 将角度范围调整到（0,PI]，并为此修正速度大小

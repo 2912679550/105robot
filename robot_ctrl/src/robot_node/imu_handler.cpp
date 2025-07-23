@@ -99,6 +99,12 @@ void IMU_HANDLER::get_aixs_err(IMU_POSE *result , bool printFlag){
     result->yaw   = result->yaw * 180.0 / M_PI;
 
     if(printFlag){
+        std::cout   << YELLOW_STRING
+                    << "current IMU quaternion: " << quat_cur.x() << ", "
+                    << quat_cur.y() << ", "
+                    << quat_cur.z() << ", "
+                    << quat_cur.w() << RESET_STRING
+                    << std::endl;
         std::cout   << RED_STRING 
                     << "IMU axis error: roll = " << result->roll 
                     << ", pitch = " << result->pitch 
