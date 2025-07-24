@@ -1,0 +1,11 @@
+# Set up your streams to rtsp here.
+port: "8554"
+streams: # Cannot rename - must leave this as is.
+
+
+  stream-x:
+    type: cam
+    source: "v4l2src device=/dev/video0 ! image/jpeg,width=1280,height=720,framerate=30/1 "
+    mountpoint: /camera
+    format: mjpeg  # 或 "jpeg"（取决于接收端支持）
+    bitrate: 800 
