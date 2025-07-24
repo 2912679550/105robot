@@ -1,8 +1,13 @@
 import rospy
 import serial
 import yaml
+import os
 
-def load_serial_config(config_path='src/camera_ctrl/config/serial_config.yaml'):
+def load_serial_config():
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    # 从scripts目录向上找到camera_ctrl目录，然后找到config目录
+    config_path = os.path.join(current_dir, '..', 'config', 'serial_config.yaml')
+    config_path = os.path.normpath(config_path)  # 规范化路径
     """加载串口配置文件"""
     try:
         with open(config_path, 'r') as f:
@@ -53,9 +58,9 @@ def send_to_serial(serialized_str, config=None):
                 
             return True
             
-    except serial.SerialException as e:
-        rospy.logerr(f"串口通信错误 ({port}): {e}")
-        return False
+    # except serial.SerialException as e:
+    #     rospy.logerr(f"串口通信错误 ({port}): {e}")
+    #     return False
     except Exception as e:
         rospy.logerr(f"发送数据时发生未知错误: {e}")
         return False

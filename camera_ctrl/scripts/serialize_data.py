@@ -1,3 +1,4 @@
+#!/usr/bin/env python3   
 def calculate_crc(data):
     """
     计算CRC-8/DVB-S2校验值

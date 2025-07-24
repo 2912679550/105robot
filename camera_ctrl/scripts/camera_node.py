@@ -1,10 +1,18 @@
 #!/usr/bin/env python3    
 import rospy
+import os
+import sys
+
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, script_dir)
+
 from serialize_data import serializeData
 from serial_write import send_to_serial
 from camera_ctrl.msg import Cameractrl
 
 
+print("Camera subscriber node started")
 
 def camera_callback(msg):
     try:
