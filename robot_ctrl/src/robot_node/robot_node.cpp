@@ -3,10 +3,6 @@
 
 // ! ========================== main robot ===========================
 // ! ========================== main robot ===========================
-
-float odomValueCoeff_f[3] = {1.040268, 1.05457, 1.016019};
-float odomValueCoeff_b[3] = {1.048881, 1.063183, 0.994876}; // 里程计值的缩放系数
-
 MAIN_ROBOT::MAIN_ROBOT(ros::NodeHandle* nh_ ){
     if(nh_ == nullptr){
         nh_ = new ros::NodeHandle();
@@ -116,20 +112,66 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
         else if(mode == ROBOT_T_L_F){
             front_side_->set_tight(msg->dir_tight_front);  // 前侧夹紧长度控制
             if(front_side_ -> tarTightFlag_ == false){
-                front_side_->release_quat(); // 如果前侧当前变为期望松开状态，则释放前侧的四元数
-                if(back_side_->tarTightFlag_ == true)
-                    back_side_->fix_quat();  // 如果后侧夹紧状态为true，则锁住后侧IMU
+                if(back_side_ -> tarTightFlag_ == true){
+                    // 此时前侧松开，后侧夹紧，需要释放前侧，锁住后侧
+                    front_side_ -> release_quat(); // 释放前侧IMU的四元数
+                    back_side_->fix_quat();  // 锁住后侧IMU
+                }else{
+                    // 此时前侧松开，后侧也松开，则都释放，不使用闭环
+                    front_side_->release_quat(); // 释放前侧IMU的四元数
+                    back_side_->release_quat();  // 释放后侧IMU的四元
+                }
+            }
+            else{
+                if(back_side_->tarTightFlag_ == false){
+                    // 此时前侧抱紧，后侧松开，需要释放后侧，锁住前侧
+                    back_side_->release_quat(); // 释放后侧IMU的四元数
+                    front_side_->fix_quat();  // 锁住前侧IMU
+                }else{
+                    // 此时前侧夹紧，后侧也夹紧，则都释放，不使用闭环
+                    front_side_->release_quat(); // 释放前侧IMU的四元数
+                    back_side_->release_quat();  // 释放后侧IMU的四元
+                }
             }
         }
         else if(mode == ROBOT_T_L_B){
             back_side_->set_tight(msg->dir_tight_back);  // 后侧夹紧长度控制
             if(back_side_ -> tarTightFlag_ == false){
-                back_side_->release_quat(); // 如果后侧当前变为期望松开状态，则释放后侧的四元数
-                if(front_side_->tarTightFlag_ == true)
-                    front_side_->fix_quat();  // 如果前侧夹紧状态为true，则锁住前侧IMU
+                if(front_side_ -> tarTightFlag_ == true){
+                    // 此时后侧松开，前侧夹紧，需要释放后侧，锁住前侧
+                    back_side_ -> release_quat(); // 释放后侧IMU的四元数
+                    front_side_->fix_quat();  // 锁住前侧IMU
+                }else{
+                    // 此时后侧松开，前侧也松开，则都释放，不使用闭环
+                    back_side_->release_quat(); // 释放后侧IMU的四元数
+                    front_side_->release_quat();  // 释放前侧IMU的四元
+                }
+            }
+            else{
+                if(front_side_->tarTightFlag_ == false){
+                    // 此时后侧抱紧，前侧松开，需要释放前侧，锁住后侧
+                    front_side_->release_quat(); // 释放前侧IMU的四元数
+                    back_side_->fix_quat();  // 锁住后侧IMU
+                }else{
+                    // 此时后侧夹紧，前侧也夹紧，则都释放，不使用闭环
+                    front_side_->release_quat(); // 释放前侧IMU的四元数
+                    back_side_->release_quat();  // 释放后侧IMU的四元
+                }
             }
         }
-
+        
+        // * 变形控制
+        else if(mode == ROBOT_DIA){
+            front_side_->set_dia(msg->dia_front);
+            back_side_->set_dia(msg->dia_back);
+        }
+        else if(mode == ROBOT_BODY_ANGLE){
+            
+            push_ctrl_->set_body_angle(msg->robot_kink_angle);
+        }
+        else{
+            std::cout<< RED_STRING << "robot node receive unknown command" << RESET_STRING << std::endl;
+        }
 
         // else if(mode == ROBOT_TIGHT_EN){
         //     front_side_->set_tight(49.0f);
@@ -161,20 +203,6 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
         //     back_side_->release_quat();  // 释放后侧IMU的四元数
         //     if( back_side_->tarTightFlag_  == false ) front_side_->fix_quat();  // 前侧单边锁住
         // }
-
-        // * 变形控制
-        else if(mode == ROBOT_DIA){
-            front_side_->set_dia(msg->dia_front);
-            back_side_->set_dia(msg->dia_back);
-        }
-        else if(mode == ROBOT_BODY_ANGLE){
-            
-            push_ctrl_->set_body_angle(msg->robot_kink_angle);
-        }
-        else{
-            std::cout<< RED_STRING << "robot node receive unknown command" << RESET_STRING << std::endl;
-        }
-        
     }
 }
 

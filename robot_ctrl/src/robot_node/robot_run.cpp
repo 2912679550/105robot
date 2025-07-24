@@ -6,6 +6,10 @@ char control = 0;
 int main(int argc , char **argv){
     ros::init(argc, argv, "robot_node");
     ros::NodeHandle nh;
+
+    // 读取机器人参数
+    readParameters(nh);
+
     MAIN_ROBOT robot = MAIN_ROBOT(&nh);
     ros::Rate loop_rate(TS); // 200Hz
 

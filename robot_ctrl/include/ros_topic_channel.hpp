@@ -49,14 +49,6 @@ typedef sensor_msgs::Imu IMU_TYPE;  // IMU数据类型
 typedef sensor_msgs::ImuConstPtr IMU_CPTR;  // IMU数据指针类型
 
 // todo 手柄发来的TCP控制消息宏转移，宏对应机器人将会执行的功能，字符串链接手柄实际发来的字符（提供不同手柄兼容性）
-// * old
-// #define ROBOT_MOTION "increment"        // 正常运动
-// #define ROBOT_CALI "stcorr"             // 舵轮标定
-// #define ROBOT_TIGHT_DIS "fans"          // 夹紧松开（app上风扇按钮灭的时候发的信号是fans）
-// #define ROBOT_TIGHT_EN "stopF"          // 启用夹紧（app上风扇按钮亮的时候发的信号是stopF）
-// #define ROBOT_OPEN  "absolute"          // 机器人张开
-// #define ROBOT_CLOSE "splineTrack"       // 机器人闭合
-// #define ROBOT_ANGLE "set_fan"           // 设置夹紧角度软件中给定的默认列表范围是3到9，计划用这个做一个映射
 // * new
 // 基本运动
 #define ROBOT_STOP "stop"               // 急停
@@ -80,6 +72,7 @@ typedef sensor_msgs::ImuConstPtr IMU_CPTR;  // IMU数据指针类型
 // camera控制
 #define CAMERA_POSE "CameraPose"
 #define CAMERA_CMD "CameraCmd"
+
 // todo 字符串打印配置宏
 // 字体颜色
 #define RED_STRING "\033[31m"       //红色

@@ -16,8 +16,10 @@ find_package(catkin REQUIRED COMPONENTS
     serial
     message_generation
     camera_ctrl
+    # opencv2
 )
 find_package(Eigen3 REQUIRED)
+find_package(OpenCV REQUIRED)
 LINK_DIRECTORIES("/usr/local/lib/")
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -34,8 +36,6 @@ add_message_files(
     # 中置推杆控制板
     push_board_cmd.msg
     push_board_val.msg
-    # 摄像头控制
-    # Cameractrl.msg
 )
 
 generate_messages(
@@ -66,6 +66,7 @@ catkin_package(
 include_directories(
     include
     ${catkin_INCLUDE_DIRS}
+    ${OpenCV_INCLUDE_DIRS}
 )
 
 include_directories(${EIGEN3_INCLUDE_DIR})
@@ -80,10 +81,11 @@ add_executable(robot_node
     src/robot_node/imu_handler.cpp
     src/robot_node/pid.cpp
     src/robot_node/board_ctrl.cpp
+    src/robot_node/robot_params.cpp
     src/Timer/Timer.cpp
 )
 add_dependencies(robot_node robot_ctrl_generate_messages_cpp)
-target_link_libraries(robot_node ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(robot_node ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${OpenCV_LIBS})
 
 #############
 ## Install ##

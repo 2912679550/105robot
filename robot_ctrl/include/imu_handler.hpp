@@ -2,23 +2,14 @@
 #include "ros_topic_channel.hpp"
 #include "eigen3/Eigen/Dense"
 #include "tf/transform_datatypes.h"
+#include "robot_params.hpp"
 
 // *  前侧陀螺仪的安装相当于沿着机器人坐标系的 x 轴旋转了 -90 度
 
 // *  后侧陀螺仪的安装相当于先沿着机器人坐标系的 x 轴旋转了 90 度
 // *  然后沿着机器人坐标系 y 轴旋转了 180 度
 
-// 定义旋转矩阵，将IMU体坐标系转换为机器人坐标系
-static const double IMU_FRONT_ROTATE[3][3] = {
-    {1.0, 0.0, 0.0},
-    {0.0, 0.0,-1.0},
-    {0.0, 1.0, 0.0},
-};  // 前侧IMU坐标系旋转矩阵
-static const double IMU_BACK_ROTATE[3][3] = {
-    {-1.0, 0.0, 0.0},
-    {0.0, 0.0, -1.0},
-    {0.0, -1.0, 0.0}
-};  // 后侧IMU坐标系旋转矩阵
+
 
 typedef enum {
     FRONT = 0,  // 前侧IMU
