@@ -55,6 +55,13 @@ void Pid::Reset()
 
 float Pid::Tick(float diff , bool printFlag)
 {
+    if(std::isnan(diff) || std::isinf(diff)){
+        std::cout   << YELLOW_STRING << BLOD_STRING << UNDERLINE_STRING
+                    << "PID Tick received invalid diff: " 
+                    << diff 
+                    << RESET_STRING << std::endl;
+        return 0.0f; // Return zero or handle the error as needed
+    }
     float pout;
 #ifdef USED
     float dout;

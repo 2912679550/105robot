@@ -12,6 +12,7 @@ odom_coeff:
 steer_vel_range: [-0.2, 0.2]
 
 # IMU俯仰角PID控制参数
+use_imu_pitch: [1]
 imu_pitch:
     P: [0.008, 0.008]          # 前后侧比例增益
     I: [0.0001, 0.0001]        # 前后侧积分增益
@@ -21,6 +22,7 @@ imu_pitch:
     out_range: [-0.1, 0.1]     # 输出限幅范围
 
 # IMU偏航角PID控制参数
+use_imu_yaw: [0]
 imu_yaw:
     P: [0.008, 0.008]          # 前后侧比例增益
     I: [0.0001, 0.0001]        # 前后侧积分增益

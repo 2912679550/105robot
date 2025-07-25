@@ -12,6 +12,7 @@ extern float steerVelRange[2]; // 舵轮电机的速度范围，单位为m/s
 
 // todo IMU控制PID的参数
 // * IMU俯仰角控制
+extern bool use_imu_pitch;  // 是否使用IMU俯仰角控制
 extern float imu_pitch_P[2];
 extern float imu_pitch_I[2]; // 前后
 extern float imu_pitch_D[2] ; // 前后侧IMU俯仰角PID参数
@@ -19,6 +20,7 @@ extern float imu_pitch_Iband[2] ; // 前后侧IMU俯仰角PID积分死区
 extern float imu_pitch_accIRange[2] ; // 前后侧IMU俯仰角PID积分限幅范围
 extern float imu_pitch_outRange[2];
 // * IMU偏航角控制
+extern bool use_imu_yaw;  // 是否使用IMU偏航角控制
 extern float imu_yaw_P[2];
 extern float imu_yaw_I[2] ; // 前后
 extern float imu_yaw_D[2]; // 前后侧IMU俯仰角PID参数

@@ -263,9 +263,11 @@ void SINGLE_SIDE_CTRL::set_steer(steerState stateIn , float v_aix , float v_cir)
             // 这里的误差输出为度
             imu_handler_->get_aixs_err(&aixs_err, true); // 获取IMU的姿态误差
             // 计算PID控制器的输出
-            pid_out_p = pid_pitch_->Tick(aixs_err.pitch, true);
+            if(use_imu_pitch == true) pid_out_p = pid_pitch_->Tick(aixs_err.pitch, true);
+            else pid_out_p = 0.0f; // 如果不使用IMU俯仰角控制，则输出为0
             // pid_out_y 为正，说明机器人偏航偏右侧，则右侧轮子需要提速，左侧轮子需要减速，即
-            pid_out_y = pid_yaw_->Tick(aixs_err.yaw, true);
+            if(use_imu_yaw == true) pid_out_y = pid_yaw_->Tick(aixs_err.yaw, true);
+            else pid_out_y = 0.0f; // 如果不使用IMU偏航角控制，则输出为0
         }
         for (int i = 0; i < 3; i++)
         {

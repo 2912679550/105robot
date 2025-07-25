@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include "ros/ros.h"     
+#include "ros_topic_channel.hpp"
 
 int TS;
 
@@ -13,6 +14,7 @@ float steerVelRange[2] ; // 舵轮电机的速度范围，单位为m/s
 
 // todo IMU控制PID的参数
 // * IMU俯仰角控制
+bool use_imu_pitch;  // 是否使用IMU偏航角控制
 float imu_pitch_P[2];
 float imu_pitch_I[2]; // 前后
 float imu_pitch_D[2]; // 前后侧IMU俯仰角PID参数
@@ -20,6 +22,7 @@ float imu_pitch_Iband[2] ; // 前后侧IMU俯仰角PID积分死区
 float imu_pitch_accIRange[2] ; // 前后侧IMU俯仰角PID积分限幅范围
 float imu_pitch_outRange[2];
 // * IMU偏航角控制
+bool use_imu_yaw;  // 是否使用IMU偏航角控制
 float imu_yaw_P[2];
 float imu_yaw_I[2]; // 前后
 float imu_yaw_D[2]; // 前后侧IMU俯仰角PID参数
@@ -96,6 +99,7 @@ void readParameters(ros::NodeHandle & n){
     steerVelRange[1] = (float)steer_vel_node[1];
     
     // 读取IMU俯仰角PID参数
+    cv::FileNode pitch_bool = fsSettings["use_imu_pitch"];
     cv::FileNode imu_pitch_node = fsSettings["imu_pitch"];
     cv::FileNode pitch_P = imu_pitch_node["P"];
     cv::FileNode pitch_I = imu_pitch_node["I"];
@@ -104,18 +108,27 @@ void readParameters(ros::NodeHandle & n){
     cv::FileNode pitch_acc_I = imu_pitch_node["acc_I_range"];
     cv::FileNode pitch_out = imu_pitch_node["out_range"];
     
-    for(int i = 0; i < 2; i++){
-        imu_pitch_P[i] = (float)pitch_P[i];
-        imu_pitch_I[i] = (float)pitch_I[i];
-        imu_pitch_D[i] = (float)pitch_D[i];
-        imu_pitch_Iband[i] = (float)pitch_Iband[i];
+    use_imu_pitch = (int)pitch_bool[0];
+    if(use_imu_pitch == true){
+        for(int i = 0; i < 2; i++){
+            imu_pitch_P[i] = (float)pitch_P[i];
+            imu_pitch_I[i] = (float)pitch_I[i];
+            imu_pitch_D[i] = (float)pitch_D[i];
+            imu_pitch_Iband[i] = (float)pitch_Iband[i];
+        }
+        imu_pitch_accIRange[0] = (float)pitch_acc_I[0];
+        imu_pitch_accIRange[1] = (float)pitch_acc_I[1];
+        imu_pitch_outRange[0] = (float)pitch_out[0];
+        imu_pitch_outRange[1] = (float)pitch_out[1];
+        // return; // 如果不使用IMU俯仰角控制，直接返回
+    }else{
+        std::cout   << RED_STRING << BLOD_STRING << UNDERLINE_STRING
+                    << "IMU pitch control is disabled." 
+                    << RESET_STRING << std::endl;
     }
-    imu_pitch_accIRange[0] = (float)pitch_acc_I[0];
-    imu_pitch_accIRange[1] = (float)pitch_acc_I[1];
-    imu_pitch_outRange[0] = (float)pitch_out[0];
-    imu_pitch_outRange[1] = (float)pitch_out[1];
     
     // 读取IMU偏航角PID参数
+    cv::FileNode yaw_bool = fsSettings["use_imu_yaw"];
     cv::FileNode imu_yaw_node = fsSettings["imu_yaw"];
     cv::FileNode yaw_P = imu_yaw_node["P"];
     cv::FileNode yaw_I = imu_yaw_node["I"];
@@ -124,17 +137,26 @@ void readParameters(ros::NodeHandle & n){
     cv::FileNode yaw_acc_I = imu_yaw_node["acc_I_range"];
     cv::FileNode yaw_out = imu_yaw_node["out_range"];
     
-    for(int i = 0; i < 2; i++){
-        imu_yaw_P[i] = (float)yaw_P[i];
-        imu_yaw_I[i] = (float)yaw_I[i];
-        imu_yaw_D[i] = (float)yaw_D[i];
-        imu_yaw_Iband[i] = (float)yaw_Iband[i];
+    use_imu_yaw = (int)yaw_bool[0];
+    if (use_imu_yaw == true)
+    {
+        for (int i = 0; i < 2; i++)
+        {
+            imu_yaw_P[i] = (float)yaw_P[i];
+            imu_yaw_I[i] = (float)yaw_I[i];
+            imu_yaw_D[i] = (float)yaw_D[i];
+            imu_yaw_Iband[i] = (float)yaw_Iband[i];
+        }
+        imu_yaw_accIRange[0] = (float)yaw_acc_I[0];
+        imu_yaw_accIRange[1] = (float)yaw_acc_I[1];
+        imu_yaw_outRange[0] = (float)yaw_out[0];
+        imu_yaw_outRange[1] = (float)yaw_out[1];
+    }else{
+        std::cout   << RED_STRING << BLOD_STRING << UNDERLINE_STRING
+                    << "IMU yaw control is disabled." 
+                    << RESET_STRING << std::endl;
     }
-    imu_yaw_accIRange[0] = (float)yaw_acc_I[0];
-    imu_yaw_accIRange[1] = (float)yaw_acc_I[1];
-    imu_yaw_outRange[0] = (float)yaw_out[0];
-    imu_yaw_outRange[1] = (float)yaw_out[1];
-    
+
     // 读取弯折角控制参数
     cv::FileNode body_angle_node = fsSettings["body_angle"];
     cv::FileNode angle_range = body_angle_node["range"];

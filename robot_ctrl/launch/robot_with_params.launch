@@ -1,0 +1,9 @@
+<launch>
+    <!-- 机器人参数配置文件路径 -->
+    <arg name="config_file" default="$(find robot_ctrl)/config/params.yaml" />
+
+    <!-- 机器人控制节点 -->
+    <node name="robot_node" pkg="robot_ctrl" type="robot_node" output="screen">
+        <param name="config_file" value="$(arg config_file)" />
+    </node>
+</launch>
