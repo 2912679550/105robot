@@ -97,6 +97,7 @@ SINGLE_SIDE_CTRL::SINGLE_SIDE_CTRL(std::string cmd_topic, std::string val_topic,
     tight_timer_ = new MYTIMER();  // 创建定时器处理类实例
     tight_timer_->reset();
     odom_handler_->reset(); // 重置里程计数据
+    set_dia(340.0f);  // 设置舵轮的直径，单位为mm
 }
 
 SINGLE_SIDE_CTRL::~SINGLE_SIDE_CTRL(){
@@ -214,6 +215,11 @@ void SINGLE_SIDE_CTRL::set_angle(float angle){
 }
 
 void SINGLE_SIDE_CTRL::set_dia(float dia){
+    // 这里输入的dia单位应为mm，限制为100mm 到370mm
+    if(dia < 100.0f || dia > 370.0f){
+        std::cout << RED_STRING << "dia out of range: " << dia << RESET_STRING << std::endl;
+        return;
+    }
     double target_angle =   pow(double(dia/100.0f) , 6) * dia2mechAngelCoeff[0] +
                             pow(double(dia/100.0f) , 5) * dia2mechAngelCoeff[1] +
                             pow(double(dia/100.0f) , 4) * dia2mechAngelCoeff[2] +
@@ -328,8 +334,8 @@ PUSH_CTRL::PUSH_CTRL(std::string cmd_topic , std::string val_topic , ros::NodeHa
             << RESET_STRING << std::endl;
     
     // 初始化控制指令
-    cmd_data_.tar_length_f = 20.0f;  // 前推杆的目标长度
-    cmd_data_.tar_length_b = 20.0f;  // 后推杆的目标长度
+    cmd_data_.tar_length_f = 25.0f;  // 前推杆的目标长度
+    cmd_data_.tar_length_b = 25.0f;  // 后推杆的目标长度
     cmd_data_.tar_length_m = 15.0f;  // 中推杆的目标长度
 }
 

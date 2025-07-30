@@ -82,8 +82,8 @@ int main(int argc , char **argv){
             break;
         case 'a':
             cmd_msg.cmdType = ROBOT_MOTION; // 正常运动
-            cmd_msg.v_axi = 0.0f;           // 设置轴向速度
-            cmd_msg.v_cir = -0.02f;         // 设置周向速度
+            cmd_msg.v_axi = 0.02f;           // 设置轴向速度
+            cmd_msg.v_cir = -0.005f;         // 设置周向速度
             robot.cmd_hand_maked(&cmd_msg);
             control = '0'; // 重置控制字符
             break;
