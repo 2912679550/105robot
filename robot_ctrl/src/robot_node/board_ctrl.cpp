@@ -298,8 +298,12 @@ void SINGLE_SIDE_CTRL::set_steer(steerState stateIn , float v_aix , float v_cir)
             }
             cmd_data_.dir_steer_dir[i] = vel_dir;   // 舵轮舵向的角度
             cmd_data_.dir_steer_vel[i] = vel_total; // 舵轮舵向的速度
+            // ! 0731 test
+            if ( i == 2  && enable_bending_pipe ) cmd_data_.dir_steer_vel[i] = vel_total *  (300.0 + 360.0) /  (300.0 + 90.0) ; // 舵轮舵向的速度
+            // ! 0731
             // std::cout << "Wheel ID: " << i
             //           << " Dir: " << cmd_data_.dir_steer_dir[i]
+            //           << " Vel: " << cmd_data_.dir_steer_vel[i]
             //           << " Vel: " << cmd_data_.dir_steer_vel[i]
             //           << std::endl;
         }
@@ -364,9 +368,14 @@ void PUSH_CTRL::val_callback(const PUSH_VAL_CPTR &msg){
 void PUSH_CTRL::set_body_angle(float angle){
     angle = angle > body_angle_range[1] ? body_angle_range[1] : angle;  // 限制角度不超过基准值
     angle = angle < body_angle_range[0] ? body_angle_range[0] : angle;  // 限制角度不低于基准值
+    // ! 临时测试用 0731
+    if(angle < -19.0f)
+        angle = -30.0;
+    // ! 临时测试end
     float delta_angel = angle / 2.0f;
     float angle_BCE = delta_angel + body_angle_baseline; // 此时单位为度   
     // 余弦定理计算推杆总长度
+    // 56.73 
     float tar_length = sqrt(body_length_BC * body_length_BC + body_length_CE * body_length_CE - 
                             2 * body_length_BC * body_length_CE * cos(angle_BCE * PI / 180.0f));
     // 计算推杆期望长度

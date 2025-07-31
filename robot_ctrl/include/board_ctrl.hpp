@@ -79,6 +79,9 @@ public:
     void fix_quat();
     void release_quat();  // 释放IMU的四元数，恢复到正常状态
 
+    // ! 0731 test
+    bool enable_bending_pipe = false;
+    // ! 0731 end
 private:
     ros::NodeHandle *nh_;
     ros::Publisher cmd_pub_;
@@ -86,6 +89,7 @@ private:
     ros::Subscriber imu_sub_;
 
     bool singleSideFixed = false;
+
 
     int imu_id_;  // IMU的ID，用于区分前侧和后侧IMU
     steerState steer_state_ = steerState::STOP;  // 当前舵轮的工作状态

@@ -110,6 +110,12 @@ int main(int argc , char **argv){
             robot.cmd_hand_maked(&cmd_msg);
             control = '0'; // 重置控制字符
             break;
+        // * 0731 临时调试逻辑
+        case 'e':
+            robot.front_side_->enable_bending_pipe = !robot.front_side_->enable_bending_pipe;
+            robot.back_side_->enable_bending_pipe = !robot.back_side_->enable_bending_pipe;
+            control = '0'; // 重置控制字符
+            break;
         default:
             break;
         }
