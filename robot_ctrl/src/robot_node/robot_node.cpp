@@ -215,8 +215,8 @@ void MAIN_ROBOT::pubCmd(){
 void MAIN_ROBOT::robot_ctrl(bool printFlag){
     // * 执行一些状态机指令
     // 如果只有一侧夹紧状态为false，则将其自动失能
-    if(front_side_->tarTightFlag_ == false && back_side_-> tarTightFlag_ == true) front_side_ -> set_steer(steerState::STOP);
-    if(back_side_->tarTightFlag_ == false && front_side_-> tarTightFlag_ == true) back_side_ -> set_steer(steerState::STOP);
+    // if(front_side_->tarTightFlag_ == false && back_side_-> tarTightFlag_ == true) front_side_ -> set_steer(steerState::STOP);
+    // if(back_side_->tarTightFlag_ == false && front_side_-> tarTightFlag_ == true) back_side_ -> set_steer(steerState::STOP);
 
     // 如果前后两侧此时都为夹紧状态，则将前后的IMU都释放
     if(front_side_->tarTightFlag_ == true && back_side_->tarTightFlag_ == true){

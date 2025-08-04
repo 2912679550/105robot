@@ -25,7 +25,7 @@ int main(int argc , char **argv){
         char temp = get_char();
         control = temp != 0 ? temp : control;
         ros::spinOnce();
-        robot.robot_ctrl(true);
+        robot.robot_ctrl(false);
         // if(control != '0' && control != 0)std::cout << control << std::endl;
         switch (control)
         {
@@ -113,6 +113,16 @@ int main(int argc , char **argv){
         // * 0731 临时调试逻辑
         case 'e':
             robot.front_side_->enable_bending_pipe = !robot.front_side_->enable_bending_pipe;
+            robot.back_side_->enable_bending_pipe = !robot.back_side_->enable_bending_pipe;
+            control = '0'; // 重置控制字符
+            break;
+        case 'F':
+            robot.front_side_->enable_bending_pipe = !robot.front_side_->enable_bending_pipe;
+            // robot.back_side_->enable_bending_pipe = !robot.back_side_->enable_bending_pipe;
+            control = '0'; // 重置控制字符
+            break;
+        case 'B':
+            // robot.front_side_->enable_bending_pipe = !robot.front_side_->enable_bending_pipe;
             robot.back_side_->enable_bending_pipe = !robot.back_side_->enable_bending_pipe;
             control = '0'; // 重置控制字符
             break;
