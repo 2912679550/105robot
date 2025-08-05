@@ -38,10 +38,20 @@ int main(int argc , char **argv){
             std::cout << "Front side IMU quaternion fixed." << std::endl;
             control = '0';
             break;
+        case 'b':
+            robot.back_side_->fix_quat();
+            std::cout << "Back side IMU quaternion fixed." << std::endl;
+            control = '0';
+            break;
         case 'o':
             IMU_POSE aixs_err;
             robot.front_side_->imu_handler_->get_aixs_err(&aixs_err, true);
             // robot.front_side_->pid_pitch_->Tick(aixs_err.pitch, true);
+            break;
+        case 'p':
+            IMU_POSE aixs_err_b;
+            robot.back_side_->imu_handler_->get_aixs_err(&aixs_err_b, true);
+            // robot.back_side_->pid_pitch_->Tick(aixs_err_b.pitch, true);
             break;
         // todo 以下开始为通过按键复现机器人的软件控制流程
         // * 两臂夹角控制

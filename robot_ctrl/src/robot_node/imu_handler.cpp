@@ -42,6 +42,13 @@ void IMU_HANDLER::imu_callback(const IMU_CPTR &msg){
         ground_truth.pitch = ground_truth.pitch * 180.0 / M_PI;
         ground_truth.yaw = ground_truth.yaw * 180.0 / M_PI;
 
+        // * 调试用 ， 打印一下当前订阅的imu topic名称，以及对应的RPY角度
+        // std::cout << GREEN_STRING << BLOD_STRING << "IMU topic: " << imu_sub_.getTopic() << RESET_STRING << std::endl;
+        // std::cout << "IMU data: roll = " << ground_truth.roll
+        //             << ", pitch = " << ground_truth.pitch 
+        //             << ", yaw = " << ground_truth.yaw << std::endl;
+        // 
+
         // if(imu_robot_matrix != nullptr){
         //     // 首先将ground_truth创建为一个tf库的列向量
         //     tf::Vector3 ground_truth_vector(ground_truth.roll, ground_truth.pitch, ground_truth.yaw);
