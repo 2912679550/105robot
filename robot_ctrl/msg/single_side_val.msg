@@ -6,8 +6,10 @@ float32[2] cur_arm_angle        # 当前的单侧一臂与二臂夹角
 float32[2] cur_spring_length    # 当前的左右弹簧长度
 float32[3] odom_axis            # 左、右、中三轮形成的当前里程计信息
 float32[3] odom_cir       
-
-
+float32[3] cur_current1     # 当前电流值 , 分别为轮 舵 机构
+float32[3] cur_current2
+float32[3] cur_current3
+float32[3] mech_pos       # 机构位置
 
 
 

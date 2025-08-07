@@ -31,7 +31,12 @@ class packInfo():
             "real_s1": 0.00, 
             "real_s2": 0.00,
             "odom_axis": 0.00,
-            "odom_cir" : 0.00
+            "odom_cir" : 0.00 ,
+            # "cur_1",    // 轮 舵 机构 三个电机的实际电流
+            "cur_1": 0.00,
+            "cur_2": 0.00,
+            "cur_3": 0.00,
+            "mech_pos": 0.00
         }
 
         self.PushCmdName = {

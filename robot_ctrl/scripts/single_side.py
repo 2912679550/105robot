@@ -28,6 +28,14 @@ class SINGLE_SIDE_VAL:
         # 里程计信息
         self.odom_axis = [0.] * 3
         self.odom_cir  = [0.] * 3
+        # 轮电机电流
+        self.cur_current1 = [0.] * sub_board_num
+        # 舵电机电流
+        self.cur_current2 = [0.] * sub_board_num
+        # 机构电流
+        self.cur_current3 = [0.] * sub_board_num
+        # 机构位置
+        self.mech_pos = [0.] * sub_board_num
         # self.tar1_v = [0] * sub_board_num
         # self.tar2_v = [0] * sub_board_num
         # self.tar_p = [0] * sub_board_num
@@ -112,6 +120,11 @@ class SINGLE_SIDE:
                 # 里程计信息
                 generat_msg.odom_axis[i] = self.current_val.odom_axis[i] = self.ether_info_buf[i].MainAssistValName["odom_axis"]
                 generat_msg.odom_cir[i]  = self.current_val.odom_cir[i]  = self.ether_info_buf[i].MainAssistValName["odom_cir"]
+                generat_msg.cur_current1[i] = self.current_val.cur_current1[i] = self.ether_info_buf[i].MainAssistValName["cur_1"]
+                generat_msg.cur_current2[i] = self.current_val.cur_current2[i] = self.ether_info_buf[i].MainAssistValName["cur_2"]
+                generat_msg.cur_current3[i] = self.current_val.cur_current3[i] = self.ether_info_buf[i].MainAssistValName["cur_3"]
+                generat_msg.mech_pos[i] = self.current_val.mech_pos[i] = self.ether_info_buf[i].MainAssistValName["mech_pos"]
+                # * 以下的量需要根据实际情况筛选存储
                 # self.current_val.tar_p[i] = self.ether_info_buf[i].MainAssistValName["tar_p"]
                 # self.current_val.tar2_v[i] = self.ether_info_buf[i].MainAssistValName["tar2_v"]
                 # self.current_val.tar1_v[i] = self.ether_info_buf[i].MainAssistValName["tar1_v"]
