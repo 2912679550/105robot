@@ -84,7 +84,7 @@ struct BETA_THETA_FITTING_FUNC_SINGLE_PARAM{
         const T term3 = T(params_.l2) * 
                         ceres::sqrt(T(1.0) - ceres::cos(*b) * ceres::cos(*b));
         //  f = term1 + term2 + term3 - input_value
-        residual[0] =ceres::abs(term1 + term2 + term3 - input_value);
+        residual[0] = ceres::pow(term1 + term2 + term3 - input_value , 2);
         return true;
     }
 };
@@ -152,7 +152,7 @@ public:
     double beta_rad_ = 0.0;  // 输出的beta角度，
     double beta_deg_ = 0.0;  // 输出的beta角度，单位为度   
     double target_v_ = 0.02; // 机器人的目标主动轮线速度
-    double cur_dis_x = 900.0;
+    double cur_dis_x_ = 900.0;
     
     // todo 外部接口
     void set_pipe_params(double l4 , double R , double r );
@@ -163,8 +163,10 @@ private:
     MYTIMER timer_; // 定义计时器，用于性能分析
 
     // 定义需要用到的自动求导函数
-    ceres::CostFunction* diff_func_beta_ = nullptr;
-    ceres::CostFunction* diff_func_beta_singel_ = nullptr;
+    ceres::CostFunction* theta_beta_func_ = nullptr;        // 双输入参数的f函数， 用于求自动微分
+    ceres::CostFunction* diff_func_beta_singel_ = nullptr;  // 单输入参数的f函数， 用于基于theta求beta
+    ceres::CostFunction* xq_func_ = nullptr;           // 用于计算x_q的函数
+    ceres::CostFunction* yq_func_ = nullptr;           // 用于计算y_q的函数
     
 
 
@@ -174,6 +176,7 @@ private:
     SolverState solve_beta_();
     SolverState compute_wheel_speeds_(float* main_wheel_speed , float* assist_wheel_speed);
     
+    double dis_x_func_(double theta_r , double beta_r);
 
 
 

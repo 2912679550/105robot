@@ -66,9 +66,9 @@ SolverState AutoPipeSolver::solve(double theta_deg, double target_v,
     std::cout   << GREEN_STRING << BLOD_STRING
                 <<  "========== Auto Pipe motion solved ==========" << "\n"
                 << " theta_deg: " << theta_deg_ << "\tbeta_deg: " << beta_deg_ << "\n"
-                << " push_length: " << *push_length << "\n"
-                // << " main_wheel_speed: " << main_wheel_speed[0] << ", " << main_wheel_speed[1] << "\n"
-                // << " assist_wheel_speed: " << assist_wheel_speed[0] << ", " << assist_wheel_speed[1] << "\n"
+                << " push_length: " << *push_length << "\tdis_x: " << cur_dis_x_ << "\n"
+                << " main_wheel_speed: " << main_wheel_speed[0] << ", " << main_wheel_speed[1] << "\n"
+                << " assist_wheel_speed: " << assist_wheel_speed[0] << ", " << assist_wheel_speed[1] << "\n"
                 << " time_cost  beta: " << time_cost_beta << " ms, "
                 << "\twheel_speed: " << time_cost_wheel_speed << " ms" << "\n"
                 << RESET_STRING << std::endl;
@@ -76,13 +76,16 @@ SolverState AutoPipeSolver::solve(double theta_deg, double target_v,
 }
 
 SolverState AutoPipeSolver::solve_beta_(){
-    double beta_init = 0.0; // 初始猜测
+    double beta_init = 0.2; // 初始猜测
     beta_rad_ = beta_init;  // 设置初始值
 
     // 动态创建cost function，将当前的theta值作为固定参数
-    diff_func_beta_singel_ = new ceres::AutoDiffCostFunction<BETA_THETA_FITTING_FUNC_SINGLE_PARAM, 1, 1>(
+    // diff_func_beta_singel_ = new ceres::AutoDiffCostFunction<BETA_THETA_FITTING_FUNC_SINGLE_PARAM, 1, 1>(
+    diff_func_beta_singel_ = new ceres::NumericDiffCostFunction<BETA_THETA_FITTING_FUNC_SINGLE_PARAM, ceres::CENTRAL , 1, 1>(
         new BETA_THETA_FITTING_FUNC_SINGLE_PARAM(params_, theta_rad_)
     );
+
+
 
     ceres::Problem problem;
     problem.AddResidualBlock(
@@ -94,27 +97,98 @@ SolverState AutoPipeSolver::solve_beta_(){
     problem.SetParameterUpperBound(&beta_rad_, 0, PI / 6.0); // beta上限  暂时给为30度
 
     ceres::Solver::Options options; 
-    options.max_num_iterations = 10;
+    options.max_num_iterations = 30;
     options.minimizer_progress_to_stdout = false; // 输出求解过程
     options.linear_solver_type = ceres::DENSE_QR; // 使用Dense QR求解器
     ceres::Solver::Summary summary;
     ceres::Solve(options, &problem, &summary);
 
     // 转换为度数用于后续计算
+    beta_rad_   = beta_rad_ + 0.00; // 修正beta_rad_的值 , 防止后边求不出偏导
     beta_deg_ = beta_rad_ * 180.0 / PI;
 
-    // if( summary.IsSolutionUsable() == true)
+    // 计算一下测试的x长度
+    cur_dis_x_ =  dis_x_func_(theta_rad_ , beta_rad_);
+    if(cur_dis_x_ < 5.0){
+        return SolverState::solveEnd; // 如果x小于5mm，认为求解结束
+    }
 
-    return SolverState::Normal; // 返回正常状态
+    if( summary.IsSolutionUsable() == true)
+        return SolverState::Normal; // 返回正常状态
+    else
+        return SolverState::BetaSolveFailed; // 返回beta求解失败状态
 }
 
 SolverState AutoPipeSolver::compute_wheel_speeds_(float* main_wheel_speed , float * assist_wheel_speed){
+    // * 计算直角坐标系下的主动轮与管道接触点速度
+    double theta_dot = target_v_ / (params_.R + params_.r);
+    double dxm_dtheta = ceres::cos(theta_rad_) * (params_.r + params_.R);
+    double dym_dtheta =-ceres::sin(theta_rad_) * (params_.r + params_.R);
+    double vx_m = dxm_dtheta * theta_dot;
+    double vy_m = dym_dtheta * theta_dot;
+
+    // * 求解f函数关于beta和theta两个参数的偏导数
+    // 修正：创建正确格式的参数数组
+    const double* parameters[2] = {&beta_rad_, &theta_rad_};
+    double residual[1];  // 残差数组（根据你的cost function输出维度）
+    // 为每个参数块分配雅可比矩阵内存
+    double df_dbeta[1];   // 对beta的偏导数
+    double df_dtheta[1];  // 对theta的偏导数
+    double* jacobians[2]= {df_dbeta, df_dtheta};
+    // 调用Evaluate函数
+    bool success = theta_beta_func_->Evaluate(parameters, residual, jacobians);
+    // std::cout << "theta_beta_func_ Evaluate success: " << success << std::endl;
+    // std::cout << "df_dbeta: " << df_dbeta[0] << ", df_dtheta: " << df_dtheta[0] << std::endl;
+    // 进一步求解得到beta_dot
+    double dbeta_dtheta = -df_dtheta[0] / df_dbeta[0];
+    double beta_dot = dbeta_dtheta * theta_dot;
+
+    // * 求解xq关于beta和theta的偏导数，yq关于beta的偏导数
+    double xq_residual[1];
+    double yq_residual[1];
+    
+    double dxq_dbeta[1], dxq_dtheta[1];
+    double* xq_jacobians[2] = {dxq_dbeta, dxq_dtheta};
+
+    double dyq_dbeta[1];
+    double* yq_jacobians[1] = {dyq_dbeta};
+
+    // 计算xq关于beta和theta的偏导数
+    bool xq_success = xq_func_->Evaluate(parameters, xq_residual, xq_jacobians);
+    // std::cout << "xq_func_ Evaluate success: " << xq_success << std::endl;
+    const double* yq_parameters[1] = {&beta_rad_};
+    bool yq_success = yq_func_->Evaluate(yq_parameters, yq_residual, yq_jacobians);
+    // std::cout << "yq_func_ Evaluate success: " << yq_success << std::endl;
+
+    // * 计算辅助轮点的直角坐标系下速度
+    double vx_q = dxq_dbeta[0] * beta_dot + dxq_dtheta[0] * theta_dot;
+    double vy_q = dyq_dbeta[0] * beta_dot;
+
+    // * 将直角速度转换为舵轮轴向与周向速度
+    main_wheel_speed[0] = vx_m * ceres::cos(theta_rad_) - vy_m * ceres::sin(theta_rad_);
+    main_wheel_speed[1] = 0.0; // 主动轮的周向速度为0
+    assist_wheel_speed[0] = vx_q * ceres::cos(2.0 * beta_rad_) - vy_q * ceres::sin(2.0 * beta_rad_);
+    assist_wheel_speed[1] =-vx_q * ceres::sin(2.0 * beta_rad_) - vy_q * ceres::cos(2.0 * beta_rad_);
     return SolverState::Normal; // 返回正常状态
 }
 
 void AutoPipeSolver::generate_diff_funcs_(){
-    // 这里暂时不创建cost function，因为theta值在运行时确定
-    // 我们将在solve_beta_()函数中动态创建
+    theta_beta_func_ = new ceres::AutoDiffCostFunction<BETA_THETA_FITTING_FUNC, 1, 1, 1>(
+        new BETA_THETA_FITTING_FUNC(params_)
+    );
+    xq_func_ = new ceres::AutoDiffCostFunction<X_Q_FUNC , 1, 1 , 1>(
+        new X_Q_FUNC(params_)
+    );
+    yq_func_ = new ceres::AutoDiffCostFunction<Y_Q_FUNC , 1, 1>(
+        new Y_Q_FUNC(params_)
+    );
 }
 
-
+double AutoPipeSolver::dis_x_func_(double theta_r , double beta_r){
+    // x = (l1 + l2 / (2 * cos(b) )) * (1 + cos(2 * b)) - (l3 - rw) * sin(2 * b) - sin(t) * (R + r + rw);
+    double term_x1 = (params_.l1 + params_.l2 / (2.0 * ceres::cos(beta_r))) * (1.0 + ceres::cos(2 * beta_r));
+    double term_x2 = (params_.l3 - params_.rw) * ceres::sin(2.0* beta_r);
+    double term_x3 = ceres::sin(theta_r) * (params_.R + params_.r + params_.rw);
+    double x = term_x1 - term_x2 - term_x3;
+    return x;
+}
