@@ -1,5 +1,5 @@
-find_package(Eigen3 REQUIRED)
-find_package(Ceres REQUIRED)
+# find_package(Eigen3 REQUIRED)
+# find_package(Ceres REQUIRED)
 
 include_directories(
     include
@@ -8,8 +8,19 @@ include_directories(
     ${EIGEN3_INCLUDE_DIRS}
 )
 
+# 获取当前CMakeList文件绝对路径
+
+
+
+set(PIPE_SOLVER_SOURCES
+    ${CMAKE_CURRENT_LIST_DIR}/autoPipeSolver.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/pipeControler.cpp
+    PARENT_SCOPE
+)
+
 add_executable(pipetest 
     autoPipeSolver.cpp
+    pipeControler.cpp
     pipeTest.cpp
     ../Timer/Timer.cpp
 )

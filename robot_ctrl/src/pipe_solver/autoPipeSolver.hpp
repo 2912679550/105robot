@@ -1,3 +1,4 @@
+#pragma once
 #include <ceres/ceres.h>      
 #include <Eigen/Dense>
 #include <cmath>
@@ -23,9 +24,9 @@ struct MathParameters{
     double rw = 50.0;
     
     // 定义默认参数，支持外部修改
-    double l4 = 280.12;
     double R = 300.0; // 弯管转弯半径
     double r = 180.0; // 弯管管道半径
+    double l4 = 280.12; // l4 = l3 + 1.5 * r
 };
 
 // todo 配置非线性函数
@@ -43,7 +44,7 @@ struct BETA_THETA_FITTING_FUNC{
                                 T( 1.0 - ceres::cos(*t) ) *
                                 T(params_.R + params_.r) -
                                 ceres::cos(*t) * T(params_.rw);
-        // (l3 - rw) *(2 * cos(b) * cos(b) - 1) 
+        // (l3 - rw) *(2 * cos(b) * cos(b) - 1)  
         const T term1 = (T(params_.l3) - T(params_.rw)) *
                         (T(2.0) * ceres::cos(*b) * ceres::cos(*b) - T(1.0));
         // 2 * l1 * cos(b) * sqrt( 1 - cos(b) * cos(b))
@@ -128,14 +129,31 @@ struct Y_Q_FUNC{
     // 定义基于模板的函数体，对应matlab中的 y_q 函数
     // * y_q = -t_ac(b) * sin(2 * b) - l4 * cos(2 *b) + l3 + R + r;
     template <typename T>
-        bool operator()(const T*b  , T* residual) const{
-        // t_ac = l1 + l2 / (2 * cos(b));
-        const T t_ac = T(params_.l1) + T(params_.l2) / (T(2.0) * ceres::cos(*b));
+    bool operator()(const T*b  , T* residual) const{
+    // t_ac = l1 + l2 / (2 * cos(b));
+    const T t_ac = T(params_.l1) + T(params_.l2) / (T(2.0) * ceres::cos(*b));
 
-        // y_q = -t_ac(b) * sin(2 * b) - l4 * cos(2 *b) + l3 + R + r;
-        residual[0] =   -t_ac * ceres::sin(T(2.0 * (*b))) - 
-                        T(params_.l4) * ceres::cos(T(2.0 * (*b))) + 
-                        T(params_.l3) + T(params_.R) + T(params_.r);
+    // y_q = -t_ac(b) * sin(2 * b) - l4 * cos(2 *b) + l3 + R + r;
+    residual[0] =   -t_ac * ceres::sin(T(2.0 * (*b))) - 
+                    T(params_.l4) * ceres::cos(T(2.0 * (*b))) + 
+                    T(params_.l3) + T(params_.R) + T(params_.r);
+    return true;
+    }
+};
+
+struct THETA_MAX_FUNC{
+    THETA_MAX_FUNC( const MathParameters& params)
+        : params_(params) {  };
+    // 补充定义类内部成员
+    MathParameters params_;
+
+    // 定义基于模板的函数体，本函数用于根据目前的管道参数计算机器人进弯过程中最大的theta角度值
+    template <typename T>
+    bool operator()(const T* t, T* residual) const{
+        const T temp = *t / 2.0;
+        // func = (l3 + R + r) * sin(temp) - l2 / 2 - l1 * cos(temp)
+        residual[0] = (params_.l3 + params_.R + params_.r) * ceres::sin(temp) - 
+                      params_.l2 / 2.0 - params_.l1 * ceres::cos(temp);
         return true;
     }
 };
@@ -144,7 +162,6 @@ class AutoPipeSolver{
 public:
     AutoPipeSolver();
     ~AutoPipeSolver();
-
     // todo 用于求解的参数与变量
     MathParameters params_; // 用于存储数学模型参数的结构体
     double theta_deg_ = 0.0;
@@ -153,11 +170,15 @@ public:
     double beta_deg_ = 0.0;  // 输出的beta角度，单位为度   
     double target_v_ = 0.02; // 机器人的目标主动轮线速度
     double cur_dis_x_ = 900.0;
-    
+    // 针对一组固定的管道尺寸，会有一个机器人进弯时的最大theta角度，超过这个角度之后机器人匀速运动即可
+    double max_theta_deg_ = 0.0;      
+    double min_push_length_ = 0.0; // 最小推杆长度
+
+
     // todo 外部接口
-    void set_pipe_params(double l4 , double R , double r );
+    void set_pipe_params(double R , double r );
     SolverState solve(double theta_deg, double target_v ,      // 两个输入 
-                float * push_length , float* main_wheel_speed , float* assist_wheel_speed); // 三个输出
+                float * push_length , float* main_wheel_speed , float* assist_wheel_speed , bool printFlag = true); // 三个输出
         
 private:
     MYTIMER timer_; // 定义计时器，用于性能分析
@@ -172,12 +193,9 @@ private:
 
     // 用于生成自动求导函数
     void generate_diff_funcs_();
-    
+    // 用于求解最大theta角度
+    void get_max_theta_deg_();
     SolverState solve_beta_();
     SolverState compute_wheel_speeds_(float* main_wheel_speed , float* assist_wheel_speed);
-    
     double dis_x_func_(double theta_r , double beta_r);
-
-
-
 };

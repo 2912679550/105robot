@@ -3,28 +3,111 @@
 
 AutoPipeSolver::AutoPipeSolver(){
     generate_diff_funcs_();
+    get_max_theta_deg_(); // 计算最大theta角度
 }
 
 AutoPipeSolver::~AutoPipeSolver(){
 
 }
 
-void AutoPipeSolver::set_pipe_params(double l4 , double R , double r){
-    params_.l4 = l4;
+void AutoPipeSolver::set_pipe_params(double R , double r){
+    params_.l4 = params_.l3 + 1.5 * r;
     params_.R = R;
     params_.r = r;
-    ROS_INFO_STREAM("Set pipe parameters: l4=" << l4 << ", R=" << R << ", r=" << r);
+    ROS_INFO_STREAM("Set pipe parameters: l4=" << params_.l4 << ", R=" << R << ", r=" << r);
     generate_diff_funcs_();
+    get_max_theta_deg_(); // 计算最大theta角度
 }
 
+void AutoPipeSolver::get_max_theta_deg_(){
+    // * 计算此时的最大theta角度
+    auto theta_max_func = new ceres::AutoDiffCostFunction<THETA_MAX_FUNC, 1, 1>(
+        new THETA_MAX_FUNC(params_)
+    );
+    ceres::Problem problem;
+    double theta_init = 0.2; // 初始猜测
+    problem.AddResidualBlock(
+        theta_max_func,
+        nullptr,
+        &theta_init // 只优化 theta_init
+    );
+    ceres::Solver::Options options;
+    options.linear_solver_type = ceres::DENSE_QR; // 使用稠密
+    options.max_num_iterations = 100; // 最大迭代次数
+    options.minimizer_progress_to_stdout = false; // 不输出迭代过程
+    ceres::Solver::Summary summary;
+    ceres::Solve(options, &problem, &summary);
 
+    if(summary.IsSolutionUsable()){
+        max_theta_deg_ = theta_init * 180.0 / PI; // 转换为度
+        ROS_INFO_STREAM("Max theta_deg: " << max_theta_deg_);
+    }
+
+    double deg_answer = params_.deg_alpha - max_theta_deg_ / 2.0;
+    // length = power(100.4241 , 2) + power(83 , 2) - 2 * 100.4241 * 83 * cos(deg_answer / 180 * pi);
+    min_push_length_ = std::sqrt(
+                std::pow(body_length_BC, 2) + std::pow(body_length_CE, 2) - 
+                2 * body_length_BC * body_length_CE * std::cos(deg_answer / 180.0 * PI)
+    );
+    ROS_INFO_STREAM("Min push_length: " << min_push_length_);
+}
+
+/**
+ * @brief 核心求解函数，根据输入的theta角度值以及期望速度，解算此时理论推杆长度与轮速
+ * 
+ * @param theta_deg 此时theta角度值，单位为度
+ * @param target_v  期望的主动轮线速度，单位为m/s
+ * @param push_length 输出的期望推杆长度，单位为mm
+ * @param main_wheel_speed 输出的主动轮速度，单位为m/s, [轴向速度, 周向速度]
+ * @param assist_wheel_speed  输出的辅助轮速度，单位为m/s, [轴向速度, 周向速度]
+ * @param printFlag  是否打印求解过程中的信息
+ * @return SolverState 
+ */
 SolverState AutoPipeSolver::solve(double theta_deg, double target_v, 
-                        float * push_length, float * main_wheel_speed, float * assist_wheel_speed) {
+                        float * push_length, float * main_wheel_speed, float * assist_wheel_speed, bool printFlag) {
     timer_.reset();
     theta_deg_ = theta_deg;
     theta_rad_ = theta_deg * PI / 180.0; // 转换为弧度
-    target_v_ = target_v;
+    target_v_ = target_v; 
     
+    // * 0. 新增，如果theta角度超过最大值，则直接判定机器人匀速运动
+    if(theta_deg_ > max_theta_deg_ * 0.95){
+        *push_length = min_push_length_;
+        main_wheel_speed[0] = target_v_;
+        main_wheel_speed[1] = 0.0; // 主动轮轴向速度为0
+        assist_wheel_speed[0] = target_v * (params_.R - 0.5 * params_.r) / (params_.r + params_.R);
+        assist_wheel_speed[1] = 0.0; // 辅助轮轴向速度为0
+        if(printFlag == true){
+            std::cout   << YELLOW_STRING << BLOD_STRING
+            <<  "========== Auto into/out Pipe motion Finished !==========" << "\n"
+            << RESET_STRING << GREEN_STRING << BLOD_STRING
+            << " theta_deg: " << theta_deg_ << "\n"
+            << " push_length: " << *push_length << "\n"
+            << " main_wheel_speed: " << main_wheel_speed[0] << ", " << main_wheel_speed[1] << "\n"
+            << " assist_wheel_speed: " << assist_wheel_speed[0] << ", " << assist_wheel_speed[1] << "\n"
+            << RESET_STRING << std::endl;
+        }
+        return SolverState::solveEnd; // 认为求解结束
+    }
+    else if(theta_deg_ < 0.0f){
+        *push_length = body_angle_push_baseline; // 如果theta小于0，则使用默认推杆长度
+        main_wheel_speed[0] = target_v; // 主动轮
+        main_wheel_speed[1] = 0.0; // 主动轮轴向速度为0
+        assist_wheel_speed[0] = target_v;
+        assist_wheel_speed[1] = 0.0; // 辅助轮轴向速度为0
+        if(printFlag == true){
+            std::cout   << YELLOW_STRING << BLOD_STRING
+                        <<  "========== Auto into/out Pipe motion Finished !==========" << "\n"
+                        << RESET_STRING << GREEN_STRING << BLOD_STRING
+                        << " theta_deg: " << theta_deg_ << "\n"
+                        << " push_length: " << *push_length << "\n"
+                        << " main_wheel_speed: " << main_wheel_speed[0] << ", " << main_wheel_speed[1] << "\n"
+                        << " assist_wheel_speed: " << assist_wheel_speed[0] << ", " << assist_wheel_speed[1] << "\n"
+                        << RESET_STRING << std::endl;
+        }
+        return SolverState::solveEnd; // 认为求解结束
+    }
+
     // * 1. 求解此时的beta角度, 并在其内部校验x值
     timer_.get_ms_duration();    // 单位 ms
     SolverState beta_state = solve_beta_();
@@ -63,6 +146,7 @@ SolverState AutoPipeSolver::solve(double theta_deg, double target_v,
     }
 
     // * 4. 至此应该已经全部求解结束，打印结果并返回状态
+    if(printFlag == false) return SolverState::Normal;                                                      
     std::cout   << GREEN_STRING << BLOD_STRING
                 <<  "========== Auto Pipe motion solved ==========" << "\n"
                 << " theta_deg: " << theta_deg_ << "\tbeta_deg: " << beta_deg_ << "\n"
@@ -84,9 +168,6 @@ SolverState AutoPipeSolver::solve_beta_(){
     diff_func_beta_singel_ = new ceres::NumericDiffCostFunction<BETA_THETA_FITTING_FUNC_SINGLE_PARAM, ceres::CENTRAL , 1, 1>(
         new BETA_THETA_FITTING_FUNC_SINGLE_PARAM(params_, theta_rad_)
     );
-
-
-
     ceres::Problem problem;
     problem.AddResidualBlock(
         diff_func_beta_singel_,

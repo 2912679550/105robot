@@ -4,13 +4,14 @@
             "name": "Linux",
             "includePath": [
                 "/opt/ros/noetic/include",
-                "${workspaceFolder}/../devel/include",
+                // "${workspaceFolder}/../devel/include",
                 "${workspaceFolder}/../../devel/include",
                 "/usr/include/eigen3",
                 "${workspaceFolder}/robot_ctrl/src/**",
                 "${workspaceFolder}/robot_ctrl/include/**",
                 "${workspaceFolder}/fdilink_ahrs/include",
-                "/usr/include/opencv4"
+                "/usr/include/opencv4",
+                "${workspaceFolder}/robot_ctrl/src"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

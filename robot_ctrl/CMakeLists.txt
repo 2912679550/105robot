@@ -20,6 +20,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 find_package(Eigen3 REQUIRED)
 find_package(OpenCV REQUIRED)
+find_package(Ceres REQUIRED)
 LINK_DIRECTORIES("/usr/local/lib/")
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -65,10 +66,11 @@ catkin_package(
 
 include_directories(
     include
+    src
     ${catkin_INCLUDE_DIRS}
     ${OpenCV_INCLUDE_DIRS}
+    ${CERES_INCLUDE_DIRS}
 )
-
 include_directories(${EIGEN3_INCLUDE_DIR})
 add_definitions(${EIGEN_DEFINITIONS})
 
@@ -84,8 +86,14 @@ add_executable(robot_node
     src/robot_node/board_ctrl.cpp
     src/robot_node/robot_params.cpp
     src/Timer/Timer.cpp
+    ${PIPE_SOLVER_SOURCES}  # 来自子路径
 )
 add_dependencies(robot_node robot_ctrl_generate_messages_cpp)
-target_link_libraries(robot_node ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${OpenCV_LIBS})
+target_link_libraries(robot_node 
+${catkin_LIBRARIES} 
+${Boost_LIBRARIES} 
+${OpenCV_LIBS}
+${CERES_LIBRARIES}
+)
 
 

@@ -1,14 +1,14 @@
+#pragma once
 #include "ros/ros.h"
 #include "ros_topic_channel.hpp"
 #include "board_ctrl.hpp"
+#include "pipe_solver/pipeControler.hpp"
 
 
 
 #define STEER_WHEEL 0   // 舵轮轮电机数组序号
 #define STEER_DIR 1     // 舵轮方向电机数组序号
-#define MECH_MOTOR 2    // 机构电机数组序号
-
-
+#define MECH_MOTOR 2    // 机构电机数
 
 
 class MAIN_ROBOT
@@ -18,9 +18,11 @@ public:
     ~MAIN_ROBOT();
     
 
+    // * 内置控制器
     SINGLE_SIDE_CTRL* front_side_;
     SINGLE_SIDE_CTRL* back_side_;
     PUSH_CTRL* push_ctrl_;
+    PipeController* pipe_controller_ = nullptr; // 管道控制器
 
     float robot_axis_odom_ = 0.0f;  // 机器人轴向里程计数据
     float robot_cir_odom_ = 0.0f;   // 机器人周向里程计数据
