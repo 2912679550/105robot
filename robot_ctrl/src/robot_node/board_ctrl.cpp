@@ -301,14 +301,6 @@ void SINGLE_SIDE_CTRL::set_steer(steerState stateIn , float v_aix , float v_cir)
             }
             cmd_data_.dir_steer_dir[i] = vel_dir;   // 舵轮舵向的角度
             cmd_data_.dir_steer_vel[i] = vel_total; // 舵轮舵向的速度
-            // ! 0731 test
-            if ( i == 2  && enable_bending_pipe ) cmd_data_.dir_steer_vel[i] = vel_total *  (300.0 + 360.0) /  (300.0 + 90.0) ; // 舵轮舵向的速度
-            // ! 0731
-            // std::cout << "Wheel ID: " << i
-            //           << " Dir: " << cmd_data_.dir_steer_dir[i]
-            //           << " Vel: " << cmd_data_.dir_steer_vel[i]
-            //           << " Vel: " << cmd_data_.dir_steer_vel[i]
-            //           << std::endl;
         }
     }
 }
@@ -366,6 +358,19 @@ void PUSH_CTRL::set_cmd(float tar_length_f , float tar_length_b , float tar_leng
 void PUSH_CTRL::val_callback(const PUSH_VAL_CPTR &msg){
     if(msg != nullptr)
     val_data_ = *msg;
+}
+/**
+ * @brief 用于直接配置机器人推杆的长度，对应的是模型意义上的长度，主要用于接收求解器解算的理论长度值，会在内部换算成推杆的期望长度
+ * 
+ * @param targetLength 目标的模型长度， unit:mm
+ * @param isFront  是否为前侧推杆，true为前侧，false为后侧
+ */
+void PUSH_CTRL::set_body_length(float targetLength, bool isFront){
+    static float deltaLength = body_angle_length_basline - body_angle_push_baseline; // 模型期望长度 - deltaLength = 推杆控制长度
+    float push_length = targetLength - deltaLength;
+    push_length = set_range<float>(push_length, (float*)push_out_length); // 限制推杆伸出长度在合理范围内
+    if(isFront) cmd_data_.tar_length_f = push_length;
+    else cmd_data_.tar_length_b = push_length;
 }
 
 void PUSH_CTRL::set_body_angle(float angle){

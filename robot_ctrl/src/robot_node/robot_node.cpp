@@ -172,37 +172,6 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
         else{
             std::cout<< RED_STRING << "robot node receive unknown command" << RESET_STRING << std::endl;
         }
-
-        // else if(mode == ROBOT_TIGHT_EN){
-        //     front_side_->set_tight(49.0f);
-        //     back_side_-> set_tight(49.0f);
-        //     // front_side_->set_tight(47.0f);
-        //     // back_side_-> set_tight(47.0f);
-        // }
-        // else if(mode == ROBOT_TIGHT_DIS){
-        //     // front_side_->set_tight(false);
-        //     // back_side_->set_tight(false);
-        //     front_side_->set_tight(60.0f);
-        //     back_side_->set_tight(60.0f);
-        // }
-        // else if(mode == ROBOT_TIGHT_F){
-        //     front_side_->set_tight(47.0f);  // 前侧夹紧
-        // }
-        // else if(mode == ROBOT_LOSS_F){
-        //     // front_side_->set_tight(false);
-        //     front_side_->set_tight(60.0f);
-        //     front_side_->release_quat();  // 释放前侧IMU的四元数    
-        //     if( front_side_->tarTightFlag_ == false ) back_side_ ->fix_quat();  // 如果此时前侧臂为松开状态，则后侧单边锁住
-        // }
-        // else if(mode == ROBOT_TIGHT_B){ 
-        //     back_side_->set_tight(47.0f);  // 后侧夹紧
-        // }
-        // else if(mode == ROBOT_LOSS_B){
-        //     // back_side_->set_tight(false);
-        //     back_side_->set_tight(60.0f);
-        //     back_side_->release_quat();  // 释放后侧IMU的四元数
-        //     if( back_side_->tarTightFlag_  == false ) front_side_->fix_quat();  // 前侧单边锁住
-        // }
     }
 }
 
@@ -215,9 +184,6 @@ void MAIN_ROBOT::pubCmd(){
 void MAIN_ROBOT::robot_ctrl(bool printFlag){
     // * 执行一些状态机指令
     // 如果只有一侧夹紧状态为false，则将其自动失能
-    // if(front_side_->tarTightFlag_ == false && back_side_-> tarTightFlag_ == true) front_side_ -> set_steer(steerState::STOP);
-    // if(back_side_->tarTightFlag_ == false && front_side_-> tarTightFlag_ == true) back_side_ -> set_steer(steerState::STOP);
-
     // 如果前后两侧此时都为夹紧状态，则将前后的IMU都释放
     if(front_side_->tarTightFlag_ == true && back_side_->tarTightFlag_ == true){
         front_side_->release_quat();  // 释放前侧IMU的四元数
@@ -307,13 +273,11 @@ void MAIN_ROBOT::robot_ctrl(bool printFlag){
         }
     }
     // * 步进与扫查控制结束
-
     odom_handler(printFlag); // 处理里程计数据
     // 发布控制指令
     pubCmd();
     // 发布手柄回传数据
     // ROBOT_TCP_VAL_TYPE tcp_val;
-
     // tcp_pub_.publish(tcp_val);
 }
 
@@ -397,3 +361,82 @@ void MAIN_ROBOT::set_motion_range(float _step_axis, float _step_cir){
     //     << " -> " << motion_range.second.x() << " , " << motion_range.second.y()
     //     << RESET_STRING << std::endl;
 }
+
+// ! ========================== Pose Closed Loop ===========================
+
+/**
+ * @brief 创建姿态闭环的控制器
+ * 
+ * @param front_imu_topic   前侧IMU话题名称
+ * @param back_imu_topic    后侧IMU话题名称
+ * @param front_handle      前侧控制器指针
+ * @param back_handle       后侧控制器指针   
+ * @param nh                ROS节点句柄指针
+ */
+POSE_CLOSED_LOOP::POSE_CLOSED_LOOP(std::string front_imu_topic , std::string back_imu_topic , 
+                                    SINGLE_SIDE_CTRL * front_handle , SINGLE_SIDE_CTRL * back_handle ,
+                                    ros::NodeHandle* nh)
+{
+    if(nh == nullptr){
+        nh_ = new ros::NodeHandle();
+        std::cout<< YELLOW_STRING << BLOD_STRING << "nh_ is nullptr" << RESET_STRING << std::endl;
+    }else{
+        nh_ = nh;
+    }
+    front_handle_ = front_handle;
+    back_handle_ = back_handle;
+
+    front_imu_handler_ = new IMU_HANDLER(front_imu_topic, nh_);
+    front_imu_handler_->imu_robot_matrix = new tf::Matrix3x3(IMU_FRONT_ROTATE[0][0], IMU_FRONT_ROTATE[0][1], IMU_FRONT_ROTATE[0][2],
+                                                            IMU_FRONT_ROTATE[1][0], IMU_FRONT_ROTATE[1][1], IMU_FRONT_ROTATE[1][2],
+                                                            IMU_FRONT_ROTATE[2][0], IMU_FRONT_ROTATE[2][1], IMU_FRONT_ROTATE[2][2]);
+    back_imu_handler_ = new IMU_HANDLER(back_imu_topic, nh_);
+    back_imu_handler_->imu_robot_matrix = new tf::Matrix3x3(IMU_BACK_ROTATE[0][0], IMU_BACK_ROTATE[0][1], IMU_BACK_ROTATE[0][2],
+                                                        IMU_BACK_ROTATE[1][0], IMU_BACK_ROTATE[1][1], IMU_BACK_ROTATE[1][2],
+                                                        IMU_BACK_ROTATE[2][0], IMU_BACK_ROTATE[2][1], IMU_BACK_ROTATE[2][2]);
+    // * 配置PID计算器参数
+    PID_PARAM pid_params;
+    pid_params.p = imu_pitch_P[0];
+    pid_params.i = imu_pitch_I[0];
+    pid_params.d = imu_pitch_D[0];
+    pid_params.Iband = imu_pitch_Iband[0];
+    pid_params.outMin = imu_pitch_outRange[0];
+    pid_params.outMax = imu_pitch_outRange[1];
+    pid_params.outIMin = imu_pitch_outRange[0];
+    pid_params.outIMax = imu_pitch_outRange[1];
+    pid_params.ts = 1.0f / float(TS);  // 设置采样周期
+    pid_pitch_ = new Pid(&pid_params);
+
+    pid_params.p = imu_yaw_P[0];
+    pid_params.i = imu_yaw_I[0];
+    pid_params.d = imu_yaw_D[0];
+    pid_params.Iband = imu_yaw_Iband[0];
+    pid_params.outMin = imu_yaw_outRange[0];
+    pid_params.outMax = imu_yaw_outRange[1];
+    pid_params.outIMin = imu_yaw_outRange[0];
+    pid_params.outIMax = imu_yaw_outRange[1];
+    pid_params.ts = 1.0f / float(TS);  // 设置采样周期
+    pid_yaw_ = new Pid(&pid_params);
+}
+
+POSE_CLOSED_LOOP::~POSE_CLOSED_LOOP(){
+    if(front_imu_handler_ != nullptr){
+        delete front_imu_handler_;
+        front_imu_handler_ = nullptr;
+    }
+    if(back_imu_handler_ != nullptr){
+        delete back_imu_handler_;
+        back_imu_handler_ = nullptr;
+    }
+    if(pid_pitch_ != nullptr){
+        delete pid_pitch_;
+        pid_pitch_ = nullptr;
+    }
+    if(pid_yaw_ != nullptr){
+        delete pid_yaw_;
+        pid_yaw_ = nullptr;
+    }
+}
+
+
+

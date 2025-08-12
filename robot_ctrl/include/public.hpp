@@ -1,5 +1,4 @@
-#ifndef PUBLIC_HPP
-#define PUBLIC_HPP
+#pragma once
 #include <sys/select.h>
 #include <stdio.h>
 #include <fstream>
@@ -36,4 +35,10 @@ float bezier_arc_length(float startPoint[], float endPoint[]);
 POINT_XY bezier_curve_alpha(float t, float startPoint[], float endPoint[]);
 // 使用迭代的方式，给定曲线的起点与终点位置与位姿，计算曲线上与目标点最近的点的区间t值
 POINT_XY bezier_close_point(POINT_XY interIn,float startPoint[], float endPoint[],POINT_XY targetPoint,int nTimes = 3);
-#endif
+
+template <typename T> 
+inline T set_range(T value, T* range){
+    if(value < range[0]) return range[0];
+    else if(value > range[1]) return range[1];
+    else return value;
+}

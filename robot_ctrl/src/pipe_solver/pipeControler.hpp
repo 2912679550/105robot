@@ -35,7 +35,7 @@ public:
     bool auto_out_pipe_(float odom_aix , float odom_cir , tf::Quaternion* cur_quat, 
                         float target_v = 0.02f,
                         bool printFlag = false); // 自动退出管道
-
     bool set_geometry_params_(float R, float r);
+    
 private:
 };

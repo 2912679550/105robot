@@ -1,3 +1,13 @@
+/**
+ * @file board_ctrl.hpp
+ * @author vulcan
+ * @brief  本头文件主要针对于机器人上三种类型的控制板进行的控制封装，主要分为主控制板、辅助控制板以及推杆控制板，封装后的类主要进行数据收发与信息整合
+ * @version 1.1
+ * @date 2025-08-12
+ * 
+ * @copyright Copyright (c) 2025
+ * 
+ */
 #include "ros/ros.h"
 #include "robot_ctrl/single_side_cmd.h"
 #include "robot_ctrl/single_side_val.h"
@@ -10,7 +20,7 @@
 #include "robot_params.hpp"
 #include <eigen3/Eigen/Dense>
 #include "Timer.hpp"
-
+#include "public.hpp"
 
 typedef enum    // 与底层32对应，舵轮当前的工作状态
 {
@@ -111,6 +121,8 @@ public:
     void pub_cmd();
     void set_cmd(float tar_length_f , float tar_length_b , float tar_length_m);
     void set_body_angle(float angle);
+    void set_body_length(float targetLength, bool isFront = true);
+
 private:
     ros::NodeHandle *nh_;
     ros::Publisher cmd_pub_;

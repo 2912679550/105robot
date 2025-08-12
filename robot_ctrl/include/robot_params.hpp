@@ -55,6 +55,7 @@ const float body_angle_length_basline = 81.74f;  // 对应机器人弯折角为0
 const float body_angle_push_baseline = 25.0f;  // 对应机器人弯折角为0度时视觉上的初始推杆长度
 const float body_length_BC = 100.42f;  // 机器人身体BC段的长度，单位为mm
 const float body_length_CE = 83.0f;  // 机器人身体CE段的长度，单位为mm
+const float push_out_length[2] = {0.0f , 85.0f}; // 推杆伸出长度范围，单位mm
 
 // 定义旋转矩阵，将IMU体坐标系转换为机器人坐标系
 static const double IMU_FRONT_ROTATE[3][3] = {
