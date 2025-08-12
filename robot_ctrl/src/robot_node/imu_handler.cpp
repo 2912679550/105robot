@@ -32,54 +32,7 @@ void IMU_HANDLER::imu_callback(const IMU_CPTR &msg){
         // * 先操作四元数
         quat_pre = quat_cur;  // 保存上一帧的四元数
         quat_cur = quat;  // 更新当前IMU数据的四元数
-
-        // * 转换为RPY开始操作
-        // 转换为RPY
-        tf::Matrix3x3 tempRota = tf::Matrix3x3(quat);
-        tempRota.getRPY(ground_truth.roll, ground_truth.pitch, ground_truth.yaw);  // 获取欧拉角
-        // 此时的单位为弧度，转化为角度
-        ground_truth.roll = ground_truth.roll * 180.0 / M_PI;
-        ground_truth.pitch = ground_truth.pitch * 180.0 / M_PI;
-        ground_truth.yaw = ground_truth.yaw * 180.0 / M_PI;
-
-        // * 调试用 ， 打印一下当前订阅的imu topic名称，以及对应的RPY角度
-        // std::cout << GREEN_STRING << BLOD_STRING << "IMU topic: " << imu_sub_.getTopic() << RESET_STRING << std::endl;
-        // std::cout << "IMU data: roll = " << ground_truth.roll
-        //             << ", pitch = " << ground_truth.pitch 
-        //             << ", yaw = " << ground_truth.yaw << std::endl;
-        // 
-
-        // if(imu_robot_matrix != nullptr){
-        //     // 首先将ground_truth创建为一个tf库的列向量
-        //     tf::Vector3 ground_truth_vector(ground_truth.roll, ground_truth.pitch, ground_truth.yaw);
-        //     // 然后将其转换为机器人坐标系下的IMU数据
-        //     tf::Vector3 imu_robot_vector = (*imu_robot_matrix) * ground_truth_vector;  // 使用IMU到机器人坐标系的旋转矩阵进行转换
-        //     // 更新ground_truth为机器人坐标系下的IMU数据
-        //     ground_truth.roll = imu_robot_vector.x();
-        //     ground_truth.pitch = imu_robot_vector.y();
-        //     ground_truth.yaw = imu_robot_vector.z();
-        // }
-        // std::cout << "IMU data: roll = " << ground_truth.roll 
-        //             << ", pitch = " << ground_truth.pitch 
-        //             << ", yaw = " << ground_truth.yaw << std::endl;
-
-        // 根据IMU复位标志位，决定是否需要复位IMU数据
-        if(imu_reset_flag == true){
-            imu_reset_flag = false;
-            pose_cur = ground_truth;  // 将当前IMU数据作为复位后的初始数据
-            pose_pre = ground_truth;  // 上一帧的IMU数据也设置为当前数据
-        }else{
-            pose_pre = pose_cur;
-            IMU_POSE pose_dir;
-            pose_dir.roll = ground_truth.roll - pose_pre.roll;   // 当前帧与上一帧的差值
-            pose_dir.pitch = ground_truth.pitch - pose_pre.pitch; // 当前帧与上一帧的差值
-            pose_dir.yaw = ground_truth.yaw - pose_pre.yaw;       // 当前帧与上一帧的差值
-        }
     }
-}
-
-void IMU_HANDLER::reset_pose(){
-    imu_reset_flag = true;  // 设置复位标志位为true
 }
 
 void IMU_HANDLER::fix_quat(){

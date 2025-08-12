@@ -17,8 +17,6 @@ int main(int argc , char **argv){
     bool exitloop = false;
     TCP_ROBOT_CMD_TYPE cmd_msg;  // 用于人工向机器人发布控制指令
     cmd_msg.cmdType = ROBOT_STOP;  // 默认停止状态
-    cmd_msg.angle_front = 0.0f;  // 前侧夹紧角度
-    cmd_msg.angle_back = 0.0f;   // 后侧夹紧角度
 
     while (ros::ok() && !exitloop)
     {
@@ -34,23 +32,23 @@ int main(int argc , char **argv){
             exitloop = true;
             break;
         case 'f':
-            robot.front_side_->fix_quat();
+            // robot.front_side_->fix_quat();
             std::cout << "Front side IMU quaternion fixed." << std::endl;
             control = '0';
             break;
         case 'b':
-            robot.back_side_->fix_quat();
+            // robot.back_side_->fix_quat();
             std::cout << "Back side IMU quaternion fixed." << std::endl;
             control = '0';
             break;
         case 'o':
             IMU_POSE aixs_err;
-            robot.front_side_->imu_handler_->get_aixs_err(&aixs_err, true);
+            // robot.front_side_->imu_handler_->get_aixs_err(&aixs_err, true);
             // robot.front_side_->pid_pitch_->Tick(aixs_err.pitch, true);
             break;
         case 'p':
             IMU_POSE aixs_err_b;
-            robot.back_side_->imu_handler_->get_aixs_err(&aixs_err_b, true);
+            // robot.back_side_->imu_handler_->get_aixs_err(&aixs_err_b, true);
             // robot.back_side_->pid_pitch_->Tick(aixs_err_b.pitch, true);
             break;
         // todo 以下开始为通过按键复现机器人的软件控制流程
@@ -120,26 +118,9 @@ int main(int argc , char **argv){
             robot.cmd_hand_maked(&cmd_msg);
             control = '0'; // 重置控制字符
             break;
-        // * 0731 临时调试逻辑
-        case 'e':
-            robot.front_side_->enable_bending_pipe = !robot.front_side_->enable_bending_pipe;
-            robot.back_side_->enable_bending_pipe = !robot.back_side_->enable_bending_pipe;
-            control = '0'; // 重置控制字符
-            break;
-        case 'F':
-            robot.front_side_->enable_bending_pipe = !robot.front_side_->enable_bending_pipe;
-            // robot.back_side_->enable_bending_pipe = !robot.back_side_->enable_bending_pipe;
-            control = '0'; // 重置控制字符
-            break;
-        case 'B':
-            // robot.front_side_->enable_bending_pipe = !robot.front_side_->enable_bending_pipe;
-            robot.back_side_->enable_bending_pipe = !robot.back_side_->enable_bending_pipe;
-            control = '0'; // 重置控制字符
-            break;
         default:
             break;
         }
-
         loop_rate.sleep();
     }  
     return 0;

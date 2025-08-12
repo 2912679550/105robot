@@ -240,16 +240,6 @@ void* InstructionPubCallback(void* arg)
             std::cout  << "v_axi: " << motion_msg.v_axi << std::endl;
             std::cout  << "v_cir: " << motion_msg.v_cir << std::endl; 
         }
-        // else if(mode == ROBOT_ANGLE){
-        //     // 软件默认范围为3到9，做一个线性映射
-        //     float angle = atof(motion_instruction_str[1].c_str());
-        //     angle = mechAngleRange[0] + (angle - 3) * (mechAngleRange[1] - mechAngleRange[0]) / (9 - 3);
-        //     motion_msg.cmdType = ROBOT_ANGLE;
-        //     motion_msg.angle_front = angle;
-        //     motion_msg.angle_back = angle;
-        //     std::cout  << "angle_front: " << angle << std::endl;
-        //     std::cout  << "angle_back: " << angle << std::endl;
-        // }
         else if(mode == ROBOT_DIA){
             motion_msg.dia_front = atof(motion_instruction_str[1].c_str()); // 前侧直径
             motion_msg.dia_back = atof(motion_instruction_str[2].c_str());  // 后侧直径
@@ -275,10 +265,21 @@ void* InstructionPubCallback(void* arg)
             camera_msg.command = cleaned.c_str();
             std::cout  << "camera_cmd: " << camera_msg.command << std::endl;
         }
-        else if(mode == ROBOT_BODY_ANGLE){
+        else if(mode == ROBOT_BOTH_LENGTH){
             motion_msg.cmdType = mode;  
-            motion_msg.robot_kink_angle = atof(motion_instruction_str[1].c_str());
-            std::cout << "kink angle: " << motion_msg.robot_kink_angle << std::endl;
+            motion_msg.push_length_f = atof(motion_instruction_str[1].c_str());
+            motion_msg.push_length_b = atof(motion_instruction_str[2].c_str());
+            std::cout << "both push length: " << motion_msg.push_length_f << std::endl;
+        }
+        else if(mode == ROBOT_F_LENGTH){
+            motion_msg.cmdType = mode;
+            motion_msg.push_length_f = atof(motion_instruction_str[1].c_str());
+            std::cout << "front side push length: " << motion_msg.push_length_f << std::endl;
+        }
+        else if(mode == ROBOT_B_LENGTH){
+            motion_msg.cmdType = mode;
+            motion_msg.push_length_b = atof(motion_instruction_str[1].c_str());
+            std::cout << "back side push length: " << motion_msg.push_length_b << std::endl;
         }
         else if(mode == ROBOT_T_L_F){
             motion_msg.cmdType = mode;
@@ -298,10 +299,6 @@ void* InstructionPubCallback(void* arg)
             motion_cmd_pub.publish(motion_msg);
         }
         else   camera_cmd_pub.publish(camera_msg);
-        // }
-        // else {
-        //     ROS_WARN("Unknown command type: %s", mode.c_str());
-        // }
         #else
         // debug模式下只打印处理后的motion_instruction_str数据
         std::cout << "motion_instruction_str: \n";

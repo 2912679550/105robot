@@ -2,21 +2,21 @@
 #include "robot_params.hpp"
 
 // ! ========================== main robot ===========================
-// ! ========================== main robot ===========================
 MAIN_ROBOT::MAIN_ROBOT(ros::NodeHandle* nh_ ){
     if(nh_ == nullptr){
         nh_ = new ros::NodeHandle();
         std::cout<< YELLOW_STRING << BLOD_STRING << "nh_ is nullptr" << RESET_STRING << std::endl;
     }
+    //* 初始化内置控制器
     front_side_ = new SINGLE_SIDE_CTRL(ROBOT_STM_CMD_F, STM_ROBOT_VAL_F, nh_);
     back_side_ = new SINGLE_SIDE_CTRL(ROBOT_STM_CMD_B, STM_ROBOT_VAL_B, nh_);
     push_ctrl_ = new PUSH_CTRL(PUSH_CMD , PUSH_VAL, nh_);
+    pipe_controller_ = new PipeController();
+    pose_closed_ctrl_ = new POSE_CLOSED_LOOP(IMU_FRONT, IMU_BACK, front_side_, back_side_, nh_);
 
     front_side_->odom_handler_ = new MICRO_ODOM(odomValueCoeff_f);  // 前侧里程计处理类
     back_side_->odom_handler_ = new MICRO_ODOM(odomValueCoeff_b);
 
-    front_side_->create_imu(IMU_FRONT , IMU_ID::FRONT);  // 创建前侧IMU
-    back_side_->create_imu(IMU_BACK , IMU_ID::BACK);   // 创建后侧IMU
     // 创建手柄消息的订阅与回传发布者
     tcp_pub_ = nh_->advertise<ROBOT_TCP_VAL_TYPE>(ROBOT_TCP_VAL, 1);
     tcp_sub_ = nh_->subscribe(TCP_ROBOT_CMD , 1, &MAIN_ROBOT::motion_cmd_callback, this);
@@ -58,7 +58,6 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
     {
         // 处理接收到的数据，整合成一个字符串容器
         std::string mode = msg->cmdType;
-
         std::cout<< BLUE_STRING << BLINK_STRING
             << "receive command: " << mode
             << RESET_STRING << std::endl;
@@ -89,10 +88,10 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
             // 设置运动范围
             set_motion_range(msg->v_axi, msg->v_cir);
             // 打印运动范围
-            std::cout << "step motion range: " 
-                      << "first: (" << motion_range.first.x() << ", " << motion_range.first.y() << "), "
-                      << "second: (" << motion_range.second.x() << ", " << motion_range.second.y() << ")" 
-                      << std::endl;
+            std::cout   << "step motion range: " 
+                        << "first: (" << motion_range.first.x() << ", " << motion_range.first.y() << "), "
+                        << "second: (" << motion_range.second.x() << ", " << motion_range.second.y() << ")" 
+                        << std::endl;
         }
         else if(mode == ROBOT_SCAN){
             // 扫查运动 
@@ -102,73 +101,29 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
             // 设置运动范围
             set_motion_range(msg->v_axi, msg->v_cir);
             // 打印运动范围
-            std::cout << "scan motion range: " 
-                      << "first: (" << motion_range.first.x() << ", " << motion_range.first.y() << "), "
-                      << "second: (" << motion_range.second.x() << ", " << motion_range.second.y() << ")" 
-                      << std::endl;
+            std::cout   << "scan motion range: " 
+                        << "first: (" << motion_range.first.x() << ", " << motion_range.first.y() << "), "
+                        << "second: (" << motion_range.second.x() << ", " << motion_range.second.y() << ")" 
+                        << std::endl;
         }
-
+        else if(mode == ROBOT_ON_POSE) pose_closed_ctrl_->turn_on_close_loop_(); // 关闭姿态闭环
+        else if(mode == ROBOT_OFF_POSE) pose_closed_ctrl_->turn_off_close_loop_(); // 开启姿态闭环
         // * 夹紧控制
-        else if(mode == ROBOT_T_L_F){
-            front_side_->set_tight(msg->dir_tight_front);  // 前侧夹紧长度控制
-            if(front_side_ -> tarTightFlag_ == false){
-                if(back_side_ -> tarTightFlag_ == true){
-                    // 此时前侧松开，后侧夹紧，需要释放前侧，锁住后侧
-                    front_side_ -> release_quat(); // 释放前侧IMU的四元数
-                    back_side_->fix_quat();  // 锁住后侧IMU
-                }else{
-                    // 此时前侧松开，后侧也松开，则都释放，不使用闭环
-                    front_side_->release_quat(); // 释放前侧IMU的四元数
-                    back_side_->release_quat();  // 释放后侧IMU的四元
-                }
-            }
-            else{
-                if(back_side_->tarTightFlag_ == false){
-                    // 此时前侧抱紧，后侧松开，需要释放后侧，锁住前侧
-                    back_side_->release_quat(); // 释放后侧IMU的四元数
-                    front_side_->fix_quat();  // 锁住前侧IMU
-                }else{
-                    // 此时前侧夹紧，后侧也夹紧，则都释放，不使用闭环
-                    front_side_->release_quat(); // 释放前侧IMU的四元数
-                    back_side_->release_quat();  // 释放后侧IMU的四元
-                }
-            }
-        }
-        else if(mode == ROBOT_T_L_B){
-            back_side_->set_tight(msg->dir_tight_back);  // 后侧夹紧长度控制
-            if(back_side_ -> tarTightFlag_ == false){
-                if(front_side_ -> tarTightFlag_ == true){
-                    // 此时后侧松开，前侧夹紧，需要释放后侧，锁住前侧
-                    back_side_ -> release_quat(); // 释放后侧IMU的四元数
-                    front_side_->fix_quat();  // 锁住前侧IMU
-                }else{
-                    // 此时后侧松开，前侧也松开，则都释放，不使用闭环
-                    back_side_->release_quat(); // 释放后侧IMU的四元数
-                    front_side_->release_quat();  // 释放前侧IMU的四元
-                }
-            }
-            else{
-                if(front_side_->tarTightFlag_ == false){
-                    // 此时后侧抱紧，前侧松开，需要释放前侧，锁住后侧
-                    front_side_->release_quat(); // 释放前侧IMU的四元数
-                    back_side_->fix_quat();  // 锁住后侧IMU
-                }else{
-                    // 此时后侧夹紧，前侧也夹紧，则都释放，不使用闭环
-                    front_side_->release_quat(); // 释放前侧IMU的四元数
-                    back_side_->release_quat();  // 释放后侧IMU的四元
-                }
-            }
-        }
-        
+        else if(mode == ROBOT_T_L_F) front_side_->set_tight(msg->dir_tight_front);  // 前侧夹紧长度控制
+        else if(mode == ROBOT_T_L_B) back_side_->set_tight(msg->dir_tight_back);  // 后侧夹紧长度控制
         // * 变形控制
         else if(mode == ROBOT_DIA){
             front_side_->set_dia(msg->dia_front);
             back_side_->set_dia(msg->dia_back);
         }
-        else if(mode == ROBOT_BODY_ANGLE){
-            
-            push_ctrl_->set_body_angle(msg->robot_kink_angle);
+        else if(mode == ROBOT_BOTH_LENGTH){
+            push_ctrl_->set_body_length(msg->push_length_f, true);
+            push_ctrl_->set_body_length(msg->push_length_b, false);
+            // push_ctrl_->set_body_angle(msg->);
         }
+        else if(mode == ROBOT_F_LENGTH) push_ctrl_->set_body_length(msg->push_length_f, true);
+        else if(mode == ROBOT_B_LENGTH) push_ctrl_->set_body_length(msg->push_length_b, false);
+
         else{
             std::cout<< RED_STRING << "robot node receive unknown command" << RESET_STRING << std::endl;
         }
@@ -183,14 +138,6 @@ void MAIN_ROBOT::pubCmd(){
 
 void MAIN_ROBOT::robot_ctrl(bool printFlag){
     // * 执行一些状态机指令
-    // 如果只有一侧夹紧状态为false，则将其自动失能
-    // 如果前后两侧此时都为夹紧状态，则将前后的IMU都释放
-    if(front_side_->tarTightFlag_ == true && back_side_->tarTightFlag_ == true){
-        front_side_->release_quat();  // 释放前侧IMU的四元数
-        back_side_->release_quat();   // 释放后侧IMU的四元数
-        std::cout<< YELLOW_STRING << "front and back side IMU release quat" << RESET_STRING << std::endl;
-    }
-    
     front_side_->single_side_ctrl();  // 前侧单侧控制逻辑
     back_side_->single_side_ctrl();   // 后侧单侧控制逻辑
 
@@ -438,5 +385,46 @@ POSE_CLOSED_LOOP::~POSE_CLOSED_LOOP(){
     }
 }
 
+void POSE_CLOSED_LOOP::turn_on_close_loop_(){
+    enable_close_loop_ = true;  // 开启姿态闭环控制
+    pid_yaw_->Reset();  // 重置偏航角PID控制器
+    pid_pitch_->Reset();  // 重置俯仰角PID控制器
+    if(front_imu_handler_ != nullptr){
+        front_imu_handler_->fix_quat();  // 固定前侧IMU的四元数
+    }
+    if(back_imu_handler_ != nullptr){
+        back_imu_handler_->fix_quat();  // 固定后侧IMU的四元数
+    }
+}
 
+void POSE_CLOSED_LOOP::turn_off_close_loop_(){
+    pid_yaw_->Reset();  // 重置偏航角PID控制器
+    pid_pitch_->Reset();  // 重置俯仰角PID控制器
+    enable_close_loop_ = false;  // 关闭姿态闭环控制
+}
 
+void POSE_CLOSED_LOOP::close_loop_pid_(bool printFlag){
+    if(enable_close_loop_ == false ||
+        (front_handle_->tarTightFlag_ ==  back_handle_->tarTightFlag_ ) ) 
+    {
+        // 如果姿态闭环控制未开启，或者前后两侧夹紧状态相同（都为夹紧或都为松开），则不进行姿态闭环控制
+        pid_out_p_ = 0.0f;  // 如果姿态闭环控制未开启，则PID输出为0
+        pid_out_y_ = 0.0f;
+        pid_yaw_->Reset();  // 重置偏航角PID控制器
+        pid_pitch_->Reset();  // 重置俯仰角PID控制器
+        return;
+    }
+    IMU_POSE aixs_err;
+    // 如果前侧夹紧为true，根据前文逻辑此时后侧一定为false，则使用前侧IMU数据进行姿态闭环控制
+    if(front_handle_->tarTightFlag_ == true) front_imu_handler_->get_aixs_err(&aixs_err, printFlag);
+    // 如果后侧夹紧为true，根据前文逻辑此时前侧一定为false，则使用后侧IMU数据进行姿态闭环控制
+    else back_imu_handler_->get_aixs_err(&aixs_err, printFlag);
+
+    pid_out_p_ = pid_pitch_->Tick(aixs_err.pitch, printFlag);
+    pid_out_y_ = pid_yaw_->Tick(aixs_err.yaw, printFlag);
+
+    // * 最后判断全局硬性使能标志位
+    if(use_imu_pitch == false) pid_out_p_ = 0.0f;  // 如果不使用IMU俯仰角控制，则PID输出为0
+    if(use_imu_yaw == false) pid_out_y_ = 0.0f;  // 如果不使用IMU偏航角控制，则PID输出为0
+    return;
+}

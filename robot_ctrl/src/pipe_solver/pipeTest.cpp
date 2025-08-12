@@ -17,6 +17,7 @@ int main(int argc, char **argv)
     std::cout<<"debug 1"<< std::endl;
     controller.set_start_(0.0f, 0.0f, nullptr); // 设置起始位置
     controller.auto_in_pipe_(200.0f, 0.0f, nullptr, 0.02f, true); // 自动进入管道
+    controller.auto_in_pipe_(230.0f, 0.0f, nullptr, 0.02f, true); // 自动进入管道
 
     return 0; 
 }

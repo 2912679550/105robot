@@ -12,52 +12,8 @@ enum ROBOT_STATE{
     NORMAL_HAND_CTRL,   // 正常手操遥控
     STEP_MOTION,        // 步进运动状态
     SCAN_MOTION,        // 扫查运动状态
-    AUTO_IN_PIPE,       // 自动进弯
-    AUTO_OUT_PIPE,      // 自动出弯
-    POSE_CLOSED_LOOP,
-};
-
-class MAIN_ROBOT
-{
-public:
-    MAIN_ROBOT(ros::NodeHandle* nh_ = nullptr);
-    ~MAIN_ROBOT();
-    
-
-    // * 内置控制器
-    SINGLE_SIDE_CTRL* front_side_;
-    SINGLE_SIDE_CTRL* back_side_;
-    PUSH_CTRL* push_ctrl_;
-    PipeController* pipe_controller_ = nullptr; // 管道控制器
-
-    float robot_axis_odom_ = 0.0f;  // 机器人轴向里程计数据
-    float robot_cir_odom_ = 0.0f;   // 机器人周向里程计数据
-
-    // 当步进运动或扫查运动的标志位使能后，主控制状态机将自动调用motion_range中存储的信息
-    // 步进运动只调用second
-    // 扫查运动调用first和second
-    std::pair<Eigen::Vector2f, Eigen::Vector2f> motion_range;   // 用于在轴向与周向步进或扫查时，存储机器人的运动范围信息
-    void set_motion_range(float _step_axis, float _step_cir);   // 设置步进或扫查运动的范围
-
-    void robot_ctrl(bool printFlag = false);
-    // 用于在外部通过键盘按键直接调用cmd_callback并进行人为回调处理
-    void cmd_hand_maked(TCP_ROBOT_CMD_TYPE* msg);
-
-    
-private:
-    ros::NodeHandle* nh_;
-    ros::Publisher tcp_pub_;
-    ros::Subscriber tcp_sub_;
-    
-    bool front_odom_en_ = false;  // 前侧里程计使能
-    bool back_odom_en_ = false;   // 后侧里程计使能
-    bool step_moiton_en_ = false; // 步进运动使能
-    bool scan_motion_en_ = false; // 扫查运动使能
-    bool scan_positive_en_ = true; // 扫查正向使能
-    
-    void odom_handler(bool printFlag = false); // 里程计处理函数
-    void motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg);
-    void pubCmd();
+    IN_PIPE,       // 自动进弯
+    OUT_PIPE,      // 自动出弯
 };
 
 class POSE_CLOSED_LOOP{
@@ -67,19 +23,78 @@ public:
                     SINGLE_SIDE_CTRL* back_handle ,  ros::NodeHandle* nh = nullptr);
     ~POSE_CLOSED_LOOP();
 
-    
+    // * 存储PID输出
+    float pid_out_p_ = 0.0f; // 俯仰角PID输出
+    float pid_out_y_ = 0.0f; // 偏航角PID
 
+    /**
+     * @brief 开启机器人姿态闭环控制，并在内部存储前后IMU的姿态数据
+     * 
+     */
+    void turn_on_close_loop_(); 
+    /**
+     * @brief 关闭机器人姿态闭环控制
+     * 
+     */
+    void turn_off_close_loop_(); 
+    /**
+     * @brief 执行姿态闭环PID计算，并将结果存储在pid_out_p_和pid_out_y_中
+     * 
+     * @param printFlag 是否打印调试信息
+     */
+    void close_loop_pid_(bool printFlag = false); 
 private:
     ros::NodeHandle* nh_;
     SINGLE_SIDE_CTRL* front_handle_;
     SINGLE_SIDE_CTRL* back_handle_;
-
     // IMU数据处理类
     IMU_HANDLER* front_imu_handler_;
     IMU_HANDLER* back_imu_handler_;
-
     Pid* pid_pitch_;  // 俯仰角PID控制器
     Pid* pid_yaw_;    // 偏航角PID控制器
-    
 
+    bool enable_close_loop_ = false; // 是否开启姿态闭环
 };
+
+class MAIN_ROBOT
+{
+public:
+    MAIN_ROBOT(ros::NodeHandle* nh_ = nullptr);
+    ~MAIN_ROBOT();
+    // * 内置控制器
+    SINGLE_SIDE_CTRL* front_side_;
+    SINGLE_SIDE_CTRL* back_side_;
+    PUSH_CTRL* push_ctrl_;
+    PipeController* pipe_controller_ = nullptr; // 管道控制器
+    POSE_CLOSED_LOOP* pose_closed_ctrl_ = nullptr; // 姿态闭环控制器
+
+    float robot_axis_odom_ = 0.0f;  // 机器人轴向里程计数据
+    float robot_cir_odom_ = 0.0f;   // 机器人周向里程计数据
+
+    ROBOT_STATE robot_state_ = NORMAL_HAND_CTRL; // 机器人当前的工作状态
+    ROBOT_STATE pre_robot_state_ = NORMAL_HAND_CTRL; // 机器人上一次的工作状态
+
+    void set_motion_range(float _step_axis, float _step_cir);   // 设置步进或扫查运动的范围
+    void robot_ctrl(bool printFlag = false);
+    // 用于在外部通过键盘按键直接调用cmd_callback并进行人为回调处理
+    void cmd_hand_maked(TCP_ROBOT_CMD_TYPE* msg);
+private:
+    ros::NodeHandle* nh_;
+    ros::Publisher tcp_pub_;
+    ros::Subscriber tcp_sub_;
+    
+    // 当步进运动或扫查运动的标志位使能后，主控制状态机将自动调用motion_range中存储的信息
+    // 步进运动只调用second
+    // 扫查运动调用first和second
+    std::pair<Eigen::Vector2f, Eigen::Vector2f> motion_range;   // 用于在轴向与周向步进或扫查时，存储机器人的运动范围信息
+    
+    bool front_odom_en_ = false;  // 前侧里程计使能
+    bool back_odom_en_ = false;   // 后侧里程计使能
+    bool step_moiton_en_ = false; // 步进运动使能
+    bool scan_motion_en_ = false; // 扫查运动使能
+    bool scan_positive_en_ = true; // 扫查正向使能
+    void odom_handler(bool printFlag = false); // 里程计处理函数
+    void motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg);
+    void pubCmd();
+};
+

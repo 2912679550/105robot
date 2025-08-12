@@ -31,8 +31,6 @@ typedef enum    // 与底层32对应，舵轮当前的工作状态
     RESET_OVER  // 4 完成复位
 } steerState;
 
-static float TIGHT_LENGTH_LIMIT[2] = {47.0f , 58.0f};  // 夹紧长度范围
-
 class MICRO_ODOM{
 public:
     MICRO_ODOM(float* coeff = nullptr);  // 构造函数，coeff用于设置里程计系数
@@ -50,9 +48,7 @@ public:
 private:
     Eigen::Vector2f pre_position_[3];         // 存储接收到的上一次三个轮子的定位数据
     Eigen::Vector2f cur_position_[3];         // 存储接收到的当前三个轮子的定位数据
-
     bool startOdom = false;  // 是否开始里程计数据处理
-
     bool resetFlag = true;  // 复位标志位，true表示需要复位里程计数据
 };
 
@@ -66,9 +62,6 @@ public:
     STM_ROBOT_VAL_TYPE val_data_;
     ROBOT_STM_CMD_TYPE cmd_data_;
     // 功能类
-    IMU_HANDLER* imu_handler_;  // IMU数据处理类
-    Pid* pid_pitch_;          // PID控制器，用于单边夹持时俯仰角控制
-    Pid* pid_yaw_;            // PID控制器，用于偏航角控制
     MICRO_ODOM* odom_handler_;  // 里程计处理类，用于处理轴向和周向的里程计数据
     MYTIMER* tight_timer_;  // 定时器处理类，用于定时发布控制指令
 
@@ -83,29 +76,15 @@ public:
     void set_tight(float length);   // 用于直接配置期望压缩弹簧的长度
     void set_angle(float angle);
     void set_dia(float dia);  // 设置舵轮的直径
-    void set_steer(steerState stateIn , float v_aix = 0.0f , float v_cir = 0.0f);
-
-    void create_imu(std::string imu_topic , int imu_id);
-    void fix_quat();
-    void release_quat();  // 释放IMU的四元数，恢复到正常状态
-
-    // ! 0731 test
-    bool enable_bending_pipe = false;
-    // ! 0731 end
+    void set_steer(steerState stateIn , float v_aix = 0.0f , float v_cir = 0.0f , float pid_out_p = 0.0f , float pid_out_y = 0.0f);
 private:
     ros::NodeHandle *nh_;
     ros::Publisher cmd_pub_;
     ros::Subscriber val_sub_;
-    ros::Subscriber imu_sub_;
-
     bool singleSideFixed = false;
-
-
-    int imu_id_;  // IMU的ID，用于区分前侧和后侧IMU
     steerState steer_state_ = steerState::STOP;  // 当前舵轮的工作状态
     float tar_v_aix_ = 0.0f;  // 目标轴向速度
     float tar_v_cir_ = 0.0f;  // 目标周向速度
-
     void val_callback(const STM_ROBOT_VAL_CPTR &msg);
 };
 
