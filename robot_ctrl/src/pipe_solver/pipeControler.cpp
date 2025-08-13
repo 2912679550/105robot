@@ -46,7 +46,7 @@ bool PipeController::auto_in_pipe_(float odom_aix , float odom_cir , tf::Quatern
     float theta_deg = dis_aix / (pipe_R_ + pipe_r_) * 180.0 / PI; // 计算当前的theta角度
 
     SolverState result_state =  solver_->solve(theta_deg , target_v,
-                                    &push_length_, 
+                                    &push_length_,  
                                     main_wheel_speed_, 
                                     assist_wheel_speed_, 
                                     printFlag); // 调用求解器进行求解
@@ -59,6 +59,8 @@ bool PipeController::auto_in_pipe_(float odom_aix , float odom_cir , tf::Quatern
         assist_wheel_speed_[1] = 0.0f; // 辅助
         return false;
     }else{
+        if (result_state == SolverState::solveEnd) solve_end_ = true;
+        else solve_end_ = false; // 设置求解结束状态
         return true;
     }
 }
@@ -101,6 +103,8 @@ bool PipeController::auto_out_pipe_(float odom_aix , float odom_cir , tf::Quater
         main_wheel_speed_[1] = -main_wheel_speed_[1]; // 主动轮周向速度
         assist_wheel_speed_[0] = -assist_wheel_speed_[0]; // 辅助轮
         assist_wheel_speed_[1] = -assist_wheel_speed_[1]; // 辅助轮周向速度
+        if (result_state == SolverState::solveEnd) solve_end_ = true;
+        else solve_end_ = false; // 设置求解结束状态
         return true;
     }
 }

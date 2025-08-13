@@ -34,15 +34,17 @@ void MICRO_ODOM::reset(){
     resetFlag = true;
 }
 
-void MICRO_ODOM::set_cur_val(float axis, float cir){
-    odom_axis = axis;  // 设置当前轴向里程计值
-    odom_cir = cir;    // 设置当前周向里程计值
+void MICRO_ODOM::set_cur_val(float* axis, float* cir){
+    memcpy(odom_axis, axis, 3 * sizeof(float));  // 复制轴向里程计数据
+    memcpy(odom_cir, cir, 3 * sizeof(float));    // 复制周向里程计数据
 }
 
 void MICRO_ODOM::update(STM_ROBOT_VAL_TYPE *val_data, bool printFlag ){
     if(resetFlag == true){
-        odom_axis = 0.0f;  // 重置轴向里程计
-        odom_cir = 0.0f;   // 重置周向里程计
+        memset(odom_axis, 0, sizeof(odom_axis));
+        memset(odom_cir, 0, sizeof(odom_cir));
+        odom_axis_avg = 0.0f;  // 重置平均轴向里程计
+        odom_cir_avg = 0.0f;   // 重置平均周向里程计
         resetFlag = false;  // 重置标志位
         for (int i = 0; i < 3; i++){
             pre_position_[i].setZero();  // 清零上一次的位置
@@ -57,15 +59,14 @@ void MICRO_ODOM::update(STM_ROBOT_VAL_TYPE *val_data, bool printFlag ){
             cur_position_[i] = Eigen::Vector2f(val_data->odom_axis[i], val_data->odom_cir[i]);  // 更新当前的位置
             delta[i] = cur_position_[i] - pre_position_[i];  // 计算位置增量
             delta[i] *= coeff[i];  // 应用系数调整增量
+            if(startOdom == true){
+                // 如果开启了里程计，则进行累计更新
+                odom_axis[i] += delta[i].x();  // 更新轴向里程计
+                odom_cir[i] += delta[i].y();    // 更新周向里程计
+            }
         }
-        // // 求出到三个增量delta之间总距离最小的二维向量
-        // Eigen::Vector2f total_delta = Eigen::Vector2f(0.0f, 0.0f);
-        // 使用平均距离作为单边运动的增量距离
-        Eigen::Vector2f meanDelta = (delta[0] + delta[1] + delta[2]) / 3.0f;  // 计算平均增量
-        if(startOdom == true){
-            odom_axis += meanDelta.x();  // 更新轴向里程计
-            odom_cir += meanDelta.y();    // 更新周向里程计
-        }
+        odom_axis_avg = (odom_axis[0] + odom_axis[1] + odom_axis[2]) / 3.0f;  // 计算平均轴向里程计
+        odom_cir_avg = (odom_cir[0] + odom_cir[1] + odom_cir[2]) / 3.0f;  // 计算平均周向里程计
     }
 }
 
@@ -110,31 +111,31 @@ SINGLE_SIDE_CTRL::~SINGLE_SIDE_CTRL(){
 
 void SINGLE_SIDE_CTRL::single_side_ctrl(){
     // 单侧控制逻辑
-    pre_tightFlag_ = cur_tightFlag_;  // 保存上一次的夹紧状态
-    if(tarTightFlag_ == true){
-        // 如果当前目标状态为夹紧，则开始判断是否到达夹紧阈值
-        if(cmd_data_.dir_spring_length -  val_data_.cur_spring_length[0] > -0.5f
-            && cmd_data_.dir_spring_length -  val_data_.cur_spring_length[1] > -0.5f){
-            // 如果夹紧差长度小于0.5f，则认为已经夹紧
-            cur_tightFlag_ = true;  // 更新当前夹紧状态
-            // 如果上一次夹紧状态为未夹紧，则重置定时器
-            if(pre_tightFlag_ == false) tight_timer_->reset();
-        }else{
-            cur_tightFlag_ = false;  // 否则认为未夹紧
-            tight_timer_->reset();  // 重置定时器
-        }
-    }else{
-        // 如果当前目标状态为松开，则认为未夹紧
-        cur_tightFlag_ = false;
-        tight_timer_->reset();  // 重置定时器
-    }
+    // pre_tightFlag_ = cur_tightFlag_;  // 保存上一次的夹紧状态
+    // if(tarTightFlag_ == true){
+    //     // 如果当前目标状态为夹紧，则开始判断是否到达夹紧阈值
+    //     if(cmd_data_.dir_spring_length -  val_data_.cur_spring_length[0] > -0.5f
+    //         && cmd_data_.dir_spring_length -  val_data_.cur_spring_length[1] > -0.5f){
+    //         // 如果夹紧差长度小于0.5f，则认为已经夹紧
+    //         cur_tightFlag_ = true;  // 更新当前夹紧状态
+    //         // 如果上一次夹紧状态为未夹紧，则重置定时器
+    //         if(pre_tightFlag_ == false) tight_timer_->reset();
+    //     }else{
+    //         cur_tightFlag_ = false;  // 否则认为未夹紧
+    //         tight_timer_->reset();  // 重置定时器
+    //     }
+    // }else{
+    //     // 如果当前目标状态为松开，则认为未夹紧
+    //     cur_tightFlag_ = false;
+    //     tight_timer_->reset();  // 重置定时器
+    // }
 }
 
 void SINGLE_SIDE_CTRL::pub_cmd(){
-    if(steer_state_ == steerState::NORMAL) {
-        // 如果当前是正常状态，迭代计算舵轮状态，可能需要姿态矫正的参与
-        set_steer(steerState::NORMAL , tar_v_aix_ , tar_v_cir_);  
-    }
+    // if(steer_state_ == steerState::NORMAL) {
+    //     // 如果当前是正常状态，迭代计算舵轮状态，可能需要姿态矫正的参与
+    //     set_steer(steerState::NORMAL , tar_v_aix_ , tar_v_cir_);  
+    // }
     cmd_pub_.publish(cmd_data_);
 }
 
@@ -187,6 +188,15 @@ void SINGLE_SIDE_CTRL::set_dia(float dia){
     set_angle(target_angle);
 }
 
+/**
+ * @brief 用于配置单边共计三个舵轮的工作状态与指令
+ * 
+ * @param stateIn   期望舵轮工作状态 ，与底层32对应
+ * @param v_aix     理论期望轴向速度
+ * @param v_cir     理论期望周向速度
+ * @param pid_out_p     来自外部在pitch方向的矫正
+ * @param pid_out_y     来自外部在yaw方向的矫正
+ */
 void SINGLE_SIDE_CTRL::set_steer(steerState stateIn , float v_aix , float v_cir , float pid_out_p , float pid_out_y){
     steer_state_ = stateIn;  // 更新当前舵轮的工作状态
     tar_v_aix_ = v_aix;  // 更新目标轴向速度
@@ -222,22 +232,47 @@ void SINGLE_SIDE_CTRL::set_steer(steerState stateIn , float v_aix , float v_cir 
                 vel_dir += 1.0f * PI;
                 vel_total = -vel_total;
             }
+
+            if(i < 2 && pipdiffFlag_ == true){
+                // 开启了弯道差速
+                vel_total = vel_total * (300.0 - 0.5 * pipe_r_) / (300.0 + pipe_r_); // 辅助轮的速度需要根据管道半径进行调整
+            }
+
             cmd_data_.dir_steer_dir[i] = vel_dir;   // 舵轮舵向的角度
             cmd_data_.dir_steer_vel[i] = vel_total; // 舵轮舵向的速度
         }
     }
 }
+/**
+ * @brief 拆分开独立控制主轮与辅助轮的速度接口，主要用于自动进弯时的速度配置
+ * 
+ * @param main_speed    主动轮的速度数组指针，接收一个float[2]的数组，分别对应轴向与周向速度
+ * @param assist_speed  辅助轮的速度数组指针，接收一个float[2]的数组，分别对应轴向与周向速度
+ */
+void SINGLE_SIDE_CTRL::set_main_assist_speed_(float* main_speed , float* assist_speed){
+    if(main_speed != nullptr && assist_speed != nullptr){
+        for (int i = 0; i < 3; i++)
+        {
+            cmd_data_.dir_steer_state[i] = steerState::NORMAL;  // 设置舵轮工作状态为正常
+            float vel_total = 0.0; // 速度的数值大小
+            float vel_dir = 0.0;                   // 速度的方向 , 这里的角度范围为[-PI , PI]
+            if( i ==2){
+                vel_total = sqrt(main_speed[0] * main_speed[0] + main_speed[1] * main_speed[1]); // 主动轮的速度
+                vel_dir = atan2(main_speed[0], main_speed[1]); // 主动轮的速度方向
+            }else{
+                vel_total = sqrt(assist_speed[0] * assist_speed[0] + assist_speed[1] * assist_speed[1]); // 辅助轮的速度
+                vel_dir = atan2(assist_speed[0], assist_speed[1]); // 辅助轮的速度方向
+            }
+            cmd_data_.dir_steer_dir[i] = vel_dir;   // 舵轮舵向的角度
+            cmd_data_.dir_steer_vel[i] = vel_total; // 舵轮
+        }
+    }
+}
 
-// void SINGLE_SIDE_CTRL::fix_quat(){
-//     if(imu_handler_ != nullptr){
-//         imu_handler_->fix_quat();
-//         singleSideFixed = true;  // 设置单侧固定状态为true
-//     }
-// }
-
-// void SINGLE_SIDE_CTRL::release_quat(){
-//     singleSideFixed = false;  // 释放IMU的四元数，恢复到正常状态
-// }
+void SINGLE_SIDE_CTRL::pipe_sped_diff(bool pipdiffFlag , float pipe_r){
+    pipdiffFlag_ = pipdiffFlag;
+    pipe_r_ = pipe_r;
+}
 
 
 // ! ========================== push ctrl ===========================

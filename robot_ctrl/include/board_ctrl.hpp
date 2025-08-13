@@ -36,15 +36,19 @@ public:
     MICRO_ODOM(float* coeff = nullptr);  // 构造函数，coeff用于设置里程计系数
     ~MICRO_ODOM();
     // 轴向和周向的里程计数据
-    float odom_axis = 0.0f;  // 轴向里程计
-    float odom_cir = 0.0f;   // 周向里程计
+    float odom_axis[3] = {0.0f , 0.0f , 0.0f};  // 轴向里程计
+    float odom_cir[3] =  {0.0f , 0.0f , 0.0f};   // 周向里程计
+    // 平均里程计
+    float odom_axis_avg = 0.0f;  // 平均轴向里程计
+    float odom_cir_avg = 0.0f;   // 平均周向里程计
+    // 里程计系数
     float coeff[3];
     // 更新里程计数据
     void update(STM_ROBOT_VAL_TYPE* val_data, bool printFlag = false);
     void reset();  // 重置里程计数据
     void start_odom(){startOdom = true;}    // 开始里程计数据处理
     void pause_odom(){startOdom = false;}   // 暂停里程计数据处理
-    void set_cur_val(float axis, float cir);  // 设置当前里程计数据(里程计采用增量式，可以在这里直接修改累加的基础值)
+    void set_cur_val(float* axis, float* cir);  // 设置当前里程计数据(里程计采用增量式，可以在这里直接修改累加的基础值)
 private:
     Eigen::Vector2f pre_position_[3];         // 存储接收到的上一次三个轮子的定位数据
     Eigen::Vector2f cur_position_[3];         // 存储接收到的当前三个轮子的定位数据
@@ -65,10 +69,7 @@ public:
     MICRO_ODOM* odom_handler_;  // 里程计处理类，用于处理轴向和周向的里程计数据
     MYTIMER* tight_timer_;  // 定时器处理类，用于定时发布控制指令
 
-    bool tarTightFlag_ = false;  // 目标夹紧状态
-    bool pre_tightFlag_ = false;  // 上一次夹紧状态
-    bool cur_tightFlag_ = false;  // 当前夹紧状态
-    
+    bool tarTightFlag_ = false;  // 目标夹紧状态       
     void single_side_ctrl();  // 单侧控制逻辑
     // 外部接口，用于向32发布控制指令
     void pub_cmd();
@@ -77,6 +78,8 @@ public:
     void set_angle(float angle);
     void set_dia(float dia);  // 设置舵轮的直径
     void set_steer(steerState stateIn , float v_aix = 0.0f , float v_cir = 0.0f , float pid_out_p = 0.0f , float pid_out_y = 0.0f);
+    void set_main_assist_speed_(float* main_speed , float* assist_speed); 
+    void pipe_sped_diff(bool pipdiffFlag , float pipe_r = 180.0f); // 管道差速控制开启标记
 private:
     ros::NodeHandle *nh_;
     ros::Publisher cmd_pub_;
@@ -86,11 +89,13 @@ private:
     float tar_v_aix_ = 0.0f;  // 目标轴向速度
     float tar_v_cir_ = 0.0f;  // 目标周向速度
     void val_callback(const STM_ROBOT_VAL_CPTR &msg);
+    bool pipdiffFlag_ = false;  // 管道差速标志
+    float pipe_r_ = 180.0f;  // 管道半径，单位为mm
 };
 
 class PUSH_CTRL
 {
-public:
+    public:
     PUSH_CTRL(std::string cmd_topic , std::string val_topic , ros::NodeHandle* nh = nullptr);
     ~PUSH_CTRL();
     // 存储数据

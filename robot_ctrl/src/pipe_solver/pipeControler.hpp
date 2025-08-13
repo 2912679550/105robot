@@ -15,6 +15,7 @@ public:
     float start_odom_aix_ = 0.0f; // 起始位置轴向里程计坐标
     float start_odom_cir_ = 0.0f; // 起始位置周向里程计坐标
     tf::Quaternion start_imu_quat_; // 起始位置IMU四元数
+    bool solve_end_ = false; // 是否已经完成进弯求解
 
     
     // * 求解器输入变量

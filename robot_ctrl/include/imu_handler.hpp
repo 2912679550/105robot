@@ -34,13 +34,13 @@ public:
     ~IMU_HANDLER();
     // R_b_i  表示 IMU体坐标系到机器人坐标系的旋转矩阵
     tf::Matrix3x3* imu_robot_matrix = nullptr;  // IMU数据转换矩阵，指向对应的旋转矩阵
+    tf::Quaternion quat_cur;  // 当前IMU数据的四元数
     bool imu_reset_flag = true;  // IMU复位标志位，true表示需要复位IMU数据
     void fix_quat();
     void get_aixs_err(IMU_POSE *result, bool printFlag = false);
 private:
     // *  不同形式的IMU数据
     // 以下为四元数形式的表述
-    tf::Quaternion quat_cur;  // 当前IMU数据的四元数
     tf::Quaternion quat_pre;  // 上一帧的IMU数据的四元数
     tf::Quaternion quat_fixed;  // 目标的四元数，用于在单侧夹紧后存储起来，并于后续的四元数对比，从而执行姿态PID控制
     ros::NodeHandle *nh_;

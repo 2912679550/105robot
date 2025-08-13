@@ -102,17 +102,17 @@ int main(int argc , char **argv){
             robot.cmd_hand_maked(&cmd_msg);
             control = '0'; // 重置控制字符
             break;
-        // * 夹紧控制
-        case 't':
-            cmd_msg.cmdType = ROBOT_TIGHT_EN; // 启用夹紧
-            robot.cmd_hand_maked(&cmd_msg);
-            control = '0'; // 重置控制字符
-            break;
-        case 'l':
-            cmd_msg.cmdType = ROBOT_TIGHT_DIS; // 松开夹紧
-            robot.cmd_hand_maked(&cmd_msg);
-            control = '0'; // 重置控制字符
-            break;
+        // // * 夹紧控制
+        // case 't':
+        //     cmd_msg.cmdType = ROBOT_TIGHT_EN; // 启用夹紧
+        //     robot.cmd_hand_maked(&cmd_msg);
+        //     control = '0'; // 重置控制字符
+        //     break;
+        // case 'l':
+        //     cmd_msg.cmdType = ROBOT_TIGHT_DIS; // 松开夹紧
+        //     robot.cmd_hand_maked(&cmd_msg);
+        //     control = '0'; // 重置控制字符
+        //     break;
         case 'r':
             cmd_msg.cmdType = ROBOT_STOP; // 停止运动
             robot.cmd_hand_maked(&cmd_msg);
