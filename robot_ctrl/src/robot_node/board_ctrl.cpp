@@ -331,6 +331,13 @@ void PUSH_CTRL::set_body_length(float targetLength, bool isFront){
     else cmd_data_.tar_length_b = push_length;
 }
 
+void PUSH_CTRL::set_body_length(float length_f, float length_b){
+    length_f = set_range<float>(length_f, (float*)push_out_length); // 限制前推杆伸出长度在合理范围内
+    length_b = set_range<float>(length_b, (float*)push_out_length); // 限制后推杆伸出长度在合理范围内
+    cmd_data_.tar_length_f = length_f;
+    cmd_data_.tar_length_b = length_b;
+}
+
 void PUSH_CTRL::set_body_angle(float angle){
     angle = angle > body_angle_range[1] ? body_angle_range[1] : angle;  // 限制角度不超过基准值
     angle = angle < body_angle_range[0] ? body_angle_range[0] : angle;  // 限制角度不低于基准值

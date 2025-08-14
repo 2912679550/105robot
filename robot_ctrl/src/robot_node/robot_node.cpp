@@ -131,9 +131,7 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
             front_side_->set_dia(msg->dia_front); back_side_->set_dia(msg->dia_back); 
             saved_pipe_r_[0] = msg->dia_front / 2.0f;  saved_pipe_r_[1] = msg->dia_back / 2.0f;
         }
-        else if(mode == ROBOT_BOTH_LENGTH){ push_ctrl_->set_body_length(msg->push_length_f, true); push_ctrl_->set_body_length(msg->push_length_b, false); }
-        else if(mode == ROBOT_F_LENGTH) push_ctrl_->set_body_length(msg->push_length_f, true);
-        else if(mode == ROBOT_B_LENGTH) push_ctrl_->set_body_length(msg->push_length_b, false);
+        else if(mode == ROBOT_BOTH_LENGTH){ push_ctrl_->set_body_length(msg->push_length_f, msg->push_length_b); }
         // todo 自动进弯
         else if(mode == AUTO_PIPE_CALI){
             if(pipe_cali_flag_ == false){
@@ -151,7 +149,7 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
                 return;
             }
             // 自动进弯
-            if(pre_robot_state_ != ROBOT_STATE::MOTION_STOP){
+            if(robot_state_!= ROBOT_STATE::MOTION_STOP){
                 std::cout<< YELLOW_STRING << BLOD_STRING 
                     << "Cannot enter auto in pipe , please stop first"
                     << RESET_STRING << std::endl;
@@ -170,7 +168,7 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
                 return;
             }
             // 自动出弯
-            if(pre_robot_state_ != ROBOT_STATE::MOTION_STOP){
+            if(robot_state_ != ROBOT_STATE::MOTION_STOP){
                 std::cout<< YELLOW_STRING << BLOD_STRING 
                     << "Cannot enter auto out pipe , please stop first"
                     << RESET_STRING << std::endl;
@@ -209,11 +207,9 @@ void MAIN_ROBOT::robot_ctrl(bool printFlag){
     switch(robot_state_){
         case ROBOT_STATE::MOTION_STOP:
             // * 停止状态
-            front_side_->set_steer(steerState::STOP);
-            back_side_->set_steer(steerState::STOP);
             motion_planner_->reset_motion();
-            // tar_v_aix_ = 0.0f;
-            // tar_v_cir_ = 0.0f;
+            tar_v_aix_ = 0.0f;
+            tar_v_cir_ = 0.0f;
             break;
         case ROBOT_STATE::NORMAL_HAND_CTRL:
             // * 正常运动模式
@@ -237,7 +233,7 @@ void MAIN_ROBOT::robot_ctrl(bool printFlag){
         case ROBOT_STATE::IN_PIPE:
             if (
                 pipe_controller_->auto_in_pipe_(robot_axis_odom_, robot_cir_odom_,
-                        &(pose_closed_ctrl_->front_imu_handler_->quat_cur), 0.05, printFlag)
+                        &(pose_closed_ctrl_->front_imu_handler_->quat_cur), 0.02, printFlag)
             ){
                 front_side_->set_main_assist_speed_(pipe_controller_->main_wheel_speed_, pipe_controller_->assist_wheel_speed_);
                 if(pipe_controller_->solve_end_ == true){
@@ -253,7 +249,7 @@ void MAIN_ROBOT::robot_ctrl(bool printFlag){
         case ROBOT_STATE::OUT_PIPE:
             if (
                 pipe_controller_->auto_out_pipe_(robot_axis_odom_, robot_cir_odom_,
-                        &(pose_closed_ctrl_->back_imu_handler_->quat_cur), 0.05, printFlag)
+                        &(pose_closed_ctrl_->back_imu_handler_->quat_cur), 0.02, printFlag)
             ){
                 back_side_->set_main_assist_speed_(pipe_controller_->main_wheel_speed_, pipe_controller_->assist_wheel_speed_);
                 if(pipe_controller_->solve_end_ == true){
@@ -271,8 +267,14 @@ void MAIN_ROBOT::robot_ctrl(bool printFlag){
     }
     pubCmd();
     // 发布手柄回传数据
-    // ROBOT_TCP_VAL_TYPE tcp_val;
-    // tcp_pub_.publish(tcp_val);
+    ROBOT_TCP_VAL_TYPE tcp_val;
+    tcp_val.push_length[0] = push_ctrl_->cmd_data_.tar_length_f;  // 前侧推杆长度
+    tcp_val.push_length[1] = push_ctrl_->cmd_data_.tar_length_b;  // 后侧推杆长度
+    tcp_val.front_odom[0] = front_side_->odom_handler_->odom_axis[2];
+    tcp_val.front_odom[1] = front_side_->odom_handler_->odom_cir[2];
+    tcp_val.back_odom[0] = back_side_->odom_handler_->odom_axis[2];
+    tcp_val.back_odom[1] = back_side_->odom_handler_->odom_cir[2];
+    tcp_pub_.publish(tcp_val);
 }
 
 void MAIN_ROBOT::odom_handler(bool printFlag){

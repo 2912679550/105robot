@@ -42,7 +42,7 @@ bool PipeController::auto_in_pipe_(float odom_aix , float odom_cir , tf::Quatern
         return false; // 如果未设置起始位置，则返回false
     }
 
-    float dis_aix = odom_aix - start_odom_aix_; // 计算轴向位移
+    float dis_aix = (odom_aix - start_odom_aix_) * 1000.0; // 计算轴向位移(换算为mm)
     float theta_deg = dis_aix / (pipe_R_ + pipe_r_) * 180.0 / PI; // 计算当前的theta角度
 
     SolverState result_state =  solver_->solve(theta_deg , target_v,
@@ -80,7 +80,7 @@ bool PipeController::auto_out_pipe_(float odom_aix , float odom_cir , tf::Quater
         return false; // 如果未设置起始位置，则返回false
     }
 
-    float dis_aix = odom_aix - start_odom_aix_; // 计算轴向位移
+    float dis_aix = (odom_aix - start_odom_aix_) * 1000.0; // 计算轴向位移
     float theta_deg = dis_aix / (pipe_R_ + pipe_r_) * 180.0 / PI; // 计算当前的theta角度
     float mirror_theta_deg = solver_->max_theta_deg_ - theta_deg; // 计算镜像角度
     // * 注意这里由于是出弯， 所以需要将期望速度先取反，使用镜像角度，最后使用时再将输出的速度取反

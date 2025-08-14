@@ -269,18 +269,19 @@ void* InstructionPubCallback(void* arg)
             motion_msg.cmdType = mode;  
             motion_msg.push_length_f = atof(motion_instruction_str[1].c_str());
             motion_msg.push_length_b = atof(motion_instruction_str[2].c_str());
-            std::cout << "both push length: " << motion_msg.push_length_f << std::endl;
+            std::cout << "push length: " << motion_msg.push_length_f << ", " << motion_msg.push_length_b
+                    << std::endl;
         }
-        else if(mode == ROBOT_F_LENGTH){
-            motion_msg.cmdType = mode;
-            motion_msg.push_length_f = atof(motion_instruction_str[1].c_str());
-            std::cout << "front side push length: " << motion_msg.push_length_f << std::endl;
-        }
-        else if(mode == ROBOT_B_LENGTH){
-            motion_msg.cmdType = mode;
-            motion_msg.push_length_b = atof(motion_instruction_str[1].c_str());
-            std::cout << "back side push length: " << motion_msg.push_length_b << std::endl;
-        }
+        // else if(mode == ROBOT_F_LENGTH){
+        //     motion_msg.cmdType = mode;
+        //     motion_msg.push_length_f = atof(motion_instruction_str[1].c_str());
+        //     std::cout << "front side push length: " << motion_msg.push_length_f << std::endl;
+        // }
+        // else if(mode == ROBOT_B_LENGTH){
+        //     motion_msg.cmdType = mode;
+        //     motion_msg.push_length_b = atof(motion_instruction_str[1].c_str());
+        //     std::cout << "back side push length: " << motion_msg.push_length_b << std::endl;
+        // }
         else if(mode == ROBOT_T_L_F){
             motion_msg.cmdType = mode;
             motion_msg.dir_tight_front = atof(motion_instruction_str[1].c_str());

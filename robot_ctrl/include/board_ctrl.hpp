@@ -106,6 +106,7 @@ class PUSH_CTRL
     void set_cmd(float tar_length_f , float tar_length_b , float tar_length_m);
     void set_body_angle(float angle);
     void set_body_length(float targetLength, bool isFront = true);
+    void set_body_length(float length_f, float length_b);
 
 private:
     ros::NodeHandle *nh_;

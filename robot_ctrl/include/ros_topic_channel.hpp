@@ -56,21 +56,22 @@ typedef sensor_msgs::ImuConstPtr IMU_CPTR;  // IMU数据指针类型
 #define ROBOT_MOTION    "conmove"               // 正常运动
 #define ROBOT_STEP      "stepmove"              // 步进运动
 #define ROBOT_SCAN      "stepscan"              // 扫描运动
-#define ROBOT_ON_POSE   "onpose"                // 开启姿态闭环
-#define ROBOT_OFF_POSE  "offpose"               // 关闭姿态闭环
+#define ROBOT_PIPE_SCAN "ElbowScan"             // 管段扫查
+#define ROBOT_ON_POSE   "poselock"                // 开启姿态闭环
+#define ROBOT_OFF_POSE  "poseunlock"               // 关闭姿态闭环
 // 夹紧
 #define ROBOT_T_L_F "Front"                     // 前侧夹紧,包含长度控制
 #define ROBOT_T_L_B "Back"                      // 后侧夹紧,包含长度控制
 // 变形
 #define ROBOT_BOTH_LENGTH "set_angle"           // 同时设置机器人两侧推杆长度
-#define ROBOT_F_LENGTH    "set_length_f"        // 设置机器人前侧推杆长度
-#define ROBOT_B_LENGTH    "set_length_b"        // 设置机器人后侧推杆长度  
+// #define ROBOT_F_LENGTH    "set_length_f"        // 设置机器人前侧推杆长度
+// #define ROBOT_B_LENGTH    "set_length_b"        // 设置机器人后侧推杆长度  
 #define ROBOT_DIA          "set_dia"               // 设置前后夹持管径     
 
 // 自动进弯控制
-#define AUTO_PIPE_CALI "auto_pipe_cali"         // 自动进弯标定
-#define AUTO_IN_PIPE "auto_in_pipe"             // 自动进弯
-#define AUTO_OUT_PIPE "auto_out_pipe"           // 自动出弯
+#define AUTO_PIPE_CALI "ElbowRecord"         // 自动进弯标定
+#define AUTO_IN_PIPE "AutoTurnIn"             // 自动进弯
+#define AUTO_OUT_PIPE "AutoTurnOut"           // 自动出弯
 
 // camera控制
 #define CAMERA_POSE "CameraPose"
