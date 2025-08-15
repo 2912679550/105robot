@@ -70,6 +70,7 @@ typedef sensor_msgs::ImuConstPtr IMU_CPTR;  // IMU数据指针类型
 
 // 自动进弯控制
 #define AUTO_PIPE_CALI "ElbowRecord"         // 自动进弯标定
+#define AUTO_PIPE_CLOSE "ElbowCancle"              // 自动进弯标记取消
 #define AUTO_IN_PIPE "AutoTurnIn"             // 自动进弯
 #define AUTO_OUT_PIPE "AutoTurnOut"           // 自动出弯
 

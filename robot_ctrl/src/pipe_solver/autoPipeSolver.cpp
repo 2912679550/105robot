@@ -71,7 +71,7 @@ SolverState AutoPipeSolver::solve(double theta_deg, double target_v,
     target_v_ = target_v; 
     
     // * 0. 新增，如果theta角度超过最大值，则直接判定机器人匀速运动
-    if(theta_deg_ > max_theta_deg_ * 0.95){
+    if(theta_deg_ > max_theta_deg_ * 0.97){
         *push_length = min_push_length_;
         main_wheel_speed[0] = target_v_;
         main_wheel_speed[1] = 0.0; // 主动轮轴向速度为0
@@ -89,7 +89,7 @@ SolverState AutoPipeSolver::solve(double theta_deg, double target_v,
         }
         return SolverState::solveEnd; // 认为求解结束
     }
-    else if(theta_deg_ < 0.0f){
+    else if(theta_deg_ < 0.0f){         // 自动出弯末期会用到
         *push_length = body_angle_push_baseline; // 如果theta小于0，则使用默认推杆长度
         main_wheel_speed[0] = target_v; // 主动轮
         main_wheel_speed[1] = 0.0; // 主动轮轴向速度为0

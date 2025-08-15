@@ -74,8 +74,8 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
         if(mode == ROBOT_STOP){
             front_side_->set_steer(steerState::STOP); back_side_->set_steer(steerState::STOP);
             motion_planner_->reset_motion();
-            front_side_->pipe_sped_diff(false);
-            back_side_->pipe_sped_diff(false);
+            // front_side_->pipe_sped_diff(false);
+            // back_side_->pipe_sped_diff(false);
             change_state(ROBOT_STATE::MOTION_STOP);
         }
         else if(mode == ROBOT_CALI){
@@ -88,7 +88,7 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
                 tar_v_aix_ = msg->v_axi;
                 tar_v_cir_ = msg->v_cir;
                 // 重置使能标志位
-                pipe_cali_flag_ = false;    // 自动进弯与出弯重置
+                // pipe_cali_flag_ = false;    // 自动进弯与出弯重置
                 motion_planner_->reset_motion();
                 change_state(ROBOT_STATE::NORMAL_HAND_CTRL);
             }else{
@@ -137,10 +137,19 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
             if(pipe_cali_flag_ == false){
                 save_odom_and_imu(); // 保存当前里程计与IMU数据
                 pipe_cali_flag_ = true; // 开启自动进弯标定使
+                pipe_controller_->solve_end_ = false; // 重置求解结束标志位
             }
             front_side_->pipe_sped_diff(true , saved_pipe_r_[0]);
             back_side_->pipe_sped_diff(true , saved_pipe_r_[1]);
         } 
+        else if(mode == AUTO_PIPE_CLOSE){
+            if(pipe_cali_flag_ == true){
+                pipe_cali_flag_ = false; // 关闭自动进弯标定使能
+                pipe_controller_->solve_end_ = false; // 重置求解结束标志位
+                front_side_->pipe_sped_diff(false);
+                back_side_->pipe_sped_diff(false);
+            }
+        }
         else if(mode == AUTO_IN_PIPE){
             if(pipe_cali_flag_ == false){
                 std::cout<< YELLOW_STRING << BLOD_STRING 
@@ -603,7 +612,7 @@ steerState MOTION_PLAN::motion_plan_(float* result_aix , float* result_cir,
             << "motion trace distance: " << trace_distance_
             << std::endl;
     }
-
+    return return_state;
 }
 
 void MOTION_PLAN::reset_motion(){
