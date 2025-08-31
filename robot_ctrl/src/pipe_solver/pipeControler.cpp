@@ -1,5 +1,6 @@
 #include "pipeControler.hpp"
 #include "ros_topic_channel.hpp"
+#include "imu_handler.hpp"
 
 PipeController::PipeController(){
     solver_ = new AutoPipeSolver(); // 初始化管道求解器
@@ -27,7 +28,9 @@ bool PipeController::set_start_(float odom_aix , float odom_cir , tf::Quaternion
     return true; // 返回true表示设置成功
 }
 
-bool PipeController::auto_in_pipe_(float odom_aix , float odom_cir , tf::Quaternion* cur_quat, 
+#define USE_WHEEL_ODOM 1
+
+bool PipeController::auto_in_pipe_(float odom_aix , float odom_cir ,float theta_in, 
                                     float target_v, bool printFlag){
     if(is_started_ == false){
         if(printFlag == true) 
@@ -41,9 +44,13 @@ bool PipeController::auto_in_pipe_(float odom_aix , float odom_cir , tf::Quatern
         assist_wheel_speed_[1] = 0.0f; // 辅助轮周向速度
         return false; // 如果未设置起始位置，则返回false
     }
-
+#if USE_WHEEL_ODOM
     float dis_aix = (odom_aix - start_odom_aix_) * 1000.0; // 计算轴向位移(换算为mm)
     float theta_deg = dis_aix / (pipe_R_ + pipe_r_) * 180.0 / PI; // 计算当前的theta角度
+#else
+    float theta_deg = theta_in;
+
+#endif
 
     SolverState result_state =  solver_->solve(theta_deg , target_v,
                                     &push_length_,  
@@ -65,7 +72,7 @@ bool PipeController::auto_in_pipe_(float odom_aix , float odom_cir , tf::Quatern
     }
 }
 
-bool PipeController::auto_out_pipe_(float odom_aix , float odom_cir , tf::Quaternion* cur_quat, 
+bool PipeController::auto_out_pipe_(float odom_aix , float odom_cir , float theta_in, 
                                     float target_v, bool printFlag){
     if(is_started_ == false){
         if(printFlag == true) 
@@ -80,9 +87,18 @@ bool PipeController::auto_out_pipe_(float odom_aix , float odom_cir , tf::Quater
         return false; // 如果未设置起始位置，则返回false
     }
 
-    float dis_aix = (odom_aix - start_odom_aix_) * 1000.0; // 计算轴向位移
+    // float dis_aix = (odom_aix - start_odom_aix_) * 1000.0; // 计算轴向位移
+    // float theta_deg = dis_aix / (pipe_R_ + pipe_r_) * 180.0 / PI; // 计算当前的theta角度
+#if USE_WHEEL_ODOM
+    float dis_aix = (odom_aix - start_odom_aix_) * 1000.0; // 计算轴向位移(换算为mm)
     float theta_deg = dis_aix / (pipe_R_ + pipe_r_) * 180.0 / PI; // 计算当前的theta角度
-    float mirror_theta_deg = solver_->max_theta_deg_ * 0.97 - theta_deg; // 计算镜像角度
+#else
+    float theta_deg = theta_in;
+
+#endif
+
+    
+    float mirror_theta_deg = solver_->max_theta_deg_ * 0.92 - theta_deg; // 计算镜像角度
     // * 注意这里由于是出弯， 所以需要将期望速度先取反，使用镜像角度，最后使用时再将输出的速度取反
     SolverState result_state = solver_->solve(mirror_theta_deg , -target_v,
                                     &push_length_, 

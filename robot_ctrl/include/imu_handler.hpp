@@ -38,6 +38,9 @@ public:
     bool imu_reset_flag = true;  // IMU复位标志位，true表示需要复位IMU数据
     void fix_quat();
     void get_aixs_err(IMU_POSE *result, bool printFlag = false);
+    float ger_error_yaw(tf::Quaternion* target , bool printFlag = false);
+    void get_aixs_err(tf::Quaternion* target ,  IMU_POSE* result , bool printFlag);
+
 private:
     // *  不同形式的IMU数据
     // 以下为四元数形式的表述

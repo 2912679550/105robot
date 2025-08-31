@@ -242,7 +242,9 @@ void MAIN_ROBOT::robot_ctrl(bool printFlag){
         case ROBOT_STATE::IN_PIPE:
             if (
                 pipe_controller_->auto_in_pipe_(robot_axis_odom_, robot_cir_odom_,
-                        &(pose_closed_ctrl_->front_imu_handler_->quat_cur), 0.02, printFlag)
+                        pose_closed_ctrl_->front_imu_handler_->ger_error_yaw(&(saved_quat_[0])),
+                        0.02, printFlag)
+                // true
             ){
                 front_side_->set_main_assist_speed_(pipe_controller_->main_wheel_speed_, pipe_controller_->assist_wheel_speed_);
                 if(pipe_controller_->solve_end_ == true){
@@ -258,7 +260,9 @@ void MAIN_ROBOT::robot_ctrl(bool printFlag){
         case ROBOT_STATE::OUT_PIPE:
             if (
                 pipe_controller_->auto_out_pipe_(robot_axis_odom_, robot_cir_odom_,
-                        &(pose_closed_ctrl_->back_imu_handler_->quat_cur), 0.02, printFlag)
+                        pose_closed_ctrl_->back_imu_handler_->ger_error_yaw(&(saved_quat_[1])),
+                        0.02, printFlag)
+                // true
             ){
                 back_side_->set_main_assist_speed_(pipe_controller_->main_wheel_speed_, pipe_controller_->assist_wheel_speed_);
                 if(pipe_controller_->solve_end_ == true){

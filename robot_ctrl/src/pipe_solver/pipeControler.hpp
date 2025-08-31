@@ -30,10 +30,10 @@ public:
 
     // * 接口函数  
     bool set_start_(float odom_aix , float odom_cir , tf::Quaternion* imu_quat); // 设置起始位置
-    bool auto_in_pipe_(float odom_aix , float odom_cir , tf::Quaternion* cur_quat, 
+    bool auto_in_pipe_(float odom_aix , float odom_cir , float theta_in, 
                         float target_v = 0.02f,
                         bool printFlag = false); // 自动进入管道
-    bool auto_out_pipe_(float odom_aix , float odom_cir , tf::Quaternion* cur_quat, 
+    bool auto_out_pipe_(float odom_aix , float odom_cir , float theta_in, 
                         float target_v = 0.02f,
                         bool printFlag = false); // 自动退出管道
     bool set_geometry_params_(float R, float r);

@@ -18,10 +18,10 @@ set(PIPE_SOLVER_SOURCES
     PARENT_SCOPE
 )
 
-add_executable(pipetest 
-    autoPipeSolver.cpp
-    pipeControler.cpp
-    pipeTest.cpp
-    ../Timer/Timer.cpp
-)
-target_link_libraries(pipetest ${catkin_LIBRARIES} ${CERES_LIBRARIES} ${EIGEN3_LIBRARIES})
+# add_executable(pipetest 
+#     autoPipeSolver.cpp
+#     pipeControler.cpp
+#     pipeTest.cpp
+#     ../Timer/Timer.cpp
+# )
+# target_link_libraries(pipetest ${catkin_LIBRARIES} ${CERES_LIBRARIES} ${EIGEN3_LIBRARIES})

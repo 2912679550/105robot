@@ -71,7 +71,7 @@ SolverState AutoPipeSolver::solve(double theta_deg, double target_v,
     target_v_ = target_v; 
     
     // * 0. 新增，如果theta角度超过最大值，则直接判定机器人匀速运动
-    if(theta_deg_ > max_theta_deg_ * 0.97){
+    if(theta_deg_ > max_theta_deg_ * 0.92){
         *push_length = min_push_length_;
         main_wheel_speed[0] = target_v_;
         main_wheel_speed[1] = 0.0; // 主动轮轴向速度为0

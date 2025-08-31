@@ -1,3 +1,7 @@
 KERNELS=="3-2.1:1.0", MODE:="0777", GROUP:="dialout", SYMLINK+="imu_back"
 KERNELS=="3-2.2:1.0", MODE:="0777", GROUP:="dialout", SYMLINK+="imu_front"
 KERNELS=="3-2.4:1.0", MODE:="0777", GROUP:="dialout", SYMLINK+="cam_ttl"
+
+KERNELS=="1-2.1:1.0", MODE:="0777", GROUP:="dialout", SYMLINK+="imu_back"
+KERNELS=="1-2.2:1.0", MODE:="0777", GROUP:="dialout", SYMLINK+="imu_front"
+KERNELS=="1-2.4:1.0", MODE:="0777", GROUP:="dialout", SYMLINK+="cam_ttl"

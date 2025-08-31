@@ -39,6 +39,24 @@ void IMU_HANDLER::fix_quat(){
     quat_fixed = quat_cur;  // 将当前IMU数据的四元数作为目标四元数
 }
 
+float IMU_HANDLER::ger_error_yaw(tf::Quaternion *target, bool printFlag){
+    IMU_POSE imu_error;
+    get_aixs_err(target, &imu_error, printFlag);
+    return -imu_error.pitch;
+}
+
+void IMU_HANDLER::get_aixs_err(tf::Quaternion* target ,  IMU_POSE* result , bool printFlag){
+    tf::Matrix3x3 R_w_i1 = tf::Matrix3x3(*target);  // 目标四元数对应的旋转矩阵
+    tf::Matrix3x3 R_w_i2 = tf::Matrix3x3(quat_cur);  // 当前四元数对应的旋转矩阵
+    tf::Matrix3x3 R_i1_i2 = R_w_i1.inverse() * R_w_i2;  // 当前四元数在目标四元数对应的坐标系下的旋转矩阵
+
+    tf::Matrix3x3 R_r1_r2 = (*imu_robot_matrix).inverse() * R_i1_i2 * (*imu_robot_matrix); // 将弧度转换为角度
+    R_r1_r2.getRPY(result->roll, result->pitch, result->yaw);  // 获取欧拉角
+    result->roll  = result->roll * 180.0 / M_PI;
+    result->pitch = result->pitch * 180.0 / M_PI;
+    result->yaw   = result->yaw * 180.0 / M_PI;
+}
+
 void IMU_HANDLER::get_aixs_err(IMU_POSE *result , bool printFlag){
     if (result == nullptr)
         return ;

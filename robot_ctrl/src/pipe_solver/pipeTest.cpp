@@ -16,8 +16,8 @@ int main(int argc, char **argv)
     controller.set_geometry_params_(300.0, 180.0);
     std::cout<<"debug 1"<< std::endl;
     controller.set_start_(0.0f, 0.0f, nullptr); // 设置起始位置
-    controller.auto_in_pipe_(200.0f, 0.0f, nullptr, 0.02f, true); // 自动进入管道
-    controller.auto_in_pipe_(230.0f, 0.0f, nullptr, 0.02f, true); // 自动进入管道
+    controller.auto_in_pipe_(200.0f, 0.0f, 0, 0.02f, true); // 自动进入管道
+    controller.auto_in_pipe_(230.0f, 0.0f, 0, 0.02f, true); // 自动进入管道
 
     return 0; 
 }
