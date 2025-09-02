@@ -183,3 +183,8 @@ class packInfo:
 ## 常用调试指令
 
 `rostopic pub -1 /push_cmd robot_ctrl/push_board_cmd '{tar_length_f: 25.0, tar_length_b: 25.0, tar_length_m: 20.0}'`
+
+` rostopic pub -1 /ctrl_record std_msgs/String "data: 'start_record'" `
+
+`rostopic pub -1 /ctrl_record std_msgs/String "data: 'end_record'" `
+`rostopic pub -1 /ctrl_record std_msgs/String "data: '1'" `

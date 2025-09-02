@@ -9,6 +9,7 @@
                 "/usr/include/eigen3",
                 "${workspaceFolder}/robot_ctrl/src/**",
                 "${workspaceFolder}/robot_ctrl/include/**",
+                "${workspaceFolder}/topic_record/include/**",
                 "${workspaceFolder}/fdilink_ahrs/include",
                 "/usr/include/opencv4",
                 "${workspaceFolder}/robot_ctrl/src"
@@ -16,7 +17,8 @@
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
             "cStandard": "c17",
-            "cppStandard": "gnu++14",
+            // "cppStandard": "gnu++14",
+            "cppStandard": "c++17",
             "intelliSenseMode": "linux-gcc-x64"
         }
     ],

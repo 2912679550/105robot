@@ -1,0 +1,13 @@
+<launch>
+    <!-- 机器人参数配置文件路径 -->
+    <arg name="need_record_topic" default="TCP_ROBOT_CMD_topic" />
+    <arg name="ctrl_record_topic" default="ctrl_record" />
+    <arg name="record_filefolder" default="$(find topic_record)/log" />
+
+    <!-- 机器人控制节点 -->
+    <node name="record_node" pkg="topic_record" type="topic_record_node" output="screen">
+        <param name="need_record_topic" value="$(arg need_record_topic)" />
+        <param name="ctrl_record_topic" value="$(arg ctrl_record_topic)" />
+        <param name="record_filefolder" value="$(arg record_filefolder)" />
+    </node>
+</launch>
