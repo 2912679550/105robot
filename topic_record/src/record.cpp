@@ -50,6 +50,7 @@ void Record::ctrl_callback(const std_msgs::String::ConstPtr& msg){
             if(flag == true){
                 is_playing_start = true;
             }
+            timer_.reset();
         }
     }
 }
@@ -148,6 +149,8 @@ bool Record::load_topic(int file_oder){
         cmd.push_length_f = node["topic"]["push_length_f"].as<float>();
         cmd.push_length_b = node["topic"]["push_length_b"].as<float>();
         topic_buff_.push_back(std::make_pair(time, cmd));
+
+        // cout << "Cmd Time: " << time << endl;
     }
     return true;
 }
@@ -159,6 +162,10 @@ void Record::play_topic(){
         return;
     }
     if(timer_.get_ms() >= topic_buff_[cmd_id].first){
+        std::cout   << "Current ID: " << cmd_id + 1
+                    << " Current time: " << timer_.get_ms() 
+                    << "Cmd Time: " << topic_buff_[cmd_id].first 
+                    << std::endl;
         topic_pub_.publish(topic_buff_[cmd_id].second);
         cmd_id++;
     }

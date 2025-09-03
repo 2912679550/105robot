@@ -74,6 +74,11 @@ typedef sensor_msgs::ImuConstPtr IMU_CPTR;  // IMU数据指针类型
 #define AUTO_IN_PIPE "AutoTurnIn"             // 自动进弯
 #define AUTO_OUT_PIPE "AutoTurnOut"           // 自动出弯
 
+// 录制器控制
+#define RECORD_START "record_start"             // 开始录制动作指令
+#define RECORD_STOP "record_stop"               // 录制结束指令
+#define RECORD_PLAY "record_play"               // 开始播放指令
+
 // camera控制
 #define CAMERA_POSE "CameraPose"
 #define CAMERA_CMD "CameraCmd"

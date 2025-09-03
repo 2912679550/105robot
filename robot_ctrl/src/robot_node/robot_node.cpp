@@ -120,6 +120,17 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
             motion_planner_->set_motion_range(robot_axis_odom_ , robot_cir_odom_,msg->v_axi, msg->v_cir, MOTION_PLAN::MOTION_MODE::SCAN);
             change_state(ROBOT_STATE::PLAN_MOTION);
         }
+        else if (mode == ROBOT_PIPE_SCAN){
+            if(robot_state_ != ROBOT_STATE::MOTION_STOP){
+                std::cout<< YELLOW_STRING << BLOD_STRING 
+                    << "Cannot enter full pipe scan motion , please stop first"
+                    << RESET_STRING << std::endl;
+                return;
+            }
+            // 设置运动范围
+            motion_planner_->set_motion_range(robot_axis_odom_ , robot_cir_odom_,msg->v_axi, 0.0f, MOTION_PLAN::MOTION_MODE::FULL_PIPE);
+            change_state(ROBOT_STATE::PLAN_MOTION);
+        }
         // todo IMU姿态闭环相关
         else if(mode == ROBOT_ON_POSE) pose_closed_ctrl_->turn_on_close_loop_(); // 关闭姿态闭环
         else if(mode == ROBOT_OFF_POSE) pose_closed_ctrl_->turn_off_close_loop_(); // 开启姿态闭环
@@ -227,7 +238,6 @@ void MAIN_ROBOT::robot_ctrl(bool printFlag){
                                     pose_closed_ctrl_->pid_out_p_ , pose_closed_ctrl_->pid_out_y_);
             back_side_->set_steer(steerState::NORMAL , tar_v_aix_ , tar_v_cir_,
                                     pose_closed_ctrl_->pid_out_p_ , pose_closed_ctrl_->pid_out_y_);
-            
             break;
         case ROBOT_STATE::PLAN_MOTION:
             plan_state = motion_planner_->motion_plan_(&v_aix , &v_cir, robot_axis_odom_ , robot_cir_odom_, printFlag);

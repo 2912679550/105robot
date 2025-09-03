@@ -19,10 +19,13 @@ int main(int argc, char** argv)
 
     Record my_record(nullptr , need_record_topic , ctrl_record_topic);
     my_record.filefolder_path_ = record_filefolder;
+
+    ros::Rate loop_rate(10000); // 10kHz
     while (ros::ok())
     {
         my_record.play_topic();
         ros::spinOnce();
+        loop_rate.sleep();
     }
     return 0;
 }

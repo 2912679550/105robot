@@ -6,7 +6,7 @@
 #include "robot_params.hpp"
 #include <tf/tf.h>
 #include "tcp_server.hpp"
-
+#include "std_msgs/String.h"
 #define USE_ROS 1 // debug模式只调试tcp的数据接收，不处理ros问题
 // #define DEBUG
 
@@ -25,14 +25,17 @@ int ps_success = 0;
 
 std::string fan_data_str;
 
-//运动指令消息发布器
+// * ros 信道
+// 运动指令消息发布器
 ros::Publisher motion_cmd_pub;
 ros::Subscriber motion_val_sub;
+// 相机云台消息发布器
+ros::Publisher camera_cmd_pub;
+// 创建录制器控制话题发布者
+ros::Publisher record_cmd_pub;
 
 ros::Timer tcp_recv_timer;
 
-//相机云台消息发布器
-ros::Publisher camera_cmd_pub;
 
 // 位资数据
 float pose_data[3] = {0};
@@ -50,7 +53,8 @@ int main(int argc, char** argv)
     //消息发布器和订阅器建立
     motion_cmd_pub = nh.advertise<TCP_ROBOT_CMD_TYPE>(TCP_ROBOT_CMD , 1);
     motion_val_sub = nh.subscribe(ROBOT_TCP_VAL, 1, motion_val_callback);
-    camera_cmd_pub =nh.advertise<CAMERA_CMD_TYPE>(CAMERA_ROBOT_CMD,1);
+    camera_cmd_pub = nh.advertise<CAMERA_CMD_TYPE>(CAMERA_ROBOT_CMD , 1);
+    record_cmd_pub = nh.advertise<std_msgs::String>("ctrl_record", 1); // 这个话题名称定义在record_node功能包的launch文件中
     // fan_data_sub = nh.subscribe("fan_pwm_info", 1, FanDataCallback); 
     // nh_private.param<int>("SERVER_PORT",SERVER_PORT,9527);
     // nh_private.getParam("SERVER_PORT",SERVER_PORT);
@@ -230,6 +234,21 @@ void* InstructionPubCallback(void* arg)
                     << "mode: " << mode
                     << RESET_STRING << std::endl;
         bool cameraCmd = false;
+
+        // * 0903 新增 录制器recorder控制话题
+        std_msgs::String str;
+        if(mode == RECORD_START || mode == RECORD_STOP) {
+            str.data = mode;
+            record_cmd_pub.publish(str);
+            continue;
+        }
+        else if(mode == RECORD_PLAY){
+            str.data = motion_instruction_str[1];
+            record_cmd_pub.publish(str);
+            continue;
+        }
+        // *
+
         if( mode == ROBOT_MOTION ||
             mode == ROBOT_STEP ||
             mode == ROBOT_SCAN ){
@@ -239,6 +258,10 @@ void* InstructionPubCallback(void* arg)
             motion_msg.v_cir = atof(motion_instruction_str[2].c_str())/1000.0;
             std::cout  << "v_axi: " << motion_msg.v_axi << std::endl;
             std::cout  << "v_cir: " << motion_msg.v_cir << std::endl; 
+        }
+        else if(mode == ROBOT_PIPE_SCAN){
+            motion_msg.v_axi = atof(motion_instruction_str[1].c_str()) / 1000.0;
+            std::cout << "Seting Full Pipe Scan, length: " << motion_msg.v_axi << std::endl;
         }
         else if(mode == ROBOT_DIA){
             motion_msg.dia_front = atof(motion_instruction_str[1].c_str()); // 前侧直径
