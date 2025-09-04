@@ -43,6 +43,7 @@ MAIN_ROBOT::~MAIN_ROBOT(){
     }
 }
 
+
 void MAIN_ROBOT::cmd_hand_maked(TCP_ROBOT_CMD_TYPE* msg){
     // 直接调用回调函数，模拟接收数据
     if(msg != nullptr){
@@ -128,7 +129,7 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
                 return;
             }
             // 设置运动范围
-            motion_planner_->set_motion_range(robot_axis_odom_ , robot_cir_odom_,msg->v_axi, 0.0f, MOTION_PLAN::MOTION_MODE::FULL_PIPE);
+            motion_planner_->set_motion_range(robot_axis_odom_ , robot_cir_odom_, msg->v_axi, 0.0f, MOTION_PLAN::MOTION_MODE::FULL_PIPE);
             change_state(ROBOT_STATE::PLAN_MOTION);
         }
         // todo IMU姿态闭环相关
@@ -291,12 +292,12 @@ void MAIN_ROBOT::robot_ctrl(bool printFlag){
     pubCmd();
     // 发布手柄回传数据
     ROBOT_TCP_VAL_TYPE tcp_val;
-    tcp_val.push_length[0] = push_ctrl_->cmd_data_.tar_length_f;  // 前侧推杆长度
-    tcp_val.push_length[1] = push_ctrl_->cmd_data_.tar_length_b;  // 后侧推杆长度
-    tcp_val.front_odom[0] = front_side_->odom_handler_->odom_axis[2];
-    tcp_val.front_odom[1] = front_side_->odom_handler_->odom_cir[2];
-    tcp_val.back_odom[0] = back_side_->odom_handler_->odom_axis[2];
-    tcp_val.back_odom[1] = back_side_->odom_handler_->odom_cir[2];
+    // tcp_val.push_length[0] = push_ctrl_->cmd_data_.tar_length_f;  // 前侧推杆长度
+    // tcp_val.push_length[1] = push_ctrl_->cmd_data_.tar_length_b;  // 后侧推杆长度
+    // tcp_val.front_odom[0] = front_side_->odom_handler_->odom_axis[2];
+    // tcp_val.front_odom[1] = front_side_->odom_handler_->odom_cir[2];
+    // tcp_val.back_odom[0] = back_side_->odom_handler_->odom_axis[2];
+    // tcp_val.back_odom[1] = back_side_->odom_handler_->odom_cir[2];
     tcp_pub_.publish(tcp_val);
 }
 
@@ -521,11 +522,48 @@ void MOTION_PLAN::set_motion_range(float cur_aix , float cur_cir,float _step_axi
 
     mode_ = mode;  // 设置运动模式
     motion_en_ = true;  // 使能运动
-    scan_positive_en_ = true;
+    scan_positive_en_ = true;   // 扫查运动将从正向开始
+    pipe_scan_is_aix_ = true;  // 弓字形运动从轴向步进开始
     // 打印运动范围
     if(mode_ == MOTION_MODE::STEP) std::cout << "step motion range: ";
     else if(mode_ == MOTION_MODE::SCAN) std::cout << "scan motion range: ";
-    else if(mode_ == MOTION_MODE::FULL_PIPE) std::cout << "full coverage motion range: ";
+    else if(mode_ == MOTION_MODE::FULL_PIPE){
+        pipe_scan_en_ = true;   // 使能管段扫查, 使能后再后续的switch中会初始化一个分类器, 将目标拆分成多个运动段
+        std::cout << "full coverage motion range: ";
+        motion_range_cpy = new std::pair<Eigen::Vector2f, Eigen::Vector2f>(motion_range);
+        motion_range_sub.clear();
+        static float default_step = 20.0 / 1000.0;
+        float cur_aix_step = 0.0;
+        // * 直接填充运动目标
+        if(_step_axis < default_step)
+            _step_axis = default_step; // 限制一下最小管段长度, 将作为后续的扫查步长
+        std::pair<Eigen::Vector2f, Eigen::Vector2f> temp_range = motion_range;
+        int id = 1;
+        
+        do{
+            // 生成轴向目标
+            temp_range.first.x() = cur_aix + cur_aix_step;
+            temp_range.first.y() = temp_range.first.y();
+            temp_range.second.x() = temp_range.first.x() + default_step;
+            temp_range.second.y() = temp_range.first.y();
+            motion_range_sub.push_back(temp_range);
+            std::cout<< "ID "<< id<<" aix step: "
+                << "first: (" << temp_range.first.x() << ", " << temp_range.first.y() << "), "
+                << "second: (" << temp_range.second.x() << ", " << temp_range.second.y() << ")"
+                << std::endl;
+            // 生成周向目标
+            temp_range.first.x() = temp_range.second.x() ;
+            temp_range.first.y() = temp_range.second.y() ;
+            temp_range.second.x() = temp_range.second.x();
+            temp_range.second.y() = temp_range.second.y() + PI * 360.0 / 1000.0;
+            motion_range_sub.push_back(temp_range);
+            std::cout<< "ID "<< id<<" cir step: "
+                << "first: (" << temp_range.first.x() << ", " << temp_range.first.y() << "), "
+                << "second: (" << temp_range.second.x() << ", " << temp_range.second.y() << ")"
+                << std::endl;
+            cur_aix_step += default_step; id++;
+        } while (cur_aix_step < _step_axis);
+    }
     std::cout   << "first: (" << motion_range.first.x() << ", " << motion_range.first.y() << "), "
                 << "second: (" << motion_range.second.x() << ", " << motion_range.second.y() << ")"
                 << std::endl;
@@ -612,6 +650,21 @@ steerState MOTION_PLAN::motion_plan_(float* result_aix , float* result_cir,
                 }
             }
             break;
+        case MOTION_MODE::FULL_PIPE: {
+            // 整管段弓字形扫查
+            
+            // * 根据原始的motion_range_cpy , 按照固定的步长将其拆分为 轴向 - 周向 - 的运动形式, 划分为一个运动目标的容器
+                
+            //
+
+            if(pipe_scan_is_aix_){
+                // 当前是步进扫查模式
+                
+            }else{  
+                // 
+            }
+            break;
+        }
         default:
             break;
     }
