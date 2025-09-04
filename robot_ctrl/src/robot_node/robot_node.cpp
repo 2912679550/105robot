@@ -292,6 +292,8 @@ void MAIN_ROBOT::robot_ctrl(bool printFlag){
     pubCmd();
     // 发布手柄回传数据
     ROBOT_TCP_VAL_TYPE tcp_val;
+    tcp_val.odom_pos[0] = robot_axis_odom_;
+    tcp_val.odom_pos[1] = robot_cir_odom_ ;
     // tcp_val.push_length[0] = push_ctrl_->cmd_data_.tar_length_f;  // 前侧推杆长度
     // tcp_val.push_length[1] = push_ctrl_->cmd_data_.tar_length_b;  // 后侧推杆长度
     // tcp_val.front_odom[0] = front_side_->odom_handler_->odom_axis[2];
@@ -532,7 +534,7 @@ void MOTION_PLAN::set_motion_range(float cur_aix , float cur_cir,float _step_axi
         std::cout << "full coverage motion range: ";
         motion_range_cpy = new std::pair<Eigen::Vector2f, Eigen::Vector2f>(motion_range);
         motion_range_sub.clear();
-        static float default_step = 20.0 / 1000.0;
+        static float default_step = 40.0 / 1000.0;
         float cur_aix_step = 0.0;
         // * 直接填充运动目标
         if(_step_axis < default_step)
@@ -624,7 +626,10 @@ steerState MOTION_PLAN::motion_plan_(float* result_aix , float* result_cir,
         case MOTION_MODE::SCAN:
             if(scan_positive_en_){
                 // 如果当前距离大于等于扫查运动的距离，则认为到达终点
-                if (current_distance >= trace_distance_) scan_positive_en_ = false; // 扫查正向使能为false
+                if (current_distance >= trace_distance_){
+                    scan_positive_en_ = false; // 扫查正向使能为false
+                    return_state = steerState::NORMAL;
+                }
                 else{
                     // 如果当前距离小于扫查运动的距离，则继续执行扫查运动
                     *result_aix = default_speed_ * cos(dir_);
@@ -664,6 +669,7 @@ steerState MOTION_PLAN::motion_plan_(float* result_aix , float* result_cir,
                 }else{
                     // 如果只是跑完了当前路径 , 则更新motion_range目标 , 并开始新的运动
                     full_pipe_sub_id++;
+                    return_state = steerState::NORMAL;
                     motion_range = motion_range_sub[full_pipe_sub_id];
                 }
             }

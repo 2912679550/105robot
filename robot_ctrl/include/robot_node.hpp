@@ -65,7 +65,7 @@ public:
         SCAN = 2,           // 扫查运动
         FULL_PIPE = 3,      // 管道全覆盖运动（弓字形轨迹）
     };
-    float default_speed_ = 0.02f;  // 默认运动速度
+    float default_speed_ = 0.03f;  // 默认运动速度
     
     void set_motion_range(
         float cur_aix , float cur_cir,
