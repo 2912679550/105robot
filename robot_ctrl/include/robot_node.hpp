@@ -85,9 +85,10 @@ private:
     bool scan_positive_en_ = true; // 扫查正向使能
     
     // * 用于进行管道弓字形扫查的标志位
-    bool pipe_scan_en_ = false;
-    bool pipe_scan_is_aix_ = true;
-    std::pair<Eigen::Vector2f, Eigen::Vector2f>* motion_range_cpy;
+    // bool pipe_scan_en_ = false;
+    // bool pipe_scan_is_aix_ = true;
+    int full_pipe_sub_id = 0;
+    std::pair<Eigen::Vector2f, Eigen::Vector2f> *motion_range_cpy;
     std::vector< std::pair<Eigen::Vector2f, Eigen::Vector2f> > motion_range_sub;
 };
 

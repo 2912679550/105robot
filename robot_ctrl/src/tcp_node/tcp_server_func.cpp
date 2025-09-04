@@ -20,28 +20,49 @@ void motion_val_callback(const ROBOT_TCP_VAL_CPTR& msg)
     countt++;
     if(isConnected == 1)
     {
-        std::string speed_data_string;
-        char* str;
-        speed_data_string.append("traj");
-        //上位机的格式：sprintf(dbgStr, "fan\t%.3f\t%.3f\t%.3f\r\n", param_sample[0], param_sample[1], param_sample[2]);
-        // for (size_t i = 0; i < msg->data.size(); i++) //将轨迹数据合并成一个字符串
-        // {
-        //     speed_data_string.append("\t");
-        //     sprintf(str,"%.3f",msg->data[i]);
-        //     //fan_data_string.append(std::to_string(msg->data[i]));
-        //     speed_data_string.append(str);
-        // }
-        speed_data_string.append("\r\n");
-        char* traj_data_char = new char[strlen(speed_data_string.c_str())+1];
-        strcpy(traj_data_char,speed_data_string.c_str());//将string类型转化为C语言中的char*类型
-        if(countt>10)//降低发送频率
-        {
-            // std::cout<<fan_data_char<<std::endl; //debug
-            write(confd, traj_data_char, strlen(traj_data_char));
-            countt=0;
-        }
+        // // std::string speed_data_string;
+        // // char* str;
+        // // 上位机的格式：sprintf(dbgStr, "fan\t%.3f\t%.3f\t%.3f\r\n", param_sample[0], param_sample[1], param_sample[2]);
+        // // for (size_t i = 0; i < msg->data.size(); i++) //将轨迹数据合并成一个字符串
+        // // {
+        //     // speed_data_string.append("\t");
+        //     // sprintf(str,"%.3f",msg->data[i]);
+        //     // //fan_data_string.append(std::to_string(msg->data[i]));
+        //     // speed_data_string.append(str);
+        //     // }
+        // // speed_data_string.append("traj\t");
+        // // sprintf(str, "%.3f", msg->odom_pos[0]);
+        // // speed_data_string.append(str);
+        // // speed_data_string.append("\t");
 
-        delete[] traj_data_char;
+        // // sprintf(str, "%.3f", msg->odom_pos[1]);
+        // // speed_data_string.append(str);
+        // // speed_data_string.append("\r\n");
+
+        // // char* traj_data_char = new char[strlen(speed_data_string.c_str())+1];
+        // // strcpy(traj_data_char,speed_data_string.c_str());//将string类型转化为C语言中的char*类型
+        // // if(countt>5)//降低发送频率
+        // // {
+        //     // std::cout<<fan_data_char<<std::endl; //debug
+        // //     write(confd, traj_data_char, strlen(traj_data_char));
+        // //     countt=0;
+        // //     std::cout << "now tcp pub: " << traj_data_char << std::endl;
+        // // }
+        // // delete[] traj_data_char;
+
+        std::ostringstream oss;
+        oss << "traj\t"
+            << std::fixed << std::setprecision(3) << msg->odom_pos[0] << "\t"
+            << std::fixed << std::setprecision(3) << msg->odom_pos[1] << "\r\n";
+
+        std::string speed_data_string = oss.str();
+
+        if(countt > 5) //降低发送频率
+        {
+            write(confd, speed_data_string.c_str(), speed_data_string.length());
+            countt = 0;
+            // std::cout << "now tcp pub: " << speed_data_string << std::endl;
+        }
     }
     return;
 }

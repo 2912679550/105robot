@@ -56,7 +56,7 @@ typedef sensor_msgs::ImuConstPtr IMU_CPTR;  // IMU数据指针类型
 #define ROBOT_MOTION    "conmove"               // 正常运动
 #define ROBOT_STEP      "stepmove"              // 步进运动
 #define ROBOT_SCAN      "stepscan"              // 扫描运动
-#define ROBOT_PIPE_SCAN "ElbowScan"             // 管段扫查
+#define ROBOT_PIPE_SCAN "PipeScan"             // 管段扫查
 #define ROBOT_ON_POSE   "poselock"                // 开启姿态闭环
 #define ROBOT_OFF_POSE  "poseunlock"               // 关闭姿态闭环
 // 夹紧

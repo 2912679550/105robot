@@ -11,9 +11,9 @@
 using namespace std;
 namespace fs = std::filesystem;
 
-#define START_RECORD "start_record"
+#define START_RECORD "record_start"
 #define PAUSE_RECORD "pause_record"
-#define END_RECORD  "end_record"
+#define END_RECORD  "record_stop"
 
 class Record{
 public:

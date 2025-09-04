@@ -251,7 +251,8 @@ void* InstructionPubCallback(void* arg)
 
         if( mode == ROBOT_MOTION ||
             mode == ROBOT_STEP ||
-            mode == ROBOT_SCAN ){
+            mode == ROBOT_SCAN ||
+            mode == ROBOT_PIPE_SCAN){
             motion_msg.cmdType = mode;
             // 周向速度对应原来“x方向”的位置
             motion_msg.v_axi = atof(motion_instruction_str[1].c_str())/1000.0;

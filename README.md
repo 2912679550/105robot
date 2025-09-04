@@ -188,3 +188,5 @@ class packInfo:
 
 `rostopic pub -1 /ctrl_record std_msgs/String "data: 'end_record'" `
 `rostopic pub -1 /ctrl_record std_msgs/String "data: '1'" `
+
+`rostopic pub -1 /robot_tcp_val_topic robot_ctrl/robot_motion_val "odom_pos: [1.0, 2.0]" `

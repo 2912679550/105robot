@@ -217,7 +217,7 @@ void MAIN_ROBOT::robot_ctrl(bool printFlag){
     // * 执行一些状态机指令
     front_side_->single_side_ctrl();  // 前侧单侧控制逻辑
     back_side_->single_side_ctrl();   // 后侧单侧控制逻辑
-    odom_handler(printFlag); // 处理里程计数据
+    odom_handler(false); // 处理里程计数据
 
     // * 提前配置一些switch中可能产生的变量
     float v_aix = 0.0f;
@@ -241,7 +241,7 @@ void MAIN_ROBOT::robot_ctrl(bool printFlag){
                                     pose_closed_ctrl_->pid_out_p_ , pose_closed_ctrl_->pid_out_y_);
             break;
         case ROBOT_STATE::PLAN_MOTION:
-            plan_state = motion_planner_->motion_plan_(&v_aix , &v_cir, robot_axis_odom_ , robot_cir_odom_, printFlag);
+            plan_state = motion_planner_->motion_plan_(&v_aix , &v_cir, robot_axis_odom_ , robot_cir_odom_, false);
             front_side_->set_steer(plan_state , v_aix , v_cir);
             back_side_->set_steer(plan_state , v_aix , v_cir);
 
@@ -523,12 +523,12 @@ void MOTION_PLAN::set_motion_range(float cur_aix , float cur_cir,float _step_axi
     mode_ = mode;  // 设置运动模式
     motion_en_ = true;  // 使能运动
     scan_positive_en_ = true;   // 扫查运动将从正向开始
-    pipe_scan_is_aix_ = true;  // 弓字形运动从轴向步进开始
+    // pipe_scan_is_aix_ = true;  // 弓字形运动从轴向步进开始
     // 打印运动范围
     if(mode_ == MOTION_MODE::STEP) std::cout << "step motion range: ";
     else if(mode_ == MOTION_MODE::SCAN) std::cout << "scan motion range: ";
     else if(mode_ == MOTION_MODE::FULL_PIPE){
-        pipe_scan_en_ = true;   // 使能管段扫查, 使能后再后续的switch中会初始化一个分类器, 将目标拆分成多个运动段
+        // pipe_scan_en_ = true;   // 使能管段扫查, 使能后再后续的switch中会初始化一个分类器, 将目标拆分成多个运动段
         std::cout << "full coverage motion range: ";
         motion_range_cpy = new std::pair<Eigen::Vector2f, Eigen::Vector2f>(motion_range);
         motion_range_sub.clear();
@@ -539,11 +539,10 @@ void MOTION_PLAN::set_motion_range(float cur_aix , float cur_cir,float _step_axi
             _step_axis = default_step; // 限制一下最小管段长度, 将作为后续的扫查步长
         std::pair<Eigen::Vector2f, Eigen::Vector2f> temp_range = motion_range;
         int id = 1;
-        
         do{
             // 生成轴向目标
             temp_range.first.x() = cur_aix + cur_aix_step;
-            temp_range.first.y() = temp_range.first.y();
+            temp_range.first.y() = temp_range.second.y();
             temp_range.second.x() = temp_range.first.x() + default_step;
             temp_range.second.y() = temp_range.first.y();
             motion_range_sub.push_back(temp_range);
@@ -563,6 +562,8 @@ void MOTION_PLAN::set_motion_range(float cur_aix , float cur_cir,float _step_axi
                 << std::endl;
             cur_aix_step += default_step; id++;
         } while (cur_aix_step < _step_axis);
+        full_pipe_sub_id = 0; // 重置当前在运行的管段
+        motion_range = motion_range_sub[full_pipe_sub_id];
     }
     std::cout   << "first: (" << motion_range.first.x() << ", " << motion_range.first.y() << "), "
                 << "second: (" << motion_range.second.x() << ", " << motion_range.second.y() << ")"
@@ -652,16 +653,31 @@ steerState MOTION_PLAN::motion_plan_(float* result_aix , float* result_cir,
             break;
         case MOTION_MODE::FULL_PIPE: {
             // 整管段弓字形扫查
-            
-            // * 根据原始的motion_range_cpy , 按照固定的步长将其拆分为 轴向 - 周向 - 的运动形式, 划分为一个运动目标的容器
-                
-            //
-
-            if(pipe_scan_is_aix_){
-                // 当前是步进扫查模式
-                
-            }else{  
-                // 
+            if (current_distance >= trace_distance_)
+            {
+                if(full_pipe_sub_id == motion_range_sub.size() - 1){
+                    // 当执行弓字形管段扫查时 , 只有跑完所有预片选路径 , 才认为结束
+                    *result_aix = 0.0f;
+                    *result_cir = 0.0f;
+                    motion_en_ = false;  // 关闭运动使能
+                    std::cout << GREEN_STRING << "robot full pipe motion end" << RESET_STRING << std::endl;
+                }else{
+                    // 如果只是跑完了当前路径 , 则更新motion_range目标 , 并开始新的运动
+                    full_pipe_sub_id++;
+                    motion_range = motion_range_sub[full_pipe_sub_id];
+                }
+            }
+            else
+            {
+                // 弓字形的执行部分就和基本的步进没有区别了
+                // 如果当前距离小于步进运动的距离，则继续执行步进运动
+                *result_aix = default_speed_ * cos(dir_);
+                *result_cir = default_speed_ * sin(dir_);
+                return_state = steerState::NORMAL;
+                if(printFlag) 
+                std::cout << BLOD_STRING << GREEN_STRING
+                        << "target motion: " << *result_aix << ", " << *result_cir  << "\n"
+                        << "current distance: " << current_distance << RESET_STRING << std::endl;
             }
             break;
         }
