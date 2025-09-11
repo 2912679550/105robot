@@ -185,6 +185,7 @@ void SINGLE_SIDE_CTRL::set_dia(float dia){
     // 设置目标夹角
     std::cout   << GREEN_STRING << "set dia: " << dia 
                 << " target angle: " << target_angle << RESET_STRING << std::endl;
+    pipe_r_ = dia / 2.0;
     set_angle(target_angle);
 }
 
@@ -220,7 +221,8 @@ void SINGLE_SIDE_CTRL::set_steer(steerState stateIn , float v_aix , float v_cir 
                 v_aix = tar_v_aix_ + pid_out_p; // 如果是主动驱动轮，误差为正时应该增大轴向速度
             else{
                 // i = 0 为 左侧轮子，i = 1 为右侧轮子
-                v_aix = tar_v_aix_; //  - pid_out_p; // 辅助驱动轮，误差为正时应该减小轴向速度
+                // v_aix = tar_v_aix_; // 辅助驱动轮，误差为正时应该减小轴向速度
+                v_aix = tar_v_aix_  - pid_out_p; // 辅助驱动轮，误差为正时应该减小轴向速度
                 if (i == 0) v_aix = v_aix + pid_out_y * (-1.0f);    // 左侧轮子需要减速，右侧轮子需要提速
                 if (i == 1) v_aix = v_aix + pid_out_y * ( 1.0f);    // 左侧轮子需要减速，右侧轮子需要提速
             }
@@ -240,6 +242,10 @@ void SINGLE_SIDE_CTRL::set_steer(steerState stateIn , float v_aix , float v_cir 
 
             cmd_data_.dir_steer_dir[i] = vel_dir;   // 舵轮舵向的角度
             cmd_data_.dir_steer_vel[i] = vel_total; // 舵轮舵向的速度
+        }
+
+        if(enable_bending_pipe == true){
+            cmd_data_.dir_steer_vel[2] = cmd_data_.dir_steer_vel[0] * (300.0 + pipe_r_) / (300.0 - pipe_r_ / 2.0);
         }
     }
 }

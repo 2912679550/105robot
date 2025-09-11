@@ -1,257 +1,509 @@
 - id: 1
-  time: 406.74
+  time: 15008.2
   topic: 
-    cmdType: set_angle
-    v_axi: 0
+    cmdType: conmove
+    v_axi: -0.01
     v_cir: 0
     dia_front: 0
     dia_back: 0
     dir_tight_front: 0
     dir_tight_back: 0
-    push_length_f: 45
-    push_length_b: 45
+    push_length_f: 0
+    push_length_b: 0
 - id: 2
-  time: 17.5735
+  time: 9912
   topic: 
-    cmdType: set_angle
+    cmdType: stop
     v_axi: 0
     v_cir: 0
     dia_front: 0
     dia_back: 0
     dir_tight_front: 0
     dir_tight_back: 0
-    push_length_f: 46
-    push_length_b: 46
+    push_length_f: 0
+    push_length_b: 0
 - id: 3
-  time: 59.8989
+  time: 259.502
   topic: 
-    cmdType: set_angle
+    cmdType: stop
     v_axi: 0
     v_cir: 0
     dia_front: 0
     dia_back: 0
     dir_tight_front: 0
     dir_tight_back: 0
-    push_length_f: 49
-    push_length_b: 49
+    push_length_f: 0
+    push_length_b: 0
 - id: 4
-  time: 16.8431
+  time: 148.2
   topic: 
-    cmdType: set_angle
+    cmdType: stop
     v_axi: 0
     v_cir: 0
     dia_front: 0
     dia_back: 0
     dir_tight_front: 0
     dir_tight_back: 0
-    push_length_f: 53
-    push_length_b: 53
+    push_length_f: 0
+    push_length_b: 0
 - id: 5
-  time: 16.0723
+  time: 147.806
   topic: 
-    cmdType: set_angle
+    cmdType: stop
     v_axi: 0
     v_cir: 0
     dia_front: 0
     dia_back: 0
     dir_tight_front: 0
     dir_tight_back: 0
-    push_length_f: 54
-    push_length_b: 54
+    push_length_f: 0
+    push_length_b: 0
 - id: 6
-  time: 58.3054
+  time: 29924.5
   topic: 
-    cmdType: set_angle
+    cmdType: conmove
     v_axi: 0
-    v_cir: 0
+    v_cir: 0.01
     dia_front: 0
     dia_back: 0
     dir_tight_front: 0
     dir_tight_back: 0
-    push_length_f: 55
-    push_length_b: 55
+    push_length_f: 0
+    push_length_b: 0
 - id: 7
-  time: 13.8993
+  time: 2975.31
   topic: 
-    cmdType: set_angle
+    cmdType: stop
     v_axi: 0
     v_cir: 0
     dia_front: 0
     dia_back: 0
     dir_tight_front: 0
     dir_tight_back: 0
-    push_length_f: 57
-    push_length_b: 57
+    push_length_f: 0
+    push_length_b: 0
 - id: 8
-  time: 30.5721
+  time: 169.2
   topic: 
-    cmdType: set_angle
+    cmdType: stop
     v_axi: 0
     v_cir: 0
     dia_front: 0
     dia_back: 0
     dir_tight_front: 0
     dir_tight_back: 0
-    push_length_f: 58
-    push_length_b: 58
+    push_length_f: 0
+    push_length_b: 0
 - id: 9
-  time: 87.2996
+  time: 146.994
   topic: 
-    cmdType: set_angle
+    cmdType: stop
     v_axi: 0
     v_cir: 0
     dia_front: 0
     dia_back: 0
     dir_tight_front: 0
     dir_tight_back: 0
-    push_length_f: 57
-    push_length_b: 57
+    push_length_f: 0
+    push_length_b: 0
 - id: 10
-  time: 21.6573
+  time: 882.036
   topic: 
-    cmdType: set_angle
+    cmdType: conmove
     v_axi: 0
-    v_cir: 0
+    v_cir: 0.01
     dia_front: 0
     dia_back: 0
     dir_tight_front: 0
     dir_tight_back: 0
-    push_length_f: 56
-    push_length_b: 56
+    push_length_f: 0
+    push_length_b: 0
 - id: 11
-  time: 25.609
+  time: 1002.07
   topic: 
-    cmdType: set_angle
+    cmdType: stop
     v_axi: 0
     v_cir: 0
     dia_front: 0
     dia_back: 0
     dir_tight_front: 0
     dir_tight_back: 0
-    push_length_f: 55
-    push_length_b: 55
+    push_length_f: 0
+    push_length_b: 0
 - id: 12
-  time: 33.2849
+  time: 162.794
   topic: 
-    cmdType: set_angle
+    cmdType: stop
     v_axi: 0
     v_cir: 0
     dia_front: 0
     dia_back: 0
     dir_tight_front: 0
     dir_tight_back: 0
-    push_length_f: 53
-    push_length_b: 53
+    push_length_f: 0
+    push_length_b: 0
 - id: 13
-  time: 29.9063
+  time: 160.001
   topic: 
-    cmdType: set_angle
+    cmdType: stop
     v_axi: 0
     v_cir: 0
     dia_front: 0
     dia_back: 0
     dir_tight_front: 0
     dir_tight_back: 0
-    push_length_f: 51
-    push_length_b: 51
+    push_length_f: 0
+    push_length_b: 0
 - id: 14
-  time: 42.751
+  time: 4987.9
   topic: 
-    cmdType: set_angle
+    cmdType: conmove
     v_axi: 0
-    v_cir: 0
+    v_cir: -0.01
     dia_front: 0
     dia_back: 0
     dir_tight_front: 0
     dir_tight_back: 0
-    push_length_f: 50
-    push_length_b: 50
+    push_length_f: 0
+    push_length_b: 0
 - id: 15
-  time: 45.3268
+  time: 489.899
   topic: 
-    cmdType: set_angle
+    cmdType: stop
     v_axi: 0
     v_cir: 0
     dia_front: 0
     dia_back: 0
     dir_tight_front: 0
     dir_tight_back: 0
-    push_length_f: 51
-    push_length_b: 51
+    push_length_f: 0
+    push_length_b: 0
 - id: 16
-  time: 15.9969
+  time: 918.602
   topic: 
-    cmdType: set_angle
+    cmdType: conmove
     v_axi: 0
-    v_cir: 0
+    v_cir: -0.01
     dia_front: 0
     dia_back: 0
     dir_tight_front: 0
     dir_tight_back: 0
-    push_length_f: 52
-    push_length_b: 52
+    push_length_f: 0
+    push_length_b: 0
 - id: 17
-  time: 14.0881
+  time: 4751.93
   topic: 
-    cmdType: set_angle
+    cmdType: stop
     v_axi: 0
     v_cir: 0
     dia_front: 0
     dia_back: 0
     dir_tight_front: 0
     dir_tight_back: 0
-    push_length_f: 54
-    push_length_b: 54
+    push_length_f: 0
+    push_length_b: 0
 - id: 18
-  time: 29.2523
+  time: 151.898
   topic: 
-    cmdType: set_angle
+    cmdType: stop
     v_axi: 0
     v_cir: 0
     dia_front: 0
     dia_back: 0
     dir_tight_front: 0
     dir_tight_back: 0
-    push_length_f: 55
-    push_length_b: 55
+    push_length_f: 0
+    push_length_b: 0
 - id: 19
-  time: 33.9462
+  time: 145.003
   topic: 
-    cmdType: set_angle
+    cmdType: stop
     v_axi: 0
     v_cir: 0
     dia_front: 0
     dia_back: 0
     dir_tight_front: 0
     dir_tight_back: 0
-    push_length_f: 56
-    push_length_b: 56
+    push_length_f: 0
+    push_length_b: 0
 - id: 20
-  time: 38.4585
+  time: 150.997
   topic: 
-    cmdType: set_angle
+    cmdType: stop
     v_axi: 0
     v_cir: 0
     dia_front: 0
     dia_back: 0
     dir_tight_front: 0
     dir_tight_back: 0
-    push_length_f: 55
-    push_length_b: 55
+    push_length_f: 0
+    push_length_b: 0
 - id: 21
-  time: 731.157
+  time: 2503.8
   topic: 
-    cmdType: Back
+    cmdType: conmove
     v_axi: 0
-    v_cir: 0
+    v_cir: 0.01
     dia_front: 0
     dia_back: 0
     dir_tight_front: 0
-    dir_tight_back: 56
+    dir_tight_back: 0
     push_length_f: 0
     push_length_b: 0
 - id: 22
-  time: 63.8777
+  time: 3808
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 23
+  time: 152.597
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 24
+  time: 135.295
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 25
+  time: 141.206
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 26
+  time: 134.697
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 27
+  time: 151.023
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 28
+  time: 26493.3
+  topic: 
+    cmdType: conmove
+    v_axi: 0.01
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 29
+  time: 3356.3
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 30
+  time: 163.995
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 31
+  time: 182.406
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 32
+  time: 480.899
+  topic: 
+    cmdType: conmove
+    v_axi: 0.01
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 33
+  time: 423.599
+  topic: 
+    cmdType: conmove
+    v_axi: 0.01
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 34
+  time: 477.901
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 35
+  time: 160.169
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 36
+  time: 152.727
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 37
+  time: 146.103
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 38
+  time: 160.7
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 39
+  time: 1639
+  topic: 
+    cmdType: poselock
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 40
+  time: 170.797
+  topic: 
+    cmdType: poselock
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 41
+  time: 237.803
+  topic: 
+    cmdType: poselock
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 42
+  time: 1356.6
+  topic: 
+    cmdType: poselock
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 43
+  time: 1563.44
   topic: 
     cmdType: Back
     v_axi: 0
@@ -262,8 +514,1928 @@
     dir_tight_back: 55.5
     push_length_f: 0
     push_length_b: 0
-- id: 23
-  time: 106.002
+- id: 44
+  time: 52.3634
+  topic: 
+    cmdType: Back
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 55
+    push_length_f: 0
+    push_length_b: 0
+- id: 45
+  time: 367.833
+  topic: 
+    cmdType: Back
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 54.5
+    push_length_f: 0
+    push_length_b: 0
+- id: 46
+  time: 295.403
+  topic: 
+    cmdType: Back
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 54
+    push_length_f: 0
+    push_length_b: 0
+- id: 47
+  time: 24516.6
+  topic: 
+    cmdType: Back
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 53.5
+    push_length_f: 0
+    push_length_b: 0
+- id: 48
+  time: 136.852
+  topic: 
+    cmdType: Back
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 53
+    push_length_f: 0
+    push_length_b: 0
+- id: 49
+  time: 6543.96
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 55.5
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 50
+  time: 19.2944
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 56
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 51
+  time: 644.505
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 56.5
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 52
+  time: 255.598
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 57
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 53
+  time: 429.5
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 57.5
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 54
+  time: 819.609
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 57
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 55
+  time: 1836.8
+  topic: 
+    cmdType: conmove
+    v_axi: 0.001
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 56
+  time: 1304.3
+  topic: 
+    cmdType: poselock
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 57
+  time: 4810.42
+  topic: 
+    cmdType: conmove
+    v_axi: 0.001
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 58
+  time: 1918.3
+  topic: 
+    cmdType: poselock
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 59
+  time: 6390.31
+  topic: 
+    cmdType: poselock
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 60
+  time: 5221
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 61
+  time: 68.3987
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 62
+  time: 95.7017
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 63
+  time: 16207.2
+  topic: 
+    cmdType: poseunlock
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 64
+  time: 118.901
+  topic: 
+    cmdType: poseunlock
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 65
+  time: 18417.2
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 66
+  time: 34.8969
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 67
+  time: 57997.5
+  topic: 
+    cmdType: conmove
+    v_axi: -0.01
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 68
+  time: 3796.8
+  topic: 
+    cmdType: conmove
+    v_axi: -0.01
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 69
+  time: 10443.4
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 70
+  time: 189.696
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 71
+  time: 165.463
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 72
+  time: 167.676
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 73
+  time: 168.962
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 74
+  time: 6683.6
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 75
+  time: 14269.4
+  topic: 
+    cmdType: set_dia
+    v_axi: 0
+    v_cir: 0
+    dia_front: 320
+    dia_back: 340
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 76
+  time: 16934.5
+  topic: 
+    cmdType: poselock
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 77
+  time: 5910.6
+  topic: 
+    cmdType: set_angle
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 30
+    push_length_b: 30
+- id: 78
+  time: 59.7947
+  topic: 
+    cmdType: set_angle
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 31
+    push_length_b: 31
+- id: 79
+  time: 147.5
+  topic: 
+    cmdType: set_angle
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 32
+    push_length_b: 32
+- id: 80
+  time: 272.599
+  topic: 
+    cmdType: set_angle
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 33
+    push_length_b: 33
+- id: 81
+  time: 201.002
+  topic: 
+    cmdType: set_angle
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 34
+    push_length_b: 34
+- id: 82
+  time: 1651.9
+  topic: 
+    cmdType: set_angle
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 35
+    push_length_b: 35
+- id: 83
+  time: 227.504
+  topic: 
+    cmdType: set_angle
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 36
+    push_length_b: 36
+- id: 84
+  time: 188.397
+  topic: 
+    cmdType: set_angle
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 37
+    push_length_b: 37
+- id: 85
+  time: 2226.8
+  topic: 
+    cmdType: set_angle
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 38
+    push_length_b: 38
+- id: 86
+  time: 6072.1
+  topic: 
+    cmdType: conmove
+    v_axi: 0.03
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 87
+  time: 4672.85
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 88
+  time: 172.576
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 89
+  time: 160.1
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 90
+  time: 4625.61
+  topic: 
+    cmdType: conmove
+    v_axi: 0.03
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 91
+  time: 659.6
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 92
+  time: 1023.2
+  topic: 
+    cmdType: conmove
+    v_axi: 0.03
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 93
+  time: 6175.3
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 94
+  time: 169.2
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 95
+  time: 184.2
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 96
+  time: 4695.8
+  topic: 
+    cmdType: conmove
+    v_axi: 0.03
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 97
+  time: 775.4
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 98
+  time: 169.801
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 99
+  time: 4597.4
+  topic: 
+    cmdType: conmove
+    v_axi: 0.03
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 100
+  time: 684.901
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 101
+  time: 164.9
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 102
+  time: 152
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 103
+  time: 3097.6
+  topic: 
+    cmdType: set_angle
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 33
+    push_length_b: 33
+- id: 104
+  time: 54.9009
+  topic: 
+    cmdType: set_angle
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 32
+    push_length_b: 32
+- id: 105
+  time: 13.7945
+  topic: 
+    cmdType: set_angle
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 30
+    push_length_b: 30
+- id: 106
+  time: 2513.41
+  topic: 
+    cmdType: set_angle
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 29
+    push_length_b: 29
+- id: 107
+  time: 6979.02
+  topic: 
+    cmdType: set_angle
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 28
+    push_length_b: 28
+- id: 108
+  time: 130.697
+  topic: 
+    cmdType: set_angle
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 27
+    push_length_b: 27
+- id: 109
+  time: 182.999
+  topic: 
+    cmdType: set_angle
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 26
+    push_length_b: 26
+- id: 110
+  time: 520.701
+  topic: 
+    cmdType: set_angle
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 25
+    push_length_b: 25
+- id: 111
+  time: 21206.2
+  topic: 
+    cmdType: conmove
+    v_axi: 0.03
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 112
+  time: 2171.9
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 113
+  time: 183.701
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 114
+  time: 149.497
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 115
+  time: 142.898
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 116
+  time: 160.601
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 117
+  time: 148.201
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 118
+  time: 182.939
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 119
+  time: 165.661
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 120
+  time: 13587.8
+  topic: 
+    cmdType: set_angle
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 25
+    push_length_b: 25
+- id: 121
+  time: 8853.65
+  topic: 
+    cmdType: set_angle
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 25
+    push_length_b: 26
+- id: 122
+  time: 663.295
+  topic: 
+    cmdType: set_angle
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 25
+    push_length_b: 27
+- id: 123
+  time: 5716.12
+  topic: 
+    cmdType: set_angle
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 25
+    push_length_b: 28
+- id: 124
+  time: 1728.1
+  topic: 
+    cmdType: set_angle
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 25
+    push_length_b: 27
+- id: 125
+  time: 727.603
+  topic: 
+    cmdType: set_angle
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 25
+    push_length_b: 26
+- id: 126
+  time: 954.896
+  topic: 
+    cmdType: set_angle
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 25
+    push_length_b: 25
+- id: 127
+  time: 800.006
+  topic: 
+    cmdType: set_angle
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 25
+    push_length_b: 24
+- id: 128
+  time: 1312.69
+  topic: 
+    cmdType: set_angle
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 25
+    push_length_b: 23
+- id: 129
+  time: 1556.6
+  topic: 
+    cmdType: set_angle
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 25
+    push_length_b: 22
+- id: 130
+  time: 2571.68
+  topic: 
+    cmdType: set_angle
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 25
+    push_length_b: 21
+- id: 131
+  time: 5723.02
+  topic: 
+    cmdType: set_angle
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 25
+    push_length_b: 20
+- id: 132
+  time: 995.8
+  topic: 
+    cmdType: set_angle
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 25
+    push_length_b: 19
+- id: 133
+  time: 7279.91
+  topic: 
+    cmdType: set_angle
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 25
+    push_length_b: 18
+- id: 134
+  time: 10231.4
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 135
+  time: 21.3001
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 136
+  time: 30.9943
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 137
+  time: 95.2095
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 57.5
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 138
+  time: 788.697
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 57
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 139
+  time: 3329.4
+  topic: 
+    cmdType: set_dia
+    v_axi: 0
+    v_cir: 0
+    dia_front: 340
+    dia_back: 340
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 140
+  time: 1366.3
+  topic: 
+    cmdType: set_dia
+    v_axi: 0
+    v_cir: 0
+    dia_front: 360
+    dia_back: 340
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 141
+  time: 1952.5
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 57.5
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 142
+  time: 51.6947
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 143
+  time: 26.9974
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 144
+  time: 65.3006
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 145
+  time: 1037.41
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 146
+  time: 46.5984
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 147
+  time: 51.9949
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 148
+  time: 45.2982
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 149
+  time: 65.3013
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 57.5
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 150
+  time: 200.703
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 57
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 151
+  time: 1937.1
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 57.5
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 152
+  time: 54.7985
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 153
+  time: 44.0989
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 154
+  time: 95.8985
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 155
+  time: 135
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 156
+  time: 166.105
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 157
+  time: 48.4005
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 158
+  time: 34.0983
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 159
+  time: 30.9999
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 57.5
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 160
+  time: 69.4012
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 57
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 161
+  time: 1299.71
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 57.5
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 162
+  time: 51.344
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 163
+  time: 50.5504
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 164
+  time: 110.702
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 165
+  time: 135.002
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 166
+  time: 85.5995
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 167
+  time: 52.4981
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 168
+  time: 10.6985
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 57.5
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 169
+  time: 46.2989
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 57
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 170
+  time: 87.5609
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 56.5
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 171
+  time: 1767.35
+  topic: 
+    cmdType: set_dia
+    v_axi: 0
+    v_cir: 0
+    dia_front: 340
+    dia_back: 340
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 172
+  time: 815.991
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 173
+  time: 23.398
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 174
+  time: 26.5993
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 175
+  time: 465.006
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 176
+  time: 35.1913
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 177
+  time: 33.4998
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 178
+  time: 31.1999
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 57.5
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 179
+  time: 35.6003
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 57
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 180
+  time: 48.8002
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 56.5
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 181
+  time: 686.605
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 57
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 182
+  time: 68.6005
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 57.5
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 183
+  time: 75.2964
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 184
+  time: 56.5032
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 185
+  time: 43.1954
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 186
+  time: 53.1047
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 187
+  time: 80.001
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 188
+  time: 487.711
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 189
+  time: 59.6973
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 190
+  time: 19.3958
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 191
+  time: 56.3009
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 57.5
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 192
+  time: 11.8977
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 56.5
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 193
+  time: 3980.71
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 56
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 194
+  time: 27231.8
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 55.5
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 195
+  time: 55.7947
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 55
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 196
+  time: 390.804
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 54.5
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 197
+  time: 1685.4
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 54
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 198
+  time: 37467.7
+  topic: 
+    cmdType: Back
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 54
+    push_length_f: 0
+    push_length_b: 0
+- id: 199
+  time: 31.8901
+  topic: 
+    cmdType: Back
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 54.5
+    push_length_f: 0
+    push_length_b: 0
+- id: 200
+  time: 104.304
+  topic: 
+    cmdType: Back
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 55
+    push_length_f: 0
+    push_length_b: 0
+- id: 201
+  time: 167.399
+  topic: 
+    cmdType: Back
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 54.5
+    push_length_f: 0
+    push_length_b: 0
+- id: 202
+  time: 580.706
+  topic: 
+    cmdType: Back
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 55
+    push_length_f: 0
+    push_length_b: 0
+- id: 203
+  time: 566.808
+  topic: 
+    cmdType: Back
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 55.5
+    push_length_f: 0
+    push_length_b: 0
+- id: 204
+  time: 1948.19
   topic: 
     cmdType: Back
     v_axi: 0
@@ -274,8 +2446,8 @@
     dir_tight_back: 56
     push_length_f: 0
     push_length_b: 0
-- id: 24
-  time: 16.4017
+- id: 205
+  time: 1587.23
   topic: 
     cmdType: Back
     v_axi: 0
@@ -286,8 +2458,8 @@
     dir_tight_back: 56.5
     push_length_f: 0
     push_length_b: 0
-- id: 25
-  time: 26.8201
+- id: 206
+  time: 945.569
   topic: 
     cmdType: Back
     v_axi: 0
@@ -298,8 +2470,8 @@
     dir_tight_back: 57
     push_length_f: 0
     push_length_b: 0
-- id: 26
-  time: 69.2827
+- id: 207
+  time: 145.402
   topic: 
     cmdType: Back
     v_axi: 0
@@ -307,11 +2479,11 @@
     dia_front: 0
     dia_back: 0
     dir_tight_front: 0
-    dir_tight_back: 56.5
+    dir_tight_back: 57.5
     push_length_f: 0
     push_length_b: 0
-- id: 27
-  time: 14.6098
+- id: 208
+  time: 152.997
   topic: 
     cmdType: Back
     v_axi: 0
@@ -319,11 +2491,11 @@
     dia_front: 0
     dia_back: 0
     dir_tight_front: 0
-    dir_tight_back: 56
+    dir_tight_back: 60
     push_length_f: 0
     push_length_b: 0
-- id: 28
-  time: 101.779
+- id: 209
+  time: 96.2977
   topic: 
     cmdType: Back
     v_axi: 0
@@ -331,11 +2503,11 @@
     dia_front: 0
     dia_back: 0
     dir_tight_front: 0
-    dir_tight_back: 56.5
+    dir_tight_back: 60
     push_length_f: 0
     push_length_b: 0
-- id: 29
-  time: 69.4938
+- id: 210
+  time: 72.4058
   topic: 
     cmdType: Back
     v_axi: 0
@@ -343,6 +2515,642 @@
     dia_front: 0
     dia_back: 0
     dir_tight_front: 0
-    dir_tight_back: 56
+    dir_tight_back: 60
+    push_length_f: 0
+    push_length_b: 0
+- id: 211
+  time: 59.6035
+  topic: 
+    cmdType: Back
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 60
+    push_length_f: 0
+    push_length_b: 0
+- id: 212
+  time: 83.7945
+  topic: 
+    cmdType: Back
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 60
+    push_length_f: 0
+    push_length_b: 0
+- id: 213
+  time: 785.211
+  topic: 
+    cmdType: set_dia
+    v_axi: 0
+    v_cir: 0
+    dia_front: 340
+    dia_back: 300
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 214
+  time: 6163.4
+  topic: 
+    cmdType: set_dia
+    v_axi: 0
+    v_cir: 0
+    dia_front: 340
+    dia_back: 320
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 215
+  time: 63.5934
+  topic: 
+    cmdType: set_dia
+    v_axi: 0
+    v_cir: 0
+    dia_front: 340
+    dia_back: 340
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 216
+  time: 952.207
+  topic: 
+    cmdType: set_dia
+    v_axi: 0
+    v_cir: 0
+    dia_front: 340
+    dia_back: 320
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 217
+  time: 1215.9
+  topic: 
+    cmdType: set_dia
+    v_axi: 0
+    v_cir: 0
+    dia_front: 340
+    dia_back: 300
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 218
+  time: 2547.4
+  topic: 
+    cmdType: set_dia
+    v_axi: 0
+    v_cir: 0
+    dia_front: 340
+    dia_back: 320
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 219
+  time: 7716.9
+  topic: 
+    cmdType: poselock
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 220
+  time: 1460.9
+  topic: 
+    cmdType: poselock
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 221
+  time: 307.998
+  topic: 
+    cmdType: poselock
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 222
+  time: 158.446
+  topic: 
+    cmdType: poselock
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 223
+  time: 134.56
+  topic: 
+    cmdType: poselock
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 224
+  time: 23681.8
+  topic: 
+    cmdType: conmove
+    v_axi: 0.03
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 225
+  time: 3707.5
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 226
+  time: 19872
+  topic: 
+    cmdType: conmove
+    v_axi: -0.03
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 227
+  time: 1024
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 228
+  time: 158.597
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 229
+  time: 133.898
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 230
+  time: 142.104
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 231
+  time: 154.3
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 232
+  time: 50157.3
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 55
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 233
+  time: 178.458
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 55.5
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 234
+  time: 585.243
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 56
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 235
+  time: 1164.8
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 56.5
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 236
+  time: 2431.4
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 57
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 237
+  time: 7892.31
+  topic: 
+    cmdType: conmove
+    v_axi: 0.03
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 238
+  time: 1601.41
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 239
+  time: 527
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 240
+  time: 903.304
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 241
+  time: 26.9923
+  topic: 
+    cmdType: stop
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 0
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 242
+  time: 3548.91
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 56.5
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 243
+  time: 55.9971
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 56
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 244
+  time: 75.9998
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 55
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 245
+  time: 347.103
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 54.5
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 246
+  time: 12061
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 56
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 247
+  time: 32.8011
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 56.5
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 248
+  time: 36.0993
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 57
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 249
+  time: 33.5985
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 57.5
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 250
+  time: 45.7989
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 251
+  time: 52.0005
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 252
+  time: 495.605
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 253
+  time: 1852.3
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 254
+  time: 1120.2
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 60
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 255
+  time: 216.401
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 57.5
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 256
+  time: 47.3951
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 57
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 257
+  time: 47.8017
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 56.5
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 258
+  time: 65.1988
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 56
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 259
+  time: 103.502
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 55.5
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 260
+  time: 164.499
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 55
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 261
+  time: 216.2
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 54.5
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 262
+  time: 267.802
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 54
+    dir_tight_back: 0
+    push_length_f: 0
+    push_length_b: 0
+- id: 263
+  time: 4535.42
+  topic: 
+    cmdType: Front
+    v_axi: 0
+    v_cir: 0
+    dia_front: 0
+    dia_back: 0
+    dir_tight_front: 53.5
+    dir_tight_back: 0
     push_length_f: 0
     push_length_b: 0

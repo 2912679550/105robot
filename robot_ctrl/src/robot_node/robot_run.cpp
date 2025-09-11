@@ -118,6 +118,16 @@ int main(int argc , char **argv){
             robot.cmd_hand_maked(&cmd_msg);
             control = '0'; // 重置控制字符
             break;
+        case 'F':
+            robot.front_side_->enable_bending_pipe = !robot.front_side_->enable_bending_pipe;
+            // robot.back_side_->enable_bending_pipe = !robot.back_side_->enable_bending_pipe;
+            control = '0'; // 重置控制字符
+            break;
+        case 'B':
+            // robot.front_side_->enable_bending_pipe = !robot.front_side_->enable_bending_pipe;
+            robot.back_side_->enable_bending_pipe = !robot.back_side_->enable_bending_pipe;
+            control = '0'; // 重置控制字符
+            break;
         default:
             break;
         }
