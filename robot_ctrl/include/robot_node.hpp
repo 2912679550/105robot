@@ -45,6 +45,10 @@ public:
      * @param printFlag 是否打印调试信息
      */
     void close_loop_pid_(bool printFlag = false); 
+
+    void set_pitch_adjust(float adjust_pitch);
+    float get_pitch_err();
+
 private:
     ros::NodeHandle* nh_;
     SINGLE_SIDE_CTRL* front_handle_;
@@ -54,6 +58,7 @@ private:
     Pid* pid_yaw_;    // 偏航角PID控制器
 
     bool enable_close_loop_ = false; // 是否开启姿态闭环
+    float pitch_adj_ = 0.0f; // 期望俯仰角微调值
 };
 
 class MOTION_PLAN{

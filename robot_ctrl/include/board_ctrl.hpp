@@ -69,7 +69,8 @@ public:
     MICRO_ODOM* odom_handler_;  // 里程计处理类，用于处理轴向和周向的里程计数据
     MYTIMER* tight_timer_;  // 定时器处理类，用于定时发布控制指令
 
-    bool enable_bending_pipe = false;
+    bool enable_bending_pipe = false;   // 进入弯道时的差速使能标志位
+    bool enable_up_push = false;        // 将辅助轮使能为向下压的运动方向, 并给定默认下压速度
 
     bool tarTightFlag_ = false;  // 目标夹紧状态       
     void single_side_ctrl();  // 单侧控制逻辑

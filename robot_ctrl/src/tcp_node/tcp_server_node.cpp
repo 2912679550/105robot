@@ -251,8 +251,7 @@ void* InstructionPubCallback(void* arg)
 
         if( mode == ROBOT_MOTION ||
             mode == ROBOT_STEP ||
-            mode == ROBOT_SCAN ||
-            mode == ROBOT_PIPE_SCAN){
+            mode == ROBOT_SCAN ){
             motion_msg.cmdType = mode;
             // 周向速度对应原来“x方向”的位置
             motion_msg.v_axi = atof(motion_instruction_str[1].c_str())/1000.0;
@@ -261,8 +260,14 @@ void* InstructionPubCallback(void* arg)
             std::cout  << "v_cir: " << motion_msg.v_cir << std::endl; 
         }
         else if(mode == ROBOT_PIPE_SCAN){
+            motion_msg.cmdType = mode;
             motion_msg.v_axi = atof(motion_instruction_str[1].c_str()) / 1000.0;
             std::cout << "Seting Full Pipe Scan, length: " << motion_msg.v_axi << std::endl;
+        }
+        else if(mode == PITCH_ADJ){
+            motion_msg.cmdType = mode;
+            motion_msg.v_axi = atof(motion_instruction_str[1].c_str());
+            std::cout << "Target pitch adjust: " << motion_msg.v_axi << std::endl;
         }
         else if(mode == ROBOT_DIA){
             motion_msg.dia_front = atof(motion_instruction_str[1].c_str()); // 前侧直径

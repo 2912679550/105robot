@@ -200,7 +200,19 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
             pipe_controller_->set_start_(saved_odom_aix_[1], saved_odom_cir_[1], &(saved_quat_[1]) );
             pipe_controller_->set_geometry_params_(300.0 , saved_pipe_r_[1]);
         }
-
+        // todo 特殊动作
+        else if(mode == UP_PUSH_EN){
+            front_side_->enable_up_push = true;
+            std::cout << "使能前侧辅助轮下压" << std::endl;
+        }
+        else if(mode == UP_PUSH_DIS){
+            front_side_->enable_up_push = false;
+            std::cout << "失能前侧辅助轮下压" << std::endl;
+        }
+        else if(mode == PITCH_ADJ){
+            pose_closed_ctrl_->set_pitch_adjust(msg->v_axi);
+            std::cout << "姿态闭环微调: " << msg->v_axi << std::endl;
+        }
         else{
             std::cout<< RED_STRING << "robot node receive unknown command" << RESET_STRING << std::endl;
         }
@@ -294,6 +306,7 @@ void MAIN_ROBOT::robot_ctrl(bool printFlag){
     ROBOT_TCP_VAL_TYPE tcp_val;
     tcp_val.odom_pos[0] = robot_axis_odom_;
     tcp_val.odom_pos[1] = robot_cir_odom_ ;
+    tcp_val.pitch_err = 0;
     // tcp_val.push_length[0] = push_ctrl_->cmd_data_.tar_length_f;  // 前侧推杆长度
     // tcp_val.push_length[1] = push_ctrl_->cmd_data_.tar_length_b;  // 后侧推杆长度
     // tcp_val.front_odom[0] = front_side_->odom_handler_->odom_axis[2];
@@ -464,7 +477,9 @@ void POSE_CLOSED_LOOP::turn_on_close_loop_(){
     enable_close_loop_ = true;  // 开启姿态闭环控制
     pid_yaw_->Reset();  // 重置偏航角PID控制器
     pid_pitch_->Reset();  // 重置俯仰角PID控制器
-    if(front_imu_handler_ != nullptr){
+    pitch_adj_ = 0.0;   // 重置姿态矫正偏置
+    if (front_imu_handler_ != nullptr)
+    {
         front_imu_handler_->fix_quat();  // 固定前侧IMU的四元数
     }
     if(back_imu_handler_ != nullptr){
@@ -476,6 +491,7 @@ void POSE_CLOSED_LOOP::turn_off_close_loop_(){
     pid_yaw_->Reset();  // 重置偏航角PID控制器
     pid_pitch_->Reset();  // 重置俯仰角PID控制器
     enable_close_loop_ = false;  // 关闭姿态闭环控制
+    pitch_adj_ = 0.0;   // 重置姿态矫正偏置
 }
 
 void POSE_CLOSED_LOOP::close_loop_pid_(bool printFlag){
@@ -495,7 +511,7 @@ void POSE_CLOSED_LOOP::close_loop_pid_(bool printFlag){
     // 如果后侧夹紧为true，根据前文逻辑此时前侧一定为false，则使用后侧IMU数据进行姿态闭环控制
     else back_imu_handler_->get_aixs_err(&aixs_err, printFlag);
 
-    pid_out_p_ = pid_pitch_->Tick(aixs_err.pitch, printFlag);
+    pid_out_p_ = pid_pitch_->Tick(aixs_err.pitch + pitch_adj_, printFlag);  // 在此处引入pitch_adj_
     pid_out_y_ = pid_yaw_->Tick(aixs_err.yaw, printFlag);
 
     // * 最后判断全局硬性使能标志位
@@ -504,6 +520,23 @@ void POSE_CLOSED_LOOP::close_loop_pid_(bool printFlag){
     return;
 }
 
+void POSE_CLOSED_LOOP::set_pitch_adjust(float adjust_pitch){
+    if(enable_close_loop_)
+        pitch_adj_ = adjust_pitch;
+}
+
+float POSE_CLOSED_LOOP::get_pitch_err(){
+    if(enable_close_loop_ == false)
+        return 0.0f;
+    else{
+        IMU_POSE aixs_err;
+        // 如果前侧夹紧为true，根据前文逻辑此时后侧一定为false，则使用前侧IMU数据进行姿态闭环控制
+        if(front_handle_->tarTightFlag_ == true) front_imu_handler_->get_aixs_err(&aixs_err);
+        // 如果后侧夹紧为true，根据前文逻辑此时前侧一定为false，则使用后侧IMU数据进行姿态闭环控制
+        else back_imu_handler_->get_aixs_err(&aixs_err);
+        return (aixs_err.pitch + pitch_adj_);
+    }
+}
 
 // ! ========================== Motion Plan ===========================
 /**

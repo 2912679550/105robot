@@ -214,6 +214,7 @@ void SINGLE_SIDE_CTRL::set_steer(steerState stateIn , float v_aix , float v_cir 
     }
     else if (stateIn = steerState::NORMAL)
     {
+
         for (int i = 0; i < 3; i++)
         {
             cmd_data_.dir_steer_state[i] = stateIn;
@@ -226,6 +227,15 @@ void SINGLE_SIDE_CTRL::set_steer(steerState stateIn , float v_aix , float v_cir 
                 if (i == 0) v_aix = v_aix + pid_out_y * (-1.0f);    // 左侧轮子需要减速，右侧轮子需要提速
                 if (i == 1) v_aix = v_aix + pid_out_y * ( 1.0f);    // 左侧轮子需要减速，右侧轮子需要提速
             }
+
+            // todo 引入辅助轮下压动作
+            if(enable_up_push){
+                v_aix = 0.0;
+                if(i==0) v_cir = -0.02;
+                if(i==1) v_cir =  0.02;
+            }
+            // todo end
+
             float vel_total = sqrt(v_aix * v_aix + v_cir * v_cir); // 速度的数值大小
             float vel_dir = atan2(v_aix, v_cir);                   // 速度的方向 , 这里的角度范围为[-PI , PI]
             // 将角度范围调整到（0,PI]，并为此修正速度大小
@@ -235,10 +245,10 @@ void SINGLE_SIDE_CTRL::set_steer(steerState stateIn , float v_aix , float v_cir 
                 vel_total = -vel_total;
             }
 
-            if(i < 2 && pipdiffFlag_ == true){
-                // 开启了弯道差速
-                vel_total = vel_total * (300.0 - 0.5 * pipe_r_) / (300.0 + pipe_r_); // 辅助轮的速度需要根据管道半径进行调整
-            }
+            // if(i < 2 && pipdiffFlag_ == true){
+            //     // 开启了弯道差速
+            //     vel_total = vel_total * (300.0 - 0.5 * pipe_r_) / (300.0 + pipe_r_); // 辅助轮的速度需要根据管道半径进行调整
+            // }
 
             cmd_data_.dir_steer_dir[i] = vel_dir;   // 舵轮舵向的角度
             cmd_data_.dir_steer_vel[i] = vel_total; // 舵轮舵向的速度

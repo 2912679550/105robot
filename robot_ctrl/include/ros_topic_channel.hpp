@@ -83,6 +83,11 @@ typedef sensor_msgs::ImuConstPtr IMU_CPTR;  // IMU数据指针类型
 #define CAMERA_POSE "CameraPose"
 #define CAMERA_CMD "CameraCmd"
 
+//  特殊动作: 倒挂下压
+#define UP_PUSH_EN "enablePush"
+#define UP_PUSH_DIS "disablePush"
+#define PITCH_ADJ "pitch_adj"
+
 // todo 字符串打印配置宏
 // 字体颜色
 #define RED_STRING "\033[31m"       //红色

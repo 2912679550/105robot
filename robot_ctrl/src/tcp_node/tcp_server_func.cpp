@@ -53,7 +53,8 @@ void motion_val_callback(const ROBOT_TCP_VAL_CPTR& msg)
         std::ostringstream oss;
         oss << "traj\t"
             << std::fixed << std::setprecision(3) << msg->odom_pos[0] << "\t"
-            << std::fixed << std::setprecision(3) << msg->odom_pos[1] << "\r\n";
+            << std::fixed << std::setprecision(3) << msg->odom_pos[1] << "\t"
+            << std::fixed << std::setprecision(3) << msg->pitch_err << "\r\n";
 
         std::string speed_data_string = oss.str();
 
