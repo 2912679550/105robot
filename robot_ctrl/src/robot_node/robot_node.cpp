@@ -306,7 +306,7 @@ void MAIN_ROBOT::robot_ctrl(bool printFlag){
     ROBOT_TCP_VAL_TYPE tcp_val;
     tcp_val.odom_pos[0] = robot_axis_odom_;
     tcp_val.odom_pos[1] = robot_cir_odom_ ;
-    tcp_val.pitch_err = 0;
+    tcp_val.pitch_err = pose_closed_ctrl_->get_pitch_err();
     // tcp_val.push_length[0] = push_ctrl_->cmd_data_.tar_length_f;  // 前侧推杆长度
     // tcp_val.push_length[1] = push_ctrl_->cmd_data_.tar_length_b;  // 后侧推杆长度
     // tcp_val.front_odom[0] = front_side_->odom_handler_->odom_axis[2];

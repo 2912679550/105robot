@@ -229,10 +229,12 @@ void SINGLE_SIDE_CTRL::set_steer(steerState stateIn , float v_aix , float v_cir 
             }
 
             // todo 引入辅助轮下压动作
-            if(enable_up_push){
+            if(enable_up_push && (i != 2)){
                 v_aix = 0.0;
                 if(i==0) v_cir = -0.02;
-                if(i==1) v_cir =  0.02;
+                else if(i==1) v_cir =  0.02;
+            }else{
+                v_cir = tar_v_cir_;
             }
             // todo end
 
