@@ -84,8 +84,15 @@ typedef sensor_msgs::ImuConstPtr IMU_CPTR;  // IMU数据指针类型
 #define CAMERA_CMD "CameraCmd"
 
 //  特殊动作: 倒挂下压
-#define UP_PUSH_EN "AsWheel_open"
-#define UP_PUSH_DIS "AsWheel_close"
+#define UP_PUSH_F_EN "qianAsWheel_open"
+#define UP_PUSH_F_DIS "qianAsWheel_close"
+#define UP_PUSH_B_EN "houAsWheel_open"
+#define UP_PUSH_B_DIS "houAsWheel_close"
+// 特殊动作: 前后侧差速
+#define DIFFSPED_F_EN "qianautoturn_open"
+#define DIFFSPED_F_DIS "qianautoturn_close"
+#define DIFFSPED_B_EN "houautoturn_open"
+#define DIFFSPED_B_DIS "houautoturn_close"
 #define PITCH_ADJ "finetune"
 
 // todo 字符串打印配置宏

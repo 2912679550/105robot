@@ -211,13 +211,37 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
             pipe_controller_->set_geometry_params_(300.0 , saved_pipe_r_[1]);
         }
         // todo 特殊动作
-        else if(mode == UP_PUSH_EN){
+        else if(mode == UP_PUSH_F_EN){
             front_side_->enable_up_push = true;
             std::cout << "使能前侧辅助轮下压" << std::endl;
         }
-        else if(mode == UP_PUSH_DIS){
+        else if(mode == UP_PUSH_F_DIS){
             front_side_->enable_up_push = false;
             std::cout << "失能前侧辅助轮下压" << std::endl;
+        }
+        else if(mode == UP_PUSH_B_EN){
+            back_side_->enable_up_push = true;
+            std::cout << "使能后侧辅助轮下压" << std::endl;
+        }
+        else if(mode == UP_PUSH_B_DIS){
+            back_side_->enable_up_push = false;
+            std::cout << "失能后侧辅助轮下压" << std::endl;
+        }
+        else if(mode == DIFFSPED_F_EN){
+            front_side_->enable_bending_pipe = true;
+            std::cout << "使能前侧管道差速" << std::endl;
+        }
+        else if(mode == DIFFSPED_F_DIS){
+            front_side_->enable_bending_pipe = false;
+            std::cout << "失能前侧管道差速" << std::endl;
+        }
+        else if(mode == DIFFSPED_B_EN){
+            back_side_->enable_bending_pipe = true;
+            std::cout << "使能后侧管道差速" << std::endl;
+        }
+        else if(mode == DIFFSPED_B_DIS){
+            back_side_->enable_bending_pipe = false;
+            std::cout << "失能后侧管道差速" << std::endl;
         }
         else if(mode == PITCH_ADJ){
             pose_closed_ctrl_->set_pitch_adjust(msg->v_axi);

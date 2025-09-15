@@ -6,4 +6,5 @@
     <node name="robot_node" pkg="robot_ctrl" type="robot_node" output="screen">
         <param name="config_file" value="$(arg config_file)" />
     </node>
+    <node pkg = "robot_ctrl" type = "tcp_node"  name = "tcp_node" output = "screen" />
 </launch>
