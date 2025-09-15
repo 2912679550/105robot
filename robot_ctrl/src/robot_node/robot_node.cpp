@@ -92,7 +92,11 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
                 // pipe_cali_flag_ = false;    // 自动进弯与出弯重置
                 motion_planner_->reset_motion();
                 change_state(ROBOT_STATE::NORMAL_HAND_CTRL);
-            }else{
+                front_side_-> enable_close_pid();
+                back_side_ -> enable_close_pid();
+            }
+            else
+            {
                 std::cout<< YELLOW_STRING << BLOD_STRING 
                     << "Cannot enter normal hand control , please stop first"
                     << RESET_STRING << std::endl;
@@ -136,8 +140,14 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
         else if(mode == ROBOT_ON_POSE) pose_closed_ctrl_->turn_on_close_loop_(); // 关闭姿态闭环
         else if(mode == ROBOT_OFF_POSE) pose_closed_ctrl_->turn_off_close_loop_(); // 开启姿态闭环
         // todo 夹紧控制
-        else if(mode == ROBOT_T_L_F) front_side_->set_tight(msg->dir_tight_front);  // 前侧夹紧长度控制
-        else if(mode == ROBOT_T_L_B) back_side_->set_tight(msg->dir_tight_back);  // 后侧夹紧长度控制
+        else if(mode == ROBOT_T_L_F) {
+            front_side_->set_tight(msg->dir_tight_front);  // 前侧夹紧长度控制
+            front_side_->disable_close_Pid();
+        }
+        else if(mode == ROBOT_T_L_B) {
+            back_side_->set_tight(msg->dir_tight_back);  // 后侧夹紧长度控制
+            back_side_->disable_close_Pid();
+        }
         // todo 变形控制
         else if(mode == ROBOT_DIA){ 
             front_side_->set_dia(msg->dia_front); back_side_->set_dia(msg->dia_back); 
@@ -537,6 +547,7 @@ float POSE_CLOSED_LOOP::get_pitch_err(){
         return (aixs_err.pitch + pitch_adj_);
     }
 }
+
 
 // ! ========================== Motion Plan ===========================
 /**

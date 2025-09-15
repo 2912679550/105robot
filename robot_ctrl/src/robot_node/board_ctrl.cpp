@@ -203,6 +203,11 @@ void SINGLE_SIDE_CTRL::set_steer(steerState stateIn , float v_aix , float v_cir 
     tar_v_aix_ = v_aix;  // 更新目标轴向速度
     tar_v_cir_ = v_cir;  // 更新目标周向速度
 
+    if(close_pid_en_ == false){
+        pid_out_p = 0.0;
+        pid_out_y = 0.0;
+    }
+
     // v_aix 为轴向速度，v_cir为周向速度，周向速度的正方向对应于舵轮舵向的0弧度处
     if(stateIn == steerState::RESET || stateIn == steerState::STOP){
         for (int i = 0; i < 3;i++){

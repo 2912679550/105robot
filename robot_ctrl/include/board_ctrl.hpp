@@ -83,6 +83,9 @@ public:
     void set_steer(steerState stateIn , float v_aix = 0.0f , float v_cir = 0.0f , float pid_out_p = 0.0f , float pid_out_y = 0.0f);
     void set_main_assist_speed_(float* main_speed , float* assist_speed); 
     void pipe_sped_diff(bool pipdiffFlag , float pipe_r = 180.0f); // 管道差速控制开启标记
+    void enable_close_pid() { close_pid_en_ = true; };
+    void disable_close_Pid() { close_pid_en_ = false;  };
+
 private:
     ros::NodeHandle *nh_;
     ros::Publisher cmd_pub_;
@@ -94,6 +97,7 @@ private:
     void val_callback(const STM_ROBOT_VAL_CPTR &msg);
     bool pipdiffFlag_ = false;  // 管道差速标志
     float pipe_r_ = 180.0f;  // 管道半径，单位为mm
+    bool close_pid_en_ = true;
 };
 
 class PUSH_CTRL

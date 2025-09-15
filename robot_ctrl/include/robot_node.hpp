@@ -44,8 +44,7 @@ public:
      * 
      * @param printFlag 是否打印调试信息
      */
-    void close_loop_pid_(bool printFlag = false); 
-
+    void close_loop_pid_(bool printFlag = false);
     void set_pitch_adjust(float adjust_pitch);
     float get_pitch_err();
 
