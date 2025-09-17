@@ -467,8 +467,8 @@ POSE_CLOSED_LOOP::POSE_CLOSED_LOOP(std::string front_imu_topic , std::string bac
     pid_params.Iband = imu_pitch_Iband[0];
     pid_params.outMin = imu_pitch_outRange[0];
     pid_params.outMax = imu_pitch_outRange[1];
-    pid_params.outIMin = imu_pitch_outRange[0];
-    pid_params.outIMax = imu_pitch_outRange[1];
+    pid_params.outIMin = imu_pitch_accIRange[0];
+    pid_params.outIMax = imu_pitch_accIRange[1];
     pid_params.ts = 1.0f / float(TS);  // 设置采样周期
     pid_pitch_ = new Pid(&pid_params);
 
@@ -478,8 +478,8 @@ POSE_CLOSED_LOOP::POSE_CLOSED_LOOP(std::string front_imu_topic , std::string bac
     pid_params.Iband = imu_yaw_Iband[0];
     pid_params.outMin = imu_yaw_outRange[0];
     pid_params.outMax = imu_yaw_outRange[1];
-    pid_params.outIMin = imu_yaw_outRange[0];
-    pid_params.outIMax = imu_yaw_outRange[1];
+    pid_params.outIMin = imu_yaw_accIRange[0];
+    pid_params.outIMax = imu_yaw_accIRange[1];
     pid_params.ts = 1.0f / float(TS);  // 设置采样周期
     pid_yaw_ = new Pid(&pid_params);
 }

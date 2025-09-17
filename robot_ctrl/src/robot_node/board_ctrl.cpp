@@ -159,7 +159,9 @@ void SINGLE_SIDE_CTRL::set_tight(float length){
     cmd_data_.dir_spring_length = length;
     if(cmd_data_.dir_spring_length < 10.0f || cmd_data_.dir_spring_length > 59.0f){
         tarTightFlag_ = false;  // 如果长度小于10.0f，认为是松开状态
-    }else{
+    }
+    else
+    {
         tarTightFlag_ = true;  // 否则认为是夹紧状态
     }
 }
