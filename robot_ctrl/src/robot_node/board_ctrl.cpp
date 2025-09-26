@@ -319,6 +319,7 @@ PUSH_CTRL::PUSH_CTRL(std::string cmd_topic , std::string val_topic , ros::NodeHa
     cmd_data_.tar_length_f = 25.0f;  // 前推杆的目标长度
     cmd_data_.tar_length_b = 25.0f;  // 后推杆的目标长度
     cmd_data_.tar_length_m = 15.0f;  // 中推杆的目标长度
+    cmd_data_.led_state = 1;
 }
 
 PUSH_CTRL::~PUSH_CTRL(){
@@ -336,6 +337,13 @@ void PUSH_CTRL::set_cmd(float tar_length_f , float tar_length_b , float tar_leng
     cmd_data_.tar_length_f = tar_length_f;
     cmd_data_.tar_length_b = tar_length_b;
     cmd_data_.tar_length_m = tar_length_m;
+}
+
+void PUSH_CTRL::set_light(bool openFlah){
+    if(openFlah)
+        cmd_data_.led_state = 1;
+    else
+        cmd_data_.led_state = 0;
 }
 
 void PUSH_CTRL::val_callback(const PUSH_VAL_CPTR &msg){

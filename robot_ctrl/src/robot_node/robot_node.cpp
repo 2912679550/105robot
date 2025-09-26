@@ -247,7 +247,11 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
             pose_closed_ctrl_->set_pitch_adjust(msg->v_axi);
             std::cout << "姿态闭环微调: " << msg->v_axi << std::endl;
         }
-        else{
+        // 开灯
+        else if(mode == LIGHT_OPEN) push_ctrl_->set_light(true);
+        else if(mode == LIGHT_CLOSE)  push_ctrl_->set_light(false);
+        else
+        {
             std::cout<< RED_STRING << "robot node receive unknown command" << RESET_STRING << std::endl;
         }
     }

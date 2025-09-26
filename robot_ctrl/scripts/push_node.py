@@ -17,6 +17,7 @@ class PUSH_CMD_VAL:
         self.f_length = 0.0
         self.b_length = 0.0
         self.m_length = 0.0
+        self.led = 0
 
 class PUSH_CTRL:
     def __init__(self , topic_in , topic_out , ip_start , frequency = 100):
@@ -74,10 +75,12 @@ class PUSH_CTRL:
         self.current_cmd.f_length = float(msg.tar_length_f)
         self.current_cmd.b_length = float(msg.tar_length_b)
         self.current_cmd.m_length = float(msg.tar_length_m)
+        self.current_cmd.led = int(msg.led_state)
         # 装填到等待发送的info中
         self.ether_info_buf[0].PushCmdName["f_length"] = self.current_cmd.f_length
         self.ether_info_buf[0].PushCmdName["b_length"] = self.current_cmd.b_length
         self.ether_info_buf[0].PushCmdName["m_length"] = self.current_cmd.m_length
+        self.ether_info_buf[0].PushCmdName["led"] = self.current_cmd.led
         # 发送数据
         self.ether_nodes_buf[0].sendTask(self.ether_info_buf[0])
         

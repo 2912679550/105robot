@@ -94,6 +94,9 @@ typedef sensor_msgs::ImuConstPtr IMU_CPTR;  // IMU数据指针类型
 #define DIFFSPED_B_EN "houautoturn_open"
 #define DIFFSPED_B_DIS "houautoturn_close"
 #define PITCH_ADJ "finetune"
+// 光源控制
+#define LIGHT_OPEN "light"
+#define LIGHT_CLOSE "stopL"
 
 // todo 字符串打印配置宏
 // 字体颜色

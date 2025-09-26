@@ -42,7 +42,8 @@ class packInfo():
         self.PushCmdName = {
             "f_length": 0.00,
             "b_length": 0.00,
-            "m_length": 0.00
+            "m_length": 0.00,
+            "led": 0
         }
 
         self.PushValName = {
