@@ -301,6 +301,11 @@ void* InstructionPubCallback(void* arg)
             std::cout << "push length: " << motion_msg.push_length_f << ", " << motion_msg.push_length_b
                     << std::endl;
         }
+        else if(mode == MID_L){
+            motion_msg.cmdType = mode;
+            motion_msg.push_length_m = atof(motion_instruction_str[1].c_str());
+            std::cout << "mid push length: " << motion_msg.push_length_m << std::endl;
+        }
         // else if(mode == ROBOT_F_LENGTH){
         //     motion_msg.cmdType = mode;
         //     motion_msg.push_length_f = atof(motion_instruction_str[1].c_str());

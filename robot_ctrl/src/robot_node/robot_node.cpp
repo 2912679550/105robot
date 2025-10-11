@@ -154,6 +154,9 @@ void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
             saved_pipe_r_[0] = msg->dia_front / 2.0f;  saved_pipe_r_[1] = msg->dia_back / 2.0f;
         }
         else if(mode == ROBOT_BOTH_LENGTH){ push_ctrl_->set_body_length(msg->push_length_f, msg->push_length_b); }
+        else if(mode == MID_L) {
+            push_ctrl_->set_mid_length(msg->push_length_m);
+        }
         // todo 自动进弯
         else if(mode == AUTO_PIPE_CALI){
             if(pipe_cali_flag_ == false){
@@ -396,7 +399,7 @@ void MAIN_ROBOT::odom_handler(bool printFlag){
     else if(front_odom_en_ && (!back_odom_en_)){
         // 如果只有前侧里程计使能，则取前侧里程计值，并使用前侧里程计刷新后侧里程计
         robot_axis_odom_ = front_side_->odom_handler_->odom_axis_avg;
-        robot_cir_odom_ = front_side_->odom_handler_->odom_axis_avg;
+        robot_cir_odom_ = front_side_->odom_handler_->odom_cir_avg;
         back_side_->odom_handler_->set_cur_val(front_side_->odom_handler_->odom_axis, front_side_->odom_handler_->odom_cir);  // 刷新后侧里程计
         odomPrintFlag = true;  // 设置打印标志位为true
     }

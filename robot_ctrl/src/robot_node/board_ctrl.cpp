@@ -371,6 +371,11 @@ void PUSH_CTRL::set_body_length(float length_f, float length_b){
     cmd_data_.tar_length_b = length_b;
 }
 
+void PUSH_CTRL::set_mid_length(float length_m){
+    length_m = set_range<float>(length_m, (float*)push_out_length_mid); // 限制后推杆伸出长度在合理范围内
+    cmd_data_.tar_length_m = length_m;
+}
+
 void PUSH_CTRL::set_body_angle(float angle){
     angle = angle > body_angle_range[1] ? body_angle_range[1] : angle;  // 限制角度不超过基准值
     angle = angle < body_angle_range[0] ? body_angle_range[0] : angle;  // 限制角度不低于基准值

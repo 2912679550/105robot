@@ -64,9 +64,11 @@ typedef sensor_msgs::ImuConstPtr IMU_CPTR;  // IMU数据指针类型
 #define ROBOT_T_L_B "Back"                      // 后侧夹紧,包含长度控制
 // 变形
 #define ROBOT_BOTH_LENGTH "set_angle"           // 同时设置机器人两侧推杆长度
+#define MID_L "probe"
 // #define ROBOT_F_LENGTH    "set_length_f"        // 设置机器人前侧推杆长度
 // #define ROBOT_B_LENGTH    "set_length_b"        // 设置机器人后侧推杆长度  
 #define ROBOT_DIA          "set_dia"               // 设置前后夹持管径     
+
 
 // 自动进弯控制
 #define AUTO_PIPE_CALI "ElbowRecord"         // 自动进弯标定

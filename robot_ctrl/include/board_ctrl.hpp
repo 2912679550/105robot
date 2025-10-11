@@ -114,6 +114,7 @@ class PUSH_CTRL
     void set_body_angle(float angle);
     void set_body_length(float targetLength, bool isFront = true);
     void set_body_length(float length_f, float length_b);
+    void set_mid_length(float length_m);
     void set_light(bool openFlag);
 
 private:
