@@ -316,10 +316,10 @@ PUSH_CTRL::PUSH_CTRL(std::string cmd_topic , std::string val_topic , ros::NodeHa
             << RESET_STRING << std::endl;
     
     // 初始化控制指令
-    cmd_data_.tar_length_f = 25.0f;  // 前推杆的目标长度
-    cmd_data_.tar_length_b = 25.0f;  // 后推杆的目标长度
+    cmd_data_.tar_length_f = 28.0f;  // 前推杆的目标长度
+    cmd_data_.tar_length_b = 28.0f;  // 后推杆的目标长度
     cmd_data_.tar_length_m = 15.0f;  // 中推杆的目标长度
-    cmd_data_.led_state = 1;
+    cmd_data_.led_state = 0;
 }
 
 PUSH_CTRL::~PUSH_CTRL(){

@@ -1,0 +1,9 @@
+<launch>
+
+
+    <!-- roslaunch ros_rtsp rtsp_streams.launch -->
+    <include file="$(find ros_rtsp)/launch/rtsp_streams.launch" />
+    <!-- rosrun camera_ctrl camera_node.py -->
+    <node pkg = "camera_ctrl" type = "camera_node.py"  name =  "camera_node" output = "screen" />
+
+</launch>
