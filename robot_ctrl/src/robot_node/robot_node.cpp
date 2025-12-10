@@ -1,5 +1,9 @@
 #include "robot_node.hpp"
 #include "robot_params.hpp"
+#include <fstream>
+#include <sstream>
+#include <sys/stat.h>   // mkdir
+#include <sys/types.h>
 
 // ! ========================== main robot ===========================
 MAIN_ROBOT::MAIN_ROBOT(ros::NodeHandle* nh_ ){
@@ -22,6 +26,9 @@ MAIN_ROBOT::MAIN_ROBOT(ros::NodeHandle* nh_ ){
     tcp_pub_ = nh_->advertise<ROBOT_TCP_VAL_TYPE>(ROBOT_TCP_VAL, 1);
     tcp_sub_ = nh_->subscribe(TCP_ROBOT_CMD , 1, &MAIN_ROBOT::motion_cmd_callback, this);
     std::cout<< GREEN_STRING << BLOD_STRING <<UNDERLINE_STRING<< "main robot node start" << RESET_STRING << std::endl;
+
+    // 加载机器人状态
+    load_state();
 }
 
 MAIN_ROBOT::~MAIN_ROBOT(){
@@ -43,6 +50,75 @@ MAIN_ROBOT::~MAIN_ROBOT(){
     }
 }
 
+void MAIN_ROBOT::save_state(){
+    // 将机器人的 front_side , back_side , push三个控制器的cmd_data_保存到本地文件
+    // /home/robot/bot105_ws/src/105robot/data 下的robot_state.txt = state_file_path_
+    std::ofstream state_file(state_file_path_, std::ios::out);
+    if(!state_file.is_open()){
+        std::cout<< RED_STRING << BLOD_STRING << "Failed to open state file for saving" << RESET_STRING << std::endl;
+        return;
+    }
+    // 保存front_side_ ， 以 ， 分隔
+    state_file  << front_side_->cmd_data_.dir_arm_angle[0] << "," 
+                << front_side_->cmd_data_.dir_arm_angle[1] << ","
+                << front_side_->cmd_data_.dir_spring_length << "\n";
+    // 保存back_side_
+    state_file << back_side_->cmd_data_.dir_arm_angle[0] << ","
+                << back_side_->cmd_data_.dir_arm_angle[1] << ","
+                << back_side_->cmd_data_.dir_spring_length << "\n";
+    // 保存push_ctrl_
+    state_file << push_ctrl_->cmd_data_.tar_length_f << ","
+                << push_ctrl_->cmd_data_.tar_length_b << ","
+                << push_ctrl_->cmd_data_.tar_length_m << "\n";
+    // 关闭文件
+    state_file.close();
+}
+
+void MAIN_ROBOT::load_state(){
+    // 从本地文件读取机器人的 front_side , back_side , push三个控制器的cmd_data_数据
+    std::ifstream state_file(state_file_path_, std::ios::in);
+    if(!state_file.is_open()){
+        std::cout<< RED_STRING << BLOD_STRING << "Failed to open state file for loading" << RESET_STRING << std::endl;
+        return;
+    }
+    std::string line;
+    // 读取front_side_
+    if(std::getline(state_file, line)){
+        std::stringstream ss(line);
+        std::string item;
+        std::getline(ss, item, ',');
+        front_side_->cmd_data_.dir_arm_angle[0] = std::stof(item);
+        std::getline(ss, item, ',');
+        front_side_->cmd_data_.dir_arm_angle[1] = std::stof(item);
+        std::getline(ss, item, ',');
+        front_side_->cmd_data_.dir_spring_length = std::stof(item);
+    }
+    // 读取back_side_
+    if(std::getline(state_file, line)){
+        std::stringstream ss(line);
+        std::string item;
+        std::getline(ss, item, ',');
+        back_side_->cmd_data_.dir_arm_angle[0] = std::stof(item);
+        std::getline(ss, item, ',');
+        back_side_->cmd_data_.dir_arm_angle[1] = std::stof(item);
+        std::getline(ss, item, ',');
+        back_side_->cmd_data_.dir_spring_length = std::stof(item);
+    }
+    // 读取push_ctrl_
+    if(std::getline(state_file, line)){
+        std::stringstream ss(line);
+        std::string item;
+        std::getline(ss, item, ',');
+        push_ctrl_->cmd_data_.tar_length_f = std::stof(item);
+        std::getline(ss, item, ',');
+        push_ctrl_->cmd_data_.tar_length_b = std::stof(item);
+        std::getline(ss, item, ',');
+        push_ctrl_->cmd_data_.tar_length_m = std::stof(item);
+    }
+    robot_state_ = ROBOT_STATE::MOTION_STOP; // 读取状态后，默认进入停止状态
+    // 关闭文件
+    state_file.close();
+}
 
 void MAIN_ROBOT::cmd_hand_maked(TCP_ROBOT_CMD_TYPE* msg){
     // 直接调用回调函数，模拟接收数据
@@ -68,6 +144,7 @@ void MAIN_ROBOT::change_state(ROBOT_STATE new_state){
 void MAIN_ROBOT::motion_cmd_callback(const TCP_ROBOT_CMD_CPTR &msg){
     if(msg != nullptr)
     {
+        padOnLine = true; // 接收到平板指令，链接信号置位
         // 处理接收到的数据，整合成一个字符串容器
         std::string mode = msg->cmdType;
         std::cout<< BLUE_STRING << BLINK_STRING << "receive command: " << mode << RESET_STRING << std::endl;
@@ -267,6 +344,7 @@ void MAIN_ROBOT::pubCmd(){
 };
 
 void MAIN_ROBOT::robot_ctrl(bool printFlag){
+    static int loop_count = 0;
     // * 执行一些状态机指令
     front_side_->single_side_ctrl();  // 前侧单侧控制逻辑
     back_side_->single_side_ctrl();   // 后侧单侧控制逻辑
@@ -281,7 +359,7 @@ void MAIN_ROBOT::robot_ctrl(bool printFlag){
     switch(robot_state_){
         case ROBOT_STATE::MOTION_STOP:
             // * 停止状态
-            motion_planner_->reset_motion();
+            // motion_planner_->reset_motion();
             tar_v_aix_ = 0.0f;
             tar_v_cir_ = 0.0f;
             break;
@@ -342,7 +420,18 @@ void MAIN_ROBOT::robot_ctrl(bool printFlag){
         default:
             break;
     }
-    pubCmd();
+    if(padOnLine) {
+        loop_count++;
+        pubCmd(); // 接收到平板指令后才发布控制命令
+        if(loop_count >= TS){
+            save_state(); // 每50个控制周期保存一次状态
+            loop_count = 0;
+        }
+    }
+    else {
+        // 中部推杆发布指令，用来开灯
+        push_ctrl_->pub_cmd();
+    }
     // 发布手柄回传数据
     ROBOT_TCP_VAL_TYPE tcp_val;
     tcp_val.odom_pos[0] = robot_axis_odom_;
@@ -698,36 +787,87 @@ steerState MOTION_PLAN::motion_plan_(float* result_aix , float* result_cir,
                         << "current distance: " << current_distance << RESET_STRING << std::endl;
             }
             break;
+        // case MOTION_MODE::SCAN:
+            // if(scan_positive_en_){
+            //     // 如果当前距离大于等于扫查运动的距离，则认为到达终点
+            //     if (current_distance >= trace_distance_){
+            //         scan_positive_en_ = false; // 扫查正向使能为false
+            //         return_state = steerState::NORMAL;
+            //     }
+            //     else{
+            //         // 如果当前距离小于扫查运动的距离，则继续执行扫查运动
+            //         *result_aix = default_speed_ * cos(dir_);
+            //         *result_cir = default_speed_ * sin(dir_);
+            //         return_state = steerState::NORMAL;
+            //         if(printFlag) 
+            //         std::cout << BLOD_STRING << GREEN_STRING
+            //                 << "target motion: " << *result_aix << ", " << *result_cir  << "\n"
+            //                 << "current distance: " << current_distance << RESET_STRING << std::endl;
+            //     }
+            // }else{
+            //     current_distance = sqrt(  pow(cur_aix - motion_range.second.x(), 2) + 
+            //                             pow(cur_cir  - motion_range.second.y(), 2));
+            //     if (current_distance >= trace_distance_) scan_positive_en_ = true; // 扫查正向使能为false
+            //     else{
+            //         // 如果当前距离小于扫查运动的距离，则继续执行扫查运动
+            //         *result_aix = -default_speed_ * cos(dir_);
+            //         *result_cir = -default_speed_ * sin(dir_);
+            //         return_state = steerState::NORMAL;
+            //         if(printFlag) 
+            //         std::cout << BLOD_STRING << GREEN_STRING
+            //                 << "target motion: " << *result_aix << ", " << *result_cir  << "\n"
+            //                 << "current distance: " << current_distance << RESET_STRING << std::endl;
+            //     }
+            // }
+            // break;
         case MOTION_MODE::SCAN:
             if(scan_positive_en_){
-                // 如果当前距离大于等于扫查运动的距离，则认为到达终点
+                // 正向扫查：从 motion_range.first -> motion_range.second
                 if (current_distance >= trace_distance_){
-                    scan_positive_en_ = false; // 扫查正向使能为false
+                    // 已到达正向终点 -> 立即反向返回
+                    *result_aix = -default_speed_ * cos(dir_);
+                    *result_cir = -default_speed_ * sin(dir_);
+                    scan_positive_en_ = false; // 切换到反向
                     return_state = steerState::NORMAL;
+                    if(printFlag)
+                        std::cout << BLOD_STRING << GREEN_STRING
+                                << "reached scan forward end, reversing: " << *result_aix << ", " << *result_cir  << "\n"
+                                << "current distance: " << current_distance << RESET_STRING << std::endl;
                 }
                 else{
-                    // 如果当前距离小于扫查运动的距离，则继续执行扫查运动
+                    // 继续正向扫查
                     *result_aix = default_speed_ * cos(dir_);
                     *result_cir = default_speed_ * sin(dir_);
                     return_state = steerState::NORMAL;
                     if(printFlag) 
-                    std::cout << BLOD_STRING << GREEN_STRING
-                            << "target motion: " << *result_aix << ", " << *result_cir  << "\n"
-                            << "current distance: " << current_distance << RESET_STRING << std::endl;
+                        std::cout << BLOD_STRING << GREEN_STRING
+                                << "target motion: " << *result_aix << ", " << *result_cir  << "\n"
+                                << "current distance: " << current_distance << RESET_STRING << std::endl;
                 }
             }else{
+                // 反向扫查：从 motion_range.second -> motion_range.first
                 current_distance = sqrt(  pow(cur_aix - motion_range.second.x(), 2) + 
                                         pow(cur_cir  - motion_range.second.y(), 2));
-                if (current_distance >= trace_distance_) scan_positive_en_ = true; // 扫查正向使能为false
+                if (current_distance >= trace_distance_){
+                    // 已到达反向终点（即回到起点） -> 立即正向前进
+                    *result_aix = default_speed_ * cos(dir_);
+                    *result_cir = default_speed_ * sin(dir_);
+                    scan_positive_en_ = true; // 切换到正向
+                    return_state = steerState::NORMAL;
+                    if(printFlag)
+                        std::cout << BLOD_STRING << GREEN_STRING
+                                << "reached scan backward end, reversing to forward: " << *result_aix << ", " << *result_cir  << "\n"
+                                << "current distance: " << current_distance << RESET_STRING << std::endl;
+                }
                 else{
-                    // 如果当前距离小于扫查运动的距离，则继续执行扫查运动
+                    // 继续反向扫查（朝向起点移动）
                     *result_aix = -default_speed_ * cos(dir_);
                     *result_cir = -default_speed_ * sin(dir_);
                     return_state = steerState::NORMAL;
                     if(printFlag) 
-                    std::cout << BLOD_STRING << GREEN_STRING
-                            << "target motion: " << *result_aix << ", " << *result_cir  << "\n"
-                            << "current distance: " << current_distance << RESET_STRING << std::endl;
+                        std::cout << BLOD_STRING << GREEN_STRING
+                                << "target motion: " << *result_aix << ", " << *result_cir  << "\n"
+                                << "current distance: " << current_distance << RESET_STRING << std::endl;
                 }
             }
             break;

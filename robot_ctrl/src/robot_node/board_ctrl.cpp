@@ -204,6 +204,7 @@ void SINGLE_SIDE_CTRL::set_steer(steerState stateIn , float v_aix , float v_cir 
     steer_state_ = stateIn;  // 更新当前舵轮的工作状态
     tar_v_aix_ = v_aix;  // 更新目标轴向速度
     tar_v_cir_ = v_cir;  // 更新目标周向速度
+    static float pre_dir[3] = {0.5f * PI , 0.5f * PI , 0.5f * PI}; // 用于存储上一次的舵轮方向命令
 
     if(close_pid_en_ == false){
         pid_out_p = 0.0;
@@ -245,22 +246,71 @@ void SINGLE_SIDE_CTRL::set_steer(steerState stateIn , float v_aix , float v_cir 
             }
             // todo end
 
+            // float vel_total = sqrt(v_aix * v_aix + v_cir * v_cir); // 速度的数值大小
+            // float vel_dir = atan2(v_aix, v_cir);                   // 速度的方向 , 这里的角度范围为[-PI , PI]
+            // // 将角度范围调整到[0,PI]，并为此修正速度大小
+            // if (vel_dir < -0.005f)
+            // {
+            //     vel_dir += 1.0f * PI;
+            //     vel_total = -vel_total;
+            // }
+            // cmd_data_.dir_steer_dir[i] = vel_dir;   // 舵轮舵向的角度
+            // cmd_data_.dir_steer_vel[i] = vel_total; // 舵轮舵向的速度
+
             float vel_total = sqrt(v_aix * v_aix + v_cir * v_cir); // 速度的数值大小
-            float vel_dir = atan2(v_aix, v_cir);                   // 速度的方向 , 这里的角度范围为[-PI , PI]
-            // 将角度范围调整到（0,PI]，并为此修正速度大小
-            if (vel_dir <= 0.0f)
-            {
-                vel_dir += 1.0f * PI;
-                vel_total = -vel_total;
+            float desired_dir = atan2(v_aix, v_cir); // 期望方向，范围 [-PI, PI]
+
+            // 归一化到 (-PI, PI]
+            auto normalize = [](float a)->float{
+                while (a <= -PI) a += 2.0f * PI;
+                while (a >  PI) a -= 2.0f * PI;
+                return a;
+            };
+
+            // 当前命令中已有的方向（可能在 [0,PI] 或其他区间），规约为 (-PI,PI]
+            float cur_dir = normalize(pre_dir[i]);
+
+            // 两个候选：A = desired_dir（速度不变），B = desired_dir + PI（方向反向，速度取反）
+            float candA_dir = normalize(desired_dir);
+            float candA_speed = vel_total;
+            float candB_dir = normalize(desired_dir + PI);
+            float candB_speed = -vel_total;
+
+            // 圆周上最小角差的绝对值
+            auto ang_diff = [&](float a, float b)->float{
+                float d = normalize(a - b);
+                return std::fabs(d);
+            };
+
+            float diffA = ang_diff(candA_dir, cur_dir);
+            float diffB = ang_diff(candB_dir, cur_dir);
+
+            // 选择角差更小的候选项
+            float chosen_dir = candA_dir;
+            float chosen_speed = candA_speed;
+            if (diffB < diffA) {
+                chosen_dir = candB_dir;
+                chosen_speed = candB_speed;
             }
 
-            // if(i < 2 && pipdiffFlag_ == true){
-            //     // 开启了弯道差速
-            //     vel_total = vel_total * (300.0 - 0.5 * pipe_r_) / (300.0 + pipe_r_); // 辅助轮的速度需要根据管道半径进行调整
-            // }
+            // 将最终角度映射到 [0, PI]（允许小的负浮点容差）
+            const float tol = 0.005f;
+            if (chosen_dir < -tol) {
+                // 如果显著为负角，则通过加 PI 并将速度取反使其映射到正区间
+                chosen_dir += PI;
+                chosen_speed = -chosen_speed;
+            } else if (chosen_dir < 0.0f) {
+                // 小幅负数容忍并截为 0
+                chosen_dir = 0.0f;
+            }
 
-            cmd_data_.dir_steer_dir[i] = vel_dir;   // 舵轮舵向的角度
-            cmd_data_.dir_steer_vel[i] = vel_total; // 舵轮舵向的速度
+            // 数值稳健性：确保不超出上界
+            if (chosen_dir > PI + tol) chosen_dir = PI;
+            if (chosen_dir < 0.0f) chosen_dir = 0.0f;
+
+            pre_dir[i] = chosen_dir; // 更新存储的上一次命令方向
+            cmd_data_.dir_steer_dir[i] = chosen_dir;   // 舵轮舵向的角度（保证在 [0,PI]）
+            cmd_data_.dir_steer_vel[i] = chosen_speed; // 舵轮舵向的速度（符号可能为负，表明前向/反向）
         }
 
         if(enable_bending_pipe == true){

@@ -65,7 +65,7 @@ public:
     // 数据存储，用于存放32段发回来的一些运行数据，可以通过外部访问，辅助主程序逻辑
     STM_ROBOT_VAL_TYPE val_data_;
     ROBOT_STM_CMD_TYPE cmd_data_;
-    // 功能类
+        // 功能类
     MICRO_ODOM* odom_handler_;  // 里程计处理类，用于处理轴向和周向的里程计数据
     MYTIMER* tight_timer_;  // 定时器处理类，用于定时发布控制指令
 

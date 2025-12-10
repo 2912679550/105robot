@@ -82,7 +82,7 @@ class BottomControl():
             # print('[client]: receive >>', valNameList)
         except socket.error as e:
             print(self.ip,"socket接收异常!:",e)  
-            time.sleep(3)#每3秒重新连接一次
+            time.sleep(2)#每2秒重新连接一次
             self.create_connect()
         except KeyboardInterrupt:
             # 发起关闭

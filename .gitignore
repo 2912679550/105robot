@@ -1,6 +1,7 @@
 build
 dataBag
 sh/logs/
+robot_state.txt
 
 
 

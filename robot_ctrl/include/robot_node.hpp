@@ -101,6 +101,12 @@ class MAIN_ROBOT
 public:
     MAIN_ROBOT(ros::NodeHandle* nh_ = nullptr);
     ~MAIN_ROBOT();
+    // * 新增默认逻辑， 机器人上电后等待接入平板指令， 同时引入状态保存与状态读取机制
+    bool padOnLine = false;  // 平板指令链接信号
+    string state_file_path_ = "/home/robot/bot105_ws/src/105robot/data/robot_state.txt"; // 机器人状态保存文件路径
+    void save_state();  // 将机器人的 front_side , back_side , push三个控制器的cmd_data_保存到本地文件
+    void load_state();  // 从本地文件读取机器人的 front_side , back_side , push三个控制器的cmd_data_数据
+
     // * 内置控制器
     SINGLE_SIDE_CTRL* front_side_;
     SINGLE_SIDE_CTRL* back_side_;
